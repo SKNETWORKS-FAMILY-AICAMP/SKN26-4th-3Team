@@ -28,6 +28,7 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
 
   // 정렬 상태 추가
   const [sortBy, setSortBy] = useState<"recommended" | "price">("recommended");
+  const [isSaving, setIsSaving] = useState(false);
 
   // 다이내믹 데이터 계산
   const baseRecommendations = useMemo(() => getRecommendedProducts(results), [results]);
@@ -78,13 +79,24 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
 
   // 리포트 이미지 저장 함수
   const saveReportAsImage = async () => {
-    if (!reportRef.current) return;
+    if (!reportRef.current || isSaving) return;
+    
+    setIsSaving(true);
+    
+    // UI 업데이트와 애니메이션 안정을 위해 짧은 지연시간 부여
+    await new Promise(resolve => setTimeout(resolve, 600));
+
     try {
       const canvas = await html2canvas(reportRef.current, {
         backgroundColor: "#FDFCF0",
         scale: 2,
         useCORS: true,
         logging: false,
+        onclone: (clonedDoc) => {
+          // 캡처 시점에만 특정 스타일을 강제로 고정하거나 조정할 수 있음
+          const el = clonedDoc.getElementById("report-content");
+          if (el) el.style.filter = "none";
+        }
       });
       const image = canvas.toDataURL("image/png");
       const link = document.createElement("a");
@@ -93,6 +105,8 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
       link.click();
     } catch (err) {
       console.error("이미지 저장 실패:", err);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -127,14 +141,26 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
               
               <button 
                 onClick={saveReportAsImage}
-                className="flex items-center gap-2 px-6 py-2.5 border border-wood/20 rounded-full text-[10px] sm:text-[11px] uppercase tracking-widest hover:bg-wood hover:text-cream transition-all duration-300"
+                disabled={isSaving}
+                className={`flex items-center gap-2 px-6 py-2.5 border border-wood/20 rounded-full text-[10px] sm:text-[11px] uppercase tracking-widest transition-all duration-300 ${
+                  isSaving ? "bg-wood/10 text-wood/40 cursor-not-allowed" : "hover:bg-wood hover:text-cream"
+                }`}
               >
-                <Download size={14} />
-                Save Report as Image
+                {isSaving ? (
+                  <>
+                    <div className="w-3 h-3 border-2 border-wood/20 border-t-wood rounded-full animate-spin" />
+                    Preparing Image...
+                  </>
+                ) : (
+                  <>
+                    <Download size={14} />
+                    Save Report as Image
+                  </>
+                )}
               </button>
             </div>
 
-            <div ref={reportRef} className="p-4 md:p-8 rounded-lg">
+            <div ref={reportRef} id="report-content" className="p-4 md:p-8 rounded-lg">
               {/* 01. Aura Analysis */}
               <div className="mb-32 animate-in fade-in duration-1000">
                 <div className="flex items-center gap-4 mb-12">
