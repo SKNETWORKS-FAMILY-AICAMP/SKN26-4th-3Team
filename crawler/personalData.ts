@@ -1,4 +1,4 @@
-import type { Product } from './productData';
+import type { Product } from '../src/data/productData';
 
 export const personalProducts: Product[] = [
   {
@@ -387,7 +387,7 @@ export const personalProducts: Product[] = [
     brand: "Byredo",
     price: "₩280,000",
     size: "50ML",
-    image: "https://images.eu.ctfassets.net/ud20h5tscuj7/4R8c44QVzamxmU8mZobDEv/999509d709e9e3697601e98759da369e/Byredo-Holiday25-EcomServices-Delivery-Clean_EN_1080_x_1350.jpg?q=70&fm=avif&w=1920",
+    image: "https://www.byredo.com/cdn-cgi/image/width=auto,height=1200,fit=scale-down,gravity=auto,format=webp,quality=70/https://www.byredo.com/media/catalog/product/cache/74c1057f7991b4edb2bc7bdaa94de933/8/0/806274_1_full_no.jpg",
     tags: ["Personal", "Eco"],
     notes: "M/Mink는 바이레도와 크리에이티브 하우스 M/M (Paris)와 협업...",
     family: "시그니처",

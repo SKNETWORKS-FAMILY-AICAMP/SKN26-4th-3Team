@@ -4,7 +4,7 @@
  */
 
 import { nagChampaProducts } from './nagChampaData';
-import { personalProducts } from './personalData';
+import { personalProducts } from '../../crawler/personalData';
 
 export interface Product {
   id: number;
