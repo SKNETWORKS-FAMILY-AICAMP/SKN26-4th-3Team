@@ -10,7 +10,6 @@ export default function FooterSection() {
     { label: "컨셉", href: "#philosophy" },
     { label: "AI 인터뷰", href: "#interview" },
     { label: "분석 리포트", href: "#report" },
-    { label: "추천", href: "#curated" },
     { label: "안전성", href: "#safety" },
   ];
 
@@ -26,7 +25,7 @@ export default function FooterSection() {
           
           {/* 브랜드 영역 (좌측) */}
           <div>
-            <p className="text-sm font-medium tracking-[0.2em] uppercase">Persona L</p>
+            <p className="text-sm font-medium tracking-[0.2em] uppercase">Olfit</p>
             <p className="text-[11px] text-wood/40 mt-1 tracking-wider">AI Scent Stylist</p>
           </div>
 
@@ -65,7 +64,7 @@ export default function FooterSection() {
         {/* 하단 법적 고지 및 정책 링크 (Bottom Bar) */}
         <div className="mt-12 pt-6 border-t border-wood/5 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-[10px] text-wood/30 tracking-wider">
-            © 2026 Persona L. All rights reserved.
+            © 2026 Olfit. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
             <a href="#" className="text-[10px] text-wood/30 hover:text-wood/60 transition-colors duration-300 tracking-wider">

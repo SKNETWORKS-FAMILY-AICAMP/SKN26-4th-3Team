@@ -18,7 +18,7 @@ export default function Navigation() {
   // 워터마킹: 개발자 도구 콘솔에 시그니처 출력
   useEffect(() => {
     console.log(
-      "%cPersona L - Authored by JJonyeok (2026)",
+      "%cOlfit - Authored by JJonyeok (2026)",
       "color: #4A3E3E; font-size: 12px; font-weight: bold; border-left: 3px solid #4A3E3E; padding-left: 10px;"
     );
   }, []);
@@ -29,7 +29,6 @@ export default function Navigation() {
     { label: "향기 가이드", href: "#guide" },
     { label: "AI 인터뷰", href: "#interview" },
     { label: "분석 리포트", href: "#report" },
-    { label: "추천", href: "#curated" },
     { label: "안전성", href: "#safety" },
   ];
 
@@ -74,8 +73,8 @@ export default function Navigation() {
               isScrolled ? "text-wood" : "text-cream"
             }`}
           >
-            {/* P-L-ID: 2026-JJY-SIGN */}
-            Persona L
+            {/* Olfit-ID: 2026-JJY-SIGN */}
+            Olfit
           </a>
 
           {/* 오른쪽 영역: 위시리스트 */}
@@ -143,7 +142,7 @@ export default function Navigation() {
           {/* 메뉴 하단: 카피라이트 */}
           <div className="px-6 md:px-16 lg:px-24 pb-12">
             <p className="text-[10px] md:text-[11px] text-wood/40 tracking-widest">
-              © 2026 Persona L. AI Scent Stylist.
+              © 2026 Olfit. AI Scent Stylist.
             </p>
           </div>
         </div>

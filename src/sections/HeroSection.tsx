@@ -36,7 +36,7 @@ export default function HeroSection() {
               isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
             }`}
           >
-            Persona L
+            Olfit
           </h1>
         </div>
         <p 
@@ -44,13 +44,13 @@ export default function HeroSection() {
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
           }`}
         >
-          Your Style & Space, Translated into Scent
+          Your Style Translated into Scent
         </p>
       </div>
 
       {/* 우측 하단 플로팅 액션 카드 (CTA: Call to Action) */}
       <a
-        href="#interview"
+        href="#guide"
         className="absolute bottom-6 right-6 md:bottom-8 md:right-8 group z-20"
       >
         <div className="bg-wood/40 backdrop-blur-md p-4 md:p-5 w-[calc(100vw-48px)] sm:w-[300px] md:w-[340px] max-w-[340px] border border-cream/10 shadow-2xl hover:shadow-editorial transition-all duration-400 hover:-translate-y-1">
@@ -59,7 +59,7 @@ export default function HeroSection() {
             <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-cream/10 flex-shrink-0 overflow-hidden">
               <img
                 src="/product_1.jpg"
-                alt="Personal Consultation"
+                alt="Scent Exploration"
                 className="w-full h-full object-cover mix-blend-lighten opacity-90"
               />
             </div>
@@ -67,16 +67,16 @@ export default function HeroSection() {
             <div className="flex flex-col justify-between py-0.5">
               <div>
                 <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-widest text-cream/60 mb-1">
-                  Private Consultation
+                  Ingredient Discovery
                 </p>
                 <p className="text-[13px] sm:text-sm font-medium leading-snug text-cream break-keep">
-                  당신의 스타일과 공간의 무드를 <br className="hidden sm:inline" /> 
-                  후각적 언어로 번역해 드립니다
+                  취향에 맞는 3가지 원료를 선택해 <br className="hidden sm:inline" /> 
+                  당신만의 시그니처 향을 발견하세요
                 </p>
               </div>
               {/* 시작하기 링크 버튼 */}
               <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-cream/80 mt-2 group-hover:text-cream transition-colors">
-                <span>Start Interview</span>
+                <span>Explore Ingredients</span>
                 <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
               </div>
             </div>
