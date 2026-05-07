@@ -11,7 +11,7 @@ import { radarData } from "@/data/reportData";
 import { getRecommendedProducts } from "@/data/recommendationEngine";
 import { Download } from "lucide-react";
 import html2canvas from "html2canvas";
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, useState } from "react";
 import type { AnalysisResults } from "@/types";
 import type { Product } from "@/data/productData";
 
@@ -26,8 +26,25 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
   const { ref: ref3, isVisible: vis3 } = useIntersectionObserver();
   const reportRef = useRef<HTMLDivElement>(null);
 
+  // 정렬 상태 추가
+  const [sortBy, setSortBy] = useState<"recommended" | "price">("recommended");
+
   // 다이내믹 데이터 계산
-  const recommendations = useMemo(() => getRecommendedProducts(results), [results]);
+  const baseRecommendations = useMemo(() => getRecommendedProducts(results), [results]);
+
+  // 정렬된 추천 리스트 계산
+  const recommendations = useMemo(() => {
+    const sorted = [...baseRecommendations];
+    if (sortBy === "price") {
+      return sorted.sort((a, b) => {
+        const priceA = parseInt(a.price.replace(/[^0-9]/g, "")) || 0;
+        const priceB = parseInt(b.price.replace(/[^0-9]/g, "")) || 0;
+        return priceA - priceB;
+      });
+    }
+    // 기본은 이미 similarity 순으로 정렬되어 있음
+    return sorted;
+  }, [baseRecommendations, sortBy]);
 
   // 사용자의 선택에 따른 가변적인 로직 생성
   const dynamicLogicSteps = [
@@ -104,17 +121,38 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
           <>
             <div ref={ref1} className={`flex flex-col items-center mb-20 transition-all duration-800 ${vis1 || results ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               <p className="label-upper text-wood/40 mb-4">Diagnosis Report</p>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-light tracking-tight break-keep text-wood mb-8">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-light tracking-tight break-keep text-wood mb-10 text-center">
                 당신의 비주얼 아우라 진단
               </h2>
               
-              <button 
-                onClick={saveReportAsImage}
-                className="flex items-center gap-2 px-6 py-2.5 border border-wood/20 rounded-full text-[10px] sm:text-[11px] uppercase tracking-widest hover:bg-wood hover:text-cream transition-all duration-300"
-              >
-                <Download size={14} />
-                Save Report as Image
-              </button>
+              <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
+                <button 
+                  onClick={saveReportAsImage}
+                  className="flex items-center gap-2 px-6 py-2.5 border border-wood/20 rounded-full text-[10px] sm:text-[11px] uppercase tracking-widest hover:bg-wood hover:text-cream transition-all duration-300"
+                >
+                  <Download size={14} />
+                  Save Report as Image
+                </button>
+
+                <div className="flex items-center gap-2 p-1 bg-wood/5 rounded-full border border-wood/10">
+                  <button
+                    onClick={() => setSortBy("recommended")}
+                    className={`px-4 py-1.5 rounded-full text-[10px] uppercase tracking-widest transition-all ${
+                      sortBy === "recommended" ? "bg-wood text-cream" : "text-wood/40 hover:text-wood"
+                    }`}
+                  >
+                    추천순
+                  </button>
+                  <button
+                    onClick={() => setSortBy("price")}
+                    className={`px-4 py-1.5 rounded-full text-[10px] uppercase tracking-widest transition-all ${
+                      sortBy === "price" ? "bg-wood text-cream" : "text-wood/40 hover:text-wood"
+                    }`}
+                  >
+                    가격순
+                  </button>
+                </div>
+              </div>
             </div>
 
             <div ref={reportRef} className="p-4 md:p-8 rounded-lg">
