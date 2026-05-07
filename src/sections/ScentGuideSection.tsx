@@ -10,7 +10,7 @@ import FamilyCarousel from "@/components/guide/FamilyCarousel";
 import NoteGlossary from "@/components/guide/NoteGlossary";
 import { scentFamilies, concentrations } from "@/data/scentData";
 
-export default function ScentGuideSection() {
+export default function ScentGuideSection({ onNotesChange }: { onNotesChange?: (notes: string[]) => void }) {
   const { ref, isVisible } = useIntersectionObserver();
 
   return (
@@ -40,7 +40,7 @@ export default function ScentGuideSection() {
           </div>
 
           {/* 03. 향기 원료 사전 (Note Glossary) */}
-          <NoteGlossary />
+          <NoteGlossary onNotesChange={onNotesChange} />
         </div>
       </div>
     </section>

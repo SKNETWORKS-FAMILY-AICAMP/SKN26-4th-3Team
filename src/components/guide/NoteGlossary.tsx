@@ -1,60 +1,42 @@
 /**
  * @file NoteGlossary.tsx
  * @description 향수의 주요 원료들에 대한 설명을 카드 형태로 보여주는 컴포넌트입니다.
- * 마우스 호버 시 상세 정보를 노출하여 교육적인 재미를 더합니다.
+ * 사용자가 선호하는 원료를 선택하면 부모 컴포넌트로 전달합니다.
  */
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { scentNotes } from "@/data/noteData";
-import { products } from "@/data/productData";
-import ProductCard from "@/components/curated/ProductCard";
-import ProductModal from "@/components/curated/ProductModal";
-import { Check, RefreshCw, Sparkles } from "lucide-react";
+import { Check, RefreshCw } from "lucide-react";
 import type { ScentNote } from "@/data/noteData";
-import type { Product } from "@/data/productData";
 
-export default function NoteGlossary() {
+interface NoteGlossaryProps {
+  onNotesChange?: (notes: string[]) => void;
+}
+
+export default function NoteGlossary({ onNotesChange }: NoteGlossaryProps) {
   const [hoveredNote, setHoveredNote] = useState<string | null>(null);
   const [selectedNotes, setSelectedNotes] = useState<ScentNote[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   const toggleNote = (note: ScentNote) => {
+    let newNotes;
     if (selectedNotes.find((n) => n.enName === note.enName)) {
-      setSelectedNotes(selectedNotes.filter((n) => n.enName !== note.enName));
+      newNotes = selectedNotes.filter((n) => n.enName !== note.enName);
     } else if (selectedNotes.length < 3) {
-      setSelectedNotes([...selectedNotes, note]);
+      newNotes = [...selectedNotes, note];
+    } else {
+      return;
+    }
+    
+    setSelectedNotes(newNotes);
+    if (onNotesChange) {
+      onNotesChange(newNotes.map(n => n.name));
     }
   };
 
-  const recommendations = useMemo(() => {
-    if (selectedNotes.length < 3) return [];
-
-    // 가중치 기반 유사도 계산
-    const scoredProducts = products.map((product) => {
-      let score = 0;
-      selectedNotes.forEach((note) => {
-        const searchTerms = [note.name, note.enName.toLowerCase()];
-        const targetText = `
-          ${product.notes.toLowerCase()} 
-          ${product.details.topNotes.toLowerCase()} 
-          ${product.details.middleNotes.toLowerCase()} 
-          ${product.details.baseNotes.toLowerCase()}
-          ${product.family.toLowerCase()}
-        `;
-
-        if (searchTerms.some(term => targetText.includes(term))) {
-          score += 1;
-        }
-      });
-      return { product, score };
-    });
-
-    return scoredProducts
-      .filter((item) => item.score > 0)
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 4)
-      .map((item) => item.product);
-  }, [selectedNotes]);
+  const resetNotes = () => {
+    setSelectedNotes([]);
+    if (onNotesChange) onNotesChange([]);
+  };
 
   return (
     <div className="mt-24 pt-24 border-t border-wood/10">
@@ -64,7 +46,7 @@ export default function NoteGlossary() {
             03. Perfumery Notes (향기 원료 사전)
           </h3>
           <p className="text-sm text-wood/60 break-keep">
-            마음에 드는 <span className="text-wood font-medium">3가지 원료</span>를 선택해 보세요. 당신의 취향과 가장 닮은 향수를 찾아드립니다.
+            마음에 드는 <span className="text-wood font-medium">3가지 원료</span>를 선택해 보세요. 당신의 스타일 사진과 함께 분석하여 가장 닮은 향수를 찾아드립니다.
           </p>
         </div>
         
@@ -80,7 +62,7 @@ export default function NoteGlossary() {
             ))}
           </div>
           <button 
-            onClick={() => setSelectedNotes([])}
+            onClick={resetNotes}
             className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-wood/40 hover:text-wood transition-colors"
           >
             <RefreshCw size={12} />
@@ -142,50 +124,6 @@ export default function NoteGlossary() {
           );
         })}
       </div>
-
-      {/* 추천 결과 섹션 */}
-      {selectedNotes.length === 3 && (
-        <div className="mt-20 pt-20 border-t border-wood/10 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-wood text-cream rounded-full mb-6">
-              <Sparkles size={14} className="animate-pulse" />
-              <span className="text-[10px] uppercase tracking-[0.2em] font-medium">Matched Selection</span>
-            </div>
-            <h3 className="text-2xl sm:text-3xl font-light tracking-tight text-wood">
-              선택하신 원료가 담긴 최적의 향기
-            </h3>
-            <p className="text-sm text-wood/40 mt-4">
-              {selectedNotes.map(n => n.name).join(', ')}의 조화가 어우러진 추천 리스트입니다.
-            </p>
-          </div>
-
-          {recommendations.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {recommendations.map((product, i) => (
-                <ProductCard 
-                  key={product.id} 
-                  product={product} 
-                  isVisible={true} 
-                  index={i} 
-                  onClick={(p) => setSelectedProduct(p)}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="max-w-md mx-auto text-center py-20 bg-white/30 rounded-sm border border-dashed border-wood/20">
-              <p className="text-sm text-wood/60">아쉽게도 모든 원료가 일치하는 향수를 찾지 못했습니다.<br/>다른 조합으로 다시 시도해 보세요.</p>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* 제품 상세 모달 */}
-      {selectedProduct && (
-        <ProductModal 
-          product={selectedProduct} 
-          onClose={() => setSelectedProduct(null)} 
-        />
-      )}
     </div>
   );
 }

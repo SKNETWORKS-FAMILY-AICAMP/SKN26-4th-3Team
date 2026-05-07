@@ -22,6 +22,9 @@ export default function App() {
   // 인터뷰 결과를 저장할 상태
   const [analysisResults, setAnalysisResults] = useState<AnalysisResults | null>(null);
   
+  // 사용자가 선택한 향기 노트들
+  const [selectedNotes, setSelectedNotes] = useState<string[]>([]);
+  
   // 개인정보 동의 및 세션 상태 관리
   const [hasConsented, setHasConsented] = useState<boolean>(false);
 
@@ -67,7 +70,22 @@ export default function App() {
         <main>
           {/* 히어로 섹션: 첫 화면 및 인트로 */}
           <HeroSection />
-...
+          
+          {/* 철학 섹션: 브랜드 가치 및 철학 설명 */}
+          <PhilosophySection />
+          
+          {/* 향기 가이드 섹션: 향수 사용법 및 팁 */}
+          <ScentGuideSection onNotesChange={setSelectedNotes} />
+          
+          {/* AI 인터뷰 섹션: 사용자 취향 분석을 위한 이미지 업로드 및 로직 */}
+          <AIInterviewSection 
+            onComplete={(results: AnalysisResults) => setAnalysisResults(results)} 
+            selectedNotes={selectedNotes}
+          />
+          
+          {/* 분석 리포트 섹션: 인터뷰 결과에 따른 개인화된 분석 결과 */}
+          <InsightReportSection results={analysisResults} />
+          
           {/* 안전성 섹션: 제품의 원료 및 안전성 강조 */}
           <SafetyValuesSection />
         </main>

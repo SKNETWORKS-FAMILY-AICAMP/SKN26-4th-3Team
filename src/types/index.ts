@@ -9,4 +9,8 @@ export interface AnalysisResults {
   type: ScentType;
   personalMood?: string;
   fashionStyle?: string;
+  analysisMetadata?: {
+    base64Image: string;
+    selectedNotes: string[];
+  };
 }
