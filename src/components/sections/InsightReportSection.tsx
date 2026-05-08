@@ -7,6 +7,7 @@
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import RadarChart from "@/components/common/RadarChart";
 import ProductCarousel from "@/components/report/ProductCarousel";
+import OlfitLogo from "@/components/common/OlfitLogo";
 import { radarData } from "@/data/reportData";
 import { getRecommendedProducts } from "@/services/recommendationEngine";
 import { Download } from "lucide-react";
@@ -83,85 +84,119 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
     
     setIsSaving(true);
     
-    // UI 업데이트와 애니메이션 안정을 위해 짧은 지연시간 부여
-    await new Promise(resolve => setTimeout(resolve, 600));
-
     try {
+      // 1. 폰트 로딩 대기
+      if (document.fonts) {
+        await document.fonts.ready;
+      }
+
+      // 2. 리포트 내 이미지 디코딩 확인
+      const images = reportRef.current.querySelectorAll("img");
+      const imagePromises = Array.from(images).map((img) => {
+        if (img.complete) return Promise.resolve();
+        return img.decode().catch(() => {
+          // 디코딩 실패 시 에러 무시하고 진행 (네트워크 에러 등 대비)
+          return new Promise((resolve) => {
+            img.onload = resolve;
+            img.onerror = resolve;
+          });
+        });
+      });
+      await Promise.all(imagePromises);
+
+      // 3. UI 업데이트 및 브라우저 렌더링 안정을 위한 강제 지연 (1000ms)
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
       const canvas = await html2canvas(reportRef.current, {
         backgroundColor: "#FDFCF0",
-        scale: 2, // 선명도를 위해 다시 2배로 조정 (스타일은 코드로 제어)
+        scale: 3, // 고해상도 출력을 위해 스케일을 3으로 상향 (약 300 DPI 수준)
         useCORS: true,
         logging: false,
         allowTaint: true,
         scrollX: 0,
         scrollY: -window.scrollY,
+        imageTimeout: 15000, // 이미지 로딩 타임아웃 넉넉히 설정
         onclone: (clonedDoc) => {
           const el = clonedDoc.getElementById("report-content");
           if (el) {
-            // 1. 고정 레이아웃 강제
-            el.style.width = "800px";
-            el.style.maxWidth = "800px";
-            el.style.minWidth = "800px";
-            el.style.padding = "60px";
+            // 1. 고정 레이아웃 강제 및 텍스트 렌더링 힌트 추가
+            el.style.width = "1000px"; // 출력을 위해 가로폭 확장
+            el.style.maxWidth = "1000px";
+            el.style.minWidth = "1000px";
+            el.style.padding = "80px";
             el.style.boxSizing = "border-box";
             el.style.filter = "none";
             el.style.transform = "none";
+            el.style.webkitFontSmoothing = "antialiased";
+            el.style.mozOsxFontSmoothing = "grayscale";
 
-            // 모든 하위 요소에 box-sizing 적용
+            // 모든 하위 요소에 box-sizing 및 텍스트 힌트 적용
             const allElements = el.querySelectorAll("*");
             allElements.forEach((node) => {
-              (node as HTMLElement).style.boxSizing = "border-box";
+              const target = node as HTMLElement;
+              target.style.boxSizing = "border-box";
+              target.style.webkitFontSmoothing = "antialiased";
             });
             
-            // 2. 텍스트 및 폰트 최적화 (px 단위 고정)
-            const texts = el.querySelectorAll("p, h2, h3, span, div");
+            // 2. 텍스트 및 폰트 최적화 (px 단위 고정 및 선명도 강화)
+            const texts = el.querySelectorAll("p, h2, h3, span, div, text");
             texts.forEach((node) => {
               const target = node as HTMLElement;
-              target.style.lineHeight = "1.4"; // 간격 압축
-              target.style.letterSpacing = "-0.02em";
+              target.style.lineHeight = "1.5";
+              target.style.letterSpacing = "-0.01em";
               target.style.wordBreak = "keep-all";
               target.style.whiteSpace = "normal";
               
-              // 폰트 크기 강제 고정 (반응형 방지)
+              // 폰트 크기 강제 고정 (출력물 최적화)
               const className = target.className;
               if (className.includes("text-3xl") || className.includes("text-4xl") || className.includes("text-5xl")) {
-                target.style.fontSize = "32px";
+                target.style.fontSize = "42px";
+                target.style.fontWeight = "300";
               } else if (className.includes("text-xl") || className.includes("text-2xl")) {
-                target.style.fontSize = "20px";
+                target.style.fontSize = "24px";
               } else if (className.includes("text-[15px]") || className.includes("text-base")) {
-                target.style.fontSize = "15px";
+                target.style.fontSize = "16px";
               } else if (className.includes("text-[10px]") || className.includes("text-[11px]") || className.includes("text-[9px]")) {
-                target.style.fontSize = "11px";
+                target.style.fontSize = "12px";
+                target.style.letterSpacing = "0.1em";
               }
             });
 
-            // 3. 섹션 간격 압축 (현재의 70% 수준으로 조정)
+            // 3. 섹션 간격 조정
             const spacingElements = el.querySelectorAll(".mb-32, .mt-32, .mb-20, .mb-12, .mb-16, .gap-16, .gap-24");
             spacingElements.forEach((node) => {
               const target = node as HTMLElement;
-              if (target.classList.contains("mb-32")) target.style.marginBottom = "60px";
-              if (target.classList.contains("mt-32")) target.style.marginTop = "60px";
-              if (target.classList.contains("mb-20")) target.style.marginBottom = "40px";
-              if (target.classList.contains("mb-12")) target.style.marginBottom = "24px";
-              if (target.classList.contains("mb-16")) target.style.marginBottom = "30px";
-              if (target.classList.contains("gap-16") || target.classList.contains("gap-24")) {
-                target.style.gap = "30px";
-              }
+              if (target.classList.contains("mb-32")) target.style.marginBottom = "80px";
+              if (target.classList.contains("mt-32")) target.style.marginTop = "80px";
+              if (target.classList.contains("mb-20")) target.style.marginBottom = "60px";
+              if (target.classList.contains("mb-12")) target.style.marginBottom = "30px";
+              if (target.classList.contains("mb-16")) target.style.marginBottom = "40px";
             });
 
-            // 4. Flexbox 정렬 보정 (이미지/차트 영역 고정)
-            const flexItems = el.querySelectorAll(".grid > div, .flex > div");
-            flexItems.forEach((node) => {
-              const target = node as HTMLElement;
-              target.style.flexShrink = "0";
-            });
+            // 4. 로고 및 헤더 추가 (리포트의 공식적인 느낌 부여)
+            const header = clonedDoc.createElement("div");
+            header.style.display = "flex";
+            header.style.justifyContent = "space-between";
+            header.style.alignItems = "center";
+            header.style.marginBottom = "60px";
+            header.style.borderBottom = "1px solid rgba(107, 68, 35, 0.1)";
+            header.style.paddingBottom = "20px";
+            
+            header.innerHTML = `
+              <div style="font-family: serif; font-size: 28px; font-weight: 300; letter-spacing: 0.25em; color: #6B4423; text-transform: uppercase;">OLFIT</div>
+              <div style="text-align: right;">
+                <div style="font-size: 11px; font-weight: 600; color: #6B4423; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px;">Analysis Report</div>
+                <div style="font-size: 10px; color: rgba(107, 68, 35, 0.5); letter-spacing: 0.05em;">${new Date().toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+              </div>
+            `;
+            el.prepend(header);
           }
         }
       });
       const image = canvas.toDataURL("image/png", 1.0);
       const link = document.createElement("a");
       link.href = image;
-      link.download = `Olfit_Report.png`;
+      link.download = `Olfit_Analysis_Report_${new Date().getTime()}.png`;
       link.click();
     } catch (err) {
       console.error("이미지 저장 실패:", err);
@@ -209,7 +244,7 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
                 {isSaving ? (
                   <>
                     <div className="w-3 h-3 border-2 border-wood/20 border-t-wood rounded-full animate-spin" />
-                    Preparing Image...
+                    Generating High-Quality Report...
                   </>
                 ) : (
                   <>
