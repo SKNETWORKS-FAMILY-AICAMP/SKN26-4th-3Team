@@ -197,9 +197,16 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
         setIsShared(true);
         setTimeout(() => setIsShared(false), 2000);
       } 
-      // 3. 둘 다 실패 시 다운로드로 유도
+      // 3. 둘 다 실패 시 파일 직접 다운로드로 유도
       else {
-        saveReportAsImage();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `Olfit_Analysis_${Date.now()}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setTimeout(() => window.URL.revokeObjectURL(url), 100);
       }
     } catch (err) {
       console.error("공유 실패:", err);
