@@ -37,21 +37,11 @@ export default function FamilyCarousel({ families }: FamilyCarouselProps) {
 
   return (
     <div className="flex flex-col h-full">
-      {/* 상단 컨트롤 영역: 타이틀 및 인디케이터 */}
+      {/* 상단 컨트롤 영역: 타이틀 (인디케이터는 하단으로 이동) */}
       <div className="flex justify-between items-center mb-8 md:mb-10">
         <h3 className="text-[11px] md:text-[12px] font-bold uppercase tracking-[0.2em] text-wood/30">
           02. Scent Family (계열의 차이)
         </h3>
-        <div className="flex gap-2">
-          {families.map((_, i) => (
-            <button 
-              key={i}
-              onClick={() => setActiveFamilyIdx(i)}
-              aria-label={`${families[i].title} 계열 보기`}
-              className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full transition-all duration-500 ${activeFamilyIdx === i ? 'bg-wood scale-125' : 'bg-wood/15 hover:bg-wood/30'}`}
-            />
-          ))}
-        </div>
       </div>
 
       {/* 메인 슬라이드 영역 */}
@@ -98,6 +88,23 @@ export default function FamilyCarousel({ families }: FamilyCarouselProps) {
           </div>
         ))}
       </div>
+      
+      {/* 하단 점 인디케이터 (수정된 위치 및 스타일) */}
+      <div className="flex justify-center gap-2 mt-8">
+        {families.map((_, i) => (
+          <button 
+            key={i}
+            onClick={() => setActiveFamilyIdx(i)}
+            aria-label={`${families[i].title} 계열 보기`}
+            className={`h-1 rounded-full transition-all duration-500 ease-in-out ${
+              activeFamilyIdx === i 
+                ? 'w-6 bg-wood' 
+                : 'w-1.5 bg-wood/10 hover:bg-wood/20'
+            }`}
+          />
+        ))}
+      </div>
+
       <p className="text-[9px] md:text-[10px] text-wood/30 mt-6 text-center italic uppercase tracking-widest">Automatic rotation every 10 seconds</p>
     </div>
   );

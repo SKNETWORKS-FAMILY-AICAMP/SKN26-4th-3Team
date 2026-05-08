@@ -7,6 +7,7 @@
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import ConcentrationList from "@/components/guide/ConcentrationList";
 import FamilyCarousel from "@/components/guide/FamilyCarousel";
+import ScentNoteCarousel from "@/components/guide/ScentNoteCarousel";
 import NoteGlossary from "@/components/guide/NoteGlossary";
 import { scentFamilies, concentrations } from "@/data/scentData";
 
@@ -38,7 +39,7 @@ export default function ScentGuideSection({ onNotesChange }: ScentGuideSectionPr
           </div>
 
           {/* 지식 가이드 그리드 영역 */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-stretch">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-stretch mb-20">
             {/* 01. 부향률(Concentration) 가이드 */}
             <ConcentrationList concentrations={concentrations} />
 
@@ -46,7 +47,10 @@ export default function ScentGuideSection({ onNotesChange }: ScentGuideSectionPr
             <FamilyCarousel families={scentFamilies} />
           </div>
 
-          {/* 03. 인터랙티브 향기 원료 사전 (Note Glossary) */}
+          {/* 03. 향기의 계층 (Note Carousel) */}
+          <ScentNoteCarousel />
+
+          {/* 04. 인터랙티브 향기 원료 사전 (Note Glossary) */}
           <NoteGlossary onNotesChange={onNotesChange} />
         </div>
       </div>
