@@ -468,7 +468,7 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
                       {recommendations.length > 0 && (
                         <div className="mt-6 max-w-lg mx-auto px-6 py-4 bg-wood/[0.03] border border-wood/10 rounded-sm">
                           <p className="text-[13px] text-wood/70 leading-relaxed italic break-keep">
-                            " {recommendations[0].matchReason} "
+                            "{recommendations[0].matchReason}"
                           </p>
                         </div>
                       )}
