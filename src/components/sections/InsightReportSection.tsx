@@ -78,43 +78,53 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
   const getThemeColors = () => ({ bg: "bg-cream", accent: "text-wood", border: "border-wood/10" });
   const theme = getThemeColors();
 
-  // 공통 고해상도 캡처 로직 (Blob 반환 - 안정성 최우선 + 애니메이션 무력화 완벽 병합)
+  // 공통 고해상도 캡처 로직 (Blob 반환 - 안정성 최우선 + 애니메이션 무력화 + 이미지 강제 로드)
   const captureReportBlob = async (): Promise<Blob | null> => {
     if (!reportRef.current) return null;
 
-    // 10초 전체 타임아웃 설정
+    // 1. 이미지들을 미리 Base64로 변환하여 캡처 시 지연 및 CORS 방지 (Nuclear Option)
+    const images = Array.from(reportRef.current.querySelectorAll("img"));
+    const imageMap = new Map<string, string>();
+    
+    await Promise.all(images.map(async (img) => {
+      try {
+        if (img.complete && img.naturalWidth > 0) {
+          const canvas = document.createElement("canvas");
+          canvas.width = img.naturalWidth;
+          canvas.height = img.naturalHeight;
+          const ctx = canvas.getContext("2d");
+          ctx?.drawImage(img, 0, 0);
+          const base64 = canvas.toDataURL("image/png");
+          imageMap.set(img.src, base64);
+        }
+      } catch (e) {
+        console.warn("이미지 Base64 변환 실패 (CORS 가능성):", img.src);
+      }
+    }));
+
+    // 15초 전체 타임아웃 설정
     const overallTimeout = new Promise<null>((_, reject) => 
-      setTimeout(() => reject(new Error("캡처 시간 초과")), 10000)
+      setTimeout(() => reject(new Error("캡처 시간 초과")), 15000)
     );
 
     const captureProcess = (async () => {
-      // 1. 리소스 로딩 대기 (최대한 단순화)
+      // 2. 리소스 로딩 대기
       if (document.fonts) await document.fonts.ready;
       
-      const images = reportRef.current?.querySelectorAll("img") || [];
-      await Promise.all(Array.from(images).map(img => {
-        if (img.complete) return Promise.resolve();
-        return new Promise(resolve => {
-          img.onload = resolve;
-          img.onerror = resolve;
-          setTimeout(resolve, 3000); // 개별 이미지 최대 3초
-        });
-      }));
-
-      // 2. 렌더링 안착 대기 (최소화)
+      // 3. 렌더링 안착 대기
       await new Promise(resolve => setTimeout(resolve, 800));
 
-      // 3. html2canvas 실행 (안정성 강화 옵션)
+      // 4. html2canvas 실행
       const reportElement = reportRef.current;
       if (!reportElement) throw new Error("리포트 요소를 찾을 수 없습니다.");
 
       const canvas = await html2canvas(reportElement, {
         backgroundColor: "#FDFCF0",
-        scale: 1.5, // 메모리 안전을 위해 1.5배
+        scale: 1.5,
         useCORS: true,
-        allowTaint: false,
-        logging: false, // 배포용이므로 false로 끄는 것을 권장합니다
-        imageTimeout: 10000,
+        allowTaint: true, // Base64를 사용하므로 Taint 허용
+        logging: false,
+        imageTimeout: 15000,
         scrollX: 0,
         scrollY: -window.scrollY,
         onclone: (clonedDoc) => {
@@ -124,29 +134,44 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
           // 레이아웃 고정
           el.style.width = "1000px";
           el.style.maxWidth = "1000px";
-          el.style.minWidth = "1000px"; // 추가 보정
+          el.style.minWidth = "1000px";
           el.style.padding = "60px";
           el.style.boxSizing = "border-box";
           el.style.filter = "none";
           el.style.transform = "none";
 
-          // 🔥 [핵심 병합 파트] 모든 자식 요소의 애니메이션 끄고 강제로 100% 보여주기
+          // 모든 자식 요소의 애니메이션 끄고 강제로 100% 보여주기
           const allElements = el.querySelectorAll("*");
           allElements.forEach((node) => {
             const target = node as HTMLElement;
             target.style.boxSizing = "border-box";
-
-            // Tailwind의 opacity-0 이나 animate-in 효과 무력화 (!important 강제 적용)
+            
             target.style.setProperty("opacity", "1", "important");
             target.style.setProperty("visibility", "visible", "important");
             target.style.setProperty("transform", "none", "important");
             target.style.setProperty("animation", "none", "important");
             target.style.setProperty("transition", "none", "important");
 
-            // 불필요한 UI 요소 숨기기 (버튼, 화살표 등)
+            // 캐러셀/이미지 관련 특수 처리 (숨겨진 요소 강제 노출)
+            if (target.classList.contains("overflow-hidden")) {
+              target.style.overflow = "visible";
+            }
             if (target.tagName === "BUTTON" || target.innerText?.includes("Explore") || target.classList.contains("sr-only")) {
               target.style.display = "none";
             }
+          });
+
+          // 🔥 핵심: 복제된 문서의 모든 이미지를 미리 추출한 Base64로 교체
+          const clonedImages = el.querySelectorAll("img");
+          clonedImages.forEach((img) => {
+            const target = img as HTMLImageElement;
+            const base64 = imageMap.get(target.src);
+            if (base64) {
+              target.src = base64;
+            }
+            target.style.display = "block";
+            target.style.opacity = "1";
+            target.style.visibility = "visible";
           });
 
           // 텍스트 깨짐 방지
@@ -160,7 +185,7 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
           // 고급스러운 OLFIT 로고/헤더 추가
           const header = clonedDoc.createElement("div");
           header.style.cssText = "display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:60px; border-bottom:1px solid rgba(107,68,35,0.1); padding-bottom:20px;";
-
+          
           const userImage = results?.analysisMetadata?.base64Image;
           const imageHtml = userImage 
             ? `<div style="width: 60px; height: 60px; background: #eee; overflow: hidden; border-radius: 2px; margin-right: 20px;">
@@ -182,12 +207,11 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
             </div>
           `;
           el.prepend(header);
-          }
-          });
-
+        }
+      });
 
       return new Promise<Blob | null>((resolve) => {
-        canvas.toBlob((blob) => resolve(blob), "image/png", 1.0); // 화질을 위해 0.9에서 1.0으로 복구
+        canvas.toBlob((blob) => resolve(blob), "image/png", 1.0);
       });
     })();
 
