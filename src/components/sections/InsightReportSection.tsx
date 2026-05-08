@@ -78,98 +78,77 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
   const getThemeColors = () => ({ bg: "bg-cream", accent: "text-wood", border: "border-wood/10" });
   const theme = getThemeColors();
 
-  // 공통 고해상도 캡처 로직 (Blob 반환)
+  // 공통 고해상도 캡처 로직 (Blob 반환 - 안정성 최우선 버전)
   const captureReportBlob = async (): Promise<Blob | null> => {
     if (!reportRef.current) return null;
 
-    // 1. 리소스 로딩 대기
-    if (document.fonts) await document.fonts.ready;
-    const images = reportRef.current.querySelectorAll("img");
-    const imagePromises = Array.from(images).map((img) => {
-      if (img.complete) return img.decode().catch(() => Promise.resolve());
-      return new Promise((resolve) => {
-        img.onload = () => img.decode().then(resolve).catch(resolve);
-        img.onerror = resolve;
-      });
-    });
-    await Promise.all(imagePromises);
+    // 10초 전체 타임아웃 설정
+    const overallTimeout = new Promise<null>((_, reject) => 
+      setTimeout(() => reject(new Error("캡처 시간 초과")), 10000)
+    );
 
-    // 2. 렌더링 안착 대기
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    const captureProcess = (async () => {
+      // 1. 리소스 로딩 대기 (최대한 단순화)
+      if (document.fonts) await document.fonts.ready;
+      
+      const images = reportRef.current?.querySelectorAll("img") || [];
+      await Promise.all(Array.from(images).map(img => {
+        if (img.complete) return Promise.resolve();
+        return new Promise(resolve => {
+          img.onload = resolve;
+          img.onerror = resolve;
+          setTimeout(resolve, 3000); // 개별 이미지 최대 3초
+        });
+      }));
 
-    // 3. html2canvas 실행
-    const canvas = await html2canvas(reportRef.current, {
-      backgroundColor: "#FDFCF0",
-      scale: 2,
-      useCORS: true,
-      logging: false,
-      allowTaint: false,
-      scrollX: 0,
-      scrollY: -window.scrollY,
-      onclone: (clonedDoc) => {
-        const el = clonedDoc.getElementById("report-content");
-        if (el) {
+      // 2. 렌더링 안착 대기 (최소화)
+      await new Promise(resolve => setTimeout(resolve, 800));
+
+      // 3. html2canvas 실행 (안정성 강화 옵션)
+      const canvas = await html2canvas(reportRef.current, {
+        backgroundColor: "#FDFCF0",
+        scale: 1.5, // 메모리 안전을 위해 1.5배로 하향 (모바일 호환성 극대화)
+        useCORS: true,
+        allowTaint: false, // 보안상 false 유지
+        logging: true, // 에러 추적을 위해 활성화
+        imageTimeout: 10000,
+        scrollX: 0,
+        scrollY: -window.scrollY,
+        onclone: (clonedDoc) => {
+          const el = clonedDoc.getElementById("report-content");
+          if (!el) return;
+          
           el.style.width = "1000px";
           el.style.maxWidth = "1000px";
-          el.style.minWidth = "1000px";
-          el.style.padding = "80px";
+          el.style.padding = "60px";
           el.style.boxSizing = "border-box";
           el.style.filter = "none";
           el.style.transform = "none";
-          (el.style as any).webkitFontSmoothing = "antialiased";
-          (el.style as any).mozOsxFontSmoothing = "grayscale";
 
-          const allElements = el.querySelectorAll("*");
-          allElements.forEach((node) => {
-            const target = node as HTMLElement;
-            target.style.boxSizing = "border-box";
-            (target.style as any).webkitFontSmoothing = "antialiased";
-          });
-          
-          const texts = el.querySelectorAll("p, h2, h3, span, div, text");
+          const texts = el.querySelectorAll("p, h2, h3, span, div");
           texts.forEach((node) => {
             const target = node as HTMLElement;
-            target.style.lineHeight = "1.6";
-            target.style.letterSpacing = "-0.01em";
             target.style.wordBreak = "keep-all";
             target.style.whiteSpace = "normal";
-            
-            const className = target.className || "";
-            if (className.includes("text-3xl") || className.includes("text-4xl") || className.includes("text-5xl")) {
-              target.style.fontSize = "42px";
-              target.style.fontWeight = "300";
-            } else if (className.includes("text-xl") || className.includes("text-2xl")) {
-              target.style.fontSize = "24px";
-            } else if (className.includes("text-[15px]") || className.includes("text-base")) {
-              target.style.fontSize = "16px";
-            } else if (className.includes("text-[10px]") || className.includes("text-[11px]") || className.includes("text-[9px]")) {
-              target.style.fontSize = "12px";
-            }
           });
 
+          // 로고/헤더 추가
           const header = clonedDoc.createElement("div");
-          header.style.display = "flex";
-          header.style.justifyContent = "space-between";
-          header.style.alignItems = "center";
-          header.style.marginBottom = "60px";
-          header.style.borderBottom = "1px solid rgba(107, 68, 35, 0.1)";
-          header.style.paddingBottom = "20px";
-          
+          header.style.cssText = "display:flex; justify-content:space-between; align-items:center; margin-bottom:40px; border-bottom:1px solid rgba(107,68,35,0.1); padding-bottom:15px;";
           header.innerHTML = `
-            <div style="font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 300; letter-spacing: 0.25em; color: #6B4423; text-transform: uppercase;">OLFIT</div>
-            <div style="text-align: right;">
-              <div style="font-size: 11px; font-weight: 600; color: #6B4423; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px;">Precision Analysis Report</div>
-              <div style="font-size: 10px; color: rgba(107, 68, 35, 0.5); letter-spacing: 0.05em;">${new Date().toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })}</div>
-            </div>
+            <div style="font-family:serif; font-size:24px; color:#6B4423; letter-spacing:0.2em;">OLFIT</div>
+            <div style="font-size:10px; color:rgba(107,68,35,0.4);">${new Date().toLocaleDateString()}</div>
           `;
           el.prepend(header);
         }
-      }
-    });
+      });
 
-    return new Promise((resolve) => {
-      canvas.toBlob((blob) => resolve(blob), "image/png", 1.0);
-    });
+      return new Promise<Blob | null>((resolve) => {
+        canvas.toBlob((blob) => resolve(blob), "image/png", 0.9);
+      });
+    })();
+
+    return Promise.race([captureProcess, overallTimeout]);
   };
 
   // 결과 공유 함수 (이미지 캡처 및 공유/다운로드 하이브리드)
@@ -234,7 +213,7 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
 
     } catch (err) {
       console.error("이미지 처리 중 치명적 오류:", err);
-      alert("결과를 처리하는 중 문제가 발생했습니다.");
+      alert("결과를 처리하던 중 문제가 발생했습니다.");
     } finally {
       setIsSaving(false); // 로딩 스피너 종료
     }
