@@ -111,10 +111,10 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
       // 선명도와 정확도를 위해 속도를 희생하고 완벽한 렌더링을 기다립니다.
       await new Promise(resolve => setTimeout(resolve, 2000));
 
-      // 3. 초고해상도 캡처 (Scale 4: 아주 작은 텍스트까지 선명하게 출력)
+      // 3. 캡처 진행 (Scale을 2로 조정하여 메모리 폭발 방지)
       const canvas = await html2canvas(reportRef.current, {
         backgroundColor: "#FDFCF0",
-        scale: 4, // 400 DPI 이상의 선명도를 위해 4배로 설정
+        scale: 2, // 기존 4에서 2로 조정하여 메모리 사용량 최적화
         useCORS: true,
         logging: false,
         allowTaint: false,
@@ -182,16 +182,33 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
         }
       });
 
-      // 4. 최종 고해상도 이미지 다운로드
-      const image = canvas.toDataURL("image/png", 1.0);
-      const link = document.createElement("a");
-      link.href = image;
-      link.download = `Olfit_Precision_Report_${Date.now()}.png`;
-      link.click();
+      // 4. 핵심 수정: toDataURL 대신 toBlob 사용 (메모리 폭발 방지)
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          throw new Error("이미지 변환에 실패했습니다.");
+        }
+        
+        // Blob을 가리키는 임시 URL 생성
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `Olfit_Precision_Report_${Date.now()}.png`;
+        
+        // 다운로드 트리거
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // 메모리 누수 방지를 위해 생성한 URL 해제
+        setTimeout(() => {
+          window.URL.revokeObjectURL(url);
+        }, 100);
+
+      }, "image/png", 1.0);
 
     } catch (err) {
       console.error("리포트 정밀 생성 실패:", err);
-      alert("고화질 리포트 생성 중 문제가 발생했습니다. 브라우저 메모리가 부족할 수 있으니 탭을 정리한 후 다시 시도해 주세요.");
+      alert("고화질 리포트 생성 중 문제가 발생했습니다. 브라우저 탭을 새로고침한 후 다시 시도해 주세요.");
     } finally {
       setIsSaving(false);
     }
