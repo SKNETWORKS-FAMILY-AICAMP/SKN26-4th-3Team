@@ -88,26 +88,46 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
 
     try {
       const canvas = await html2canvas(reportRef.current, {
-        backgroundColor: "#FDFCF0", // bg-cream hex color
-        scale: 2,
+        backgroundColor: "#FDFCF0",
+        scale: 1.5, // 품질과 용량 사이의 균형을 위해 1.5배율로 조정
         useCORS: true,
         logging: false,
         allowTaint: true,
         scrollX: 0,
-        scrollY: -window.scrollY, // scrollY offset fix
-        windowWidth: document.documentElement.offsetWidth,
-        windowHeight: document.documentElement.offsetHeight,
+        scrollY: -window.scrollY,
         onclone: (clonedDoc) => {
           const el = clonedDoc.getElementById("report-content");
           if (el) {
+            // 캡처 전용 스타일 강제 적용
+            el.style.width = "800px"; // 캡처 시 너비 고정 (레이아웃 틀어짐 방지)
             el.style.filter = "none";
             el.style.transform = "none";
             el.style.visibility = "visible";
             el.style.opacity = "1";
+            el.style.padding = "40px";
+            
+            // 모든 텍스트 요소의 간격 조정
+            const texts = el.querySelectorAll("p, h2, h3, span");
+            texts.forEach((node) => {
+              const target = node as HTMLElement;
+              target.style.lineHeight = "1.3"; // 고정 줄 간격
+              target.style.letterSpacing = "-0.02em"; // 미세하게 좁은 자간
+              target.style.wordBreak = "keep-all";
+            });
+
+            // 섹션 간 간격 축소 (20% 정도 줄임)
+            const sections = el.querySelectorAll(".mb-32, .mt-32, .mb-12, .mb-16");
+            sections.forEach((node) => {
+              const target = node as HTMLElement;
+              if (target.classList.contains("mb-32")) target.style.marginBottom = "80px";
+              if (target.classList.contains("mt-32")) target.style.marginTop = "80px";
+              if (target.classList.contains("mb-12")) target.style.marginBottom = "30px";
+              if (target.classList.contains("mb-16")) target.style.marginBottom = "40px";
+            });
           }
         }
       });
-      const image = canvas.toDataURL("image/png", 1.0);
+      const image = canvas.toDataURL("image/png", 0.9); // 용량 최적화 추가
       const link = document.createElement("a");
       link.href = image;
       link.download = `Olfit_Report.png`;
