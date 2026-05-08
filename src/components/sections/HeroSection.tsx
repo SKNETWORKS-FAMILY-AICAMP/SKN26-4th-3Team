@@ -6,7 +6,6 @@
 
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import { ArrowRight } from "lucide-react";
-import { motion } from "framer-motion";
 import OlfitLogo from "@/components/common/OlfitLogo";
 
 export default function HeroSection() {
@@ -28,61 +27,6 @@ export default function HeroSection() {
           }`}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-wood/40 via-transparent to-wood/60" />
-      </div>
-
-      {/* Framer Motion Glow Effects (Luxury Version): 
-        움직임이 거의 느껴지지 않을 만큼 천천히, 숨을 쉬듯 일렁이는 빛무리 
-      */}
-      <div className="absolute inset-0 z-[1] pointer-events-none overflow-hidden mix-blend-screen">
-        
-        {/* 1번 빛무리: 좌측 상단에서 미세하게 호흡 */}
-        <motion.div
-          animate={{
-            x: [0, 40, -20, 0], 
-            y: [0, -30, 40, 0],
-            scale: [1, 1.05, 1], // 크기 변화도 아주 미세하게
-          }}
-          transition={{
-            duration: 35, // 기존 18초 -> 35초로 극단적으로 느리게
-            repeat: Infinity,
-            repeatType: "reverse",
-            ease: "easeInOut",
-          }}
-          className="absolute -top-[10%] -left-[10%] w-[600px] h-[600px] bg-cream/25 rounded-full blur-[130px]"
-        />
-        
-        {/* 2번 빛무리: 우측 상단에서 반대 방향으로 천천히 흐름 */}
-        <motion.div
-          animate={{
-            x: [0, -30, 20, 0],
-            y: [0, 40, -20, 0],
-            scale: [1, 1.1, 0.95, 1],
-          }}
-          transition={{
-            duration: 40, // 40초 동안 아주 천천히 이동
-            repeat: Infinity,
-            repeatType: "reverse",
-            ease: "easeInOut",
-            delay: 2,
-          }}
-          className="absolute top-[5%] -right-[10%] w-[500px] h-[500px] bg-orange-200/20 rounded-full blur-[120px]"
-        />
-        
-        {/* 3번 빛무리: 하단에서 전체적인 안개처럼 베이스를 깔아줌 */}
-        <motion.div
-          animate={{
-            x: [0, 50, -40, 0],
-            y: [0, -20, 30, 0],
-          }}
-          transition={{
-            duration: 45, // 가장 크고 가장 느리게
-            repeat: Infinity,
-            repeatType: "reverse",
-            ease: "easeInOut",
-            delay: 5,
-          }}
-          className="absolute -bottom-[15%] left-[15%] w-[800px] h-[800px] bg-cream/20 rounded-full blur-[150px]"
-        />
       </div>
 
       {/* 중앙 콘텐츠: 메인 로고 및 슬로건 */}
