@@ -305,6 +305,15 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
                     <div className="text-center">
                       <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-wood/30 mb-2">Matching Selection</p>
                       <h3 className="text-2xl font-light tracking-tight text-wood">당신의 스타일을 닮은 향기</h3>
+                      
+                      {/* 추천 근거(Match Reason) 노출 - 첫 번째 추천 제품 기준 */}
+                      {recommendations.length > 0 && (
+                        <div className="mt-6 max-w-lg mx-auto px-6 py-4 bg-wood/[0.03] border border-wood/10 rounded-sm">
+                          <p className="text-[13px] text-wood/70 leading-relaxed italic break-keep">
+                            " {recommendations[0].matchReason} "
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </div>
 
