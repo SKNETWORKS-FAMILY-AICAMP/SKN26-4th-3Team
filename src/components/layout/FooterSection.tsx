@@ -5,6 +5,7 @@
  */
 
 import React, { useState } from "react";
+import { createPortal } from "react-dom";
 import OlfitLogo from "@/components/common/OlfitLogo";
 import { X } from "lucide-react";
 
@@ -82,7 +83,7 @@ export default function FooterSection() {
       */}
       <div className="max-w-[1440px] mx-auto px-6 md:px-8 py-12 md:py-16">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
-          
+
           {/* 브랜드 영역 (좌측) */}
           <div className="flex flex-col items-start">
             <OlfitLogo height={24} color="#6B4423" showLine={false} />
@@ -143,13 +144,14 @@ export default function FooterSection() {
         </div>
       </div>
 
-      {/* 푸터 전용 미니 모달 오버레이 - 렌더링 증발 버그 해결 및 구조 최적화 */}
-      {modalContent && (
+      {/* 푸터 전용 미니 모달 오버레이 - React Portal 적용 */}
+      {modalContent && createPortal(
         <div 
           className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
           onClick={() => setModalContent(null)}
+          style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh' }}
         >
-          {/* 모달 컨텐츠: 클릭 이벤트 버블링 방지 (배경을 클릭했을 때만 닫히도록 설정) */}
+          {/* 모달 컨텐츠: 클릭 이벤트 버블링 방지 */}
           <div 
             className="relative bg-white border border-wood/20 p-8 md:p-12 w-full max-w-lg shadow-2xl rounded-sm"
             onClick={(e) => e.stopPropagation()}
@@ -177,9 +179,10 @@ export default function FooterSection() {
               Close
             </button>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
-
     </footer>
   );
 }
+
