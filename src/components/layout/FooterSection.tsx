@@ -4,6 +4,8 @@
  * 브랜드 정보, 주요 메뉴 링크, 소셜 미디어 링크 및 법적 고지 정보를 포함합니다.
  */
 
+import OlfitLogo from "@/components/common/OlfitLogo";
+
 export default function FooterSection() {
   // 푸터 네비게이션용 링크 리스트
   const links = [
@@ -24,9 +26,9 @@ export default function FooterSection() {
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
           
           {/* 브랜드 영역 (좌측) */}
-          <div>
-            <p className="text-sm font-medium tracking-[0.2em] uppercase">Olfit</p>
-            <p className="text-[11px] text-wood/40 mt-1 tracking-wider">AI Scent Stylist</p>
+          <div className="flex flex-col items-start">
+            <OlfitLogo height={24} color="#6B4423" />
+            <p className="text-[10px] text-wood/40 mt-1 tracking-[0.2em] uppercase">AI Scent Stylist</p>
           </div>
 
           {/* 네비게이션 메뉴 영역 (중앙) */}

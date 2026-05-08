@@ -5,6 +5,7 @@
  */
 
 import { useIsScrolled } from "@/hooks/useIntersectionObserver";
+import OlfitLogo from "@/components/common/OlfitLogo";
 
 export default function Navigation() {
   const isScrolled = useIsScrolled(80);
@@ -30,11 +31,11 @@ export default function Navigation() {
         <div className="flex-shrink-0">
           <a
             href="#"
-            className={`text-base md:text-lg font-light tracking-[0.3em] uppercase transition-all duration-500 ${
+            className={`transition-all duration-500 flex items-center ${
               isScrolled ? "text-wood" : "text-cream"
             }`}
           >
-            Olfit
+            <OlfitLogo height={isScrolled ? 24 : 28} />
           </a>
         </div>
 
