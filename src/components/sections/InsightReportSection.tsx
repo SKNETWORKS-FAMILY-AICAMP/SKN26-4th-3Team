@@ -20,32 +20,6 @@ interface InsightReportSectionProps {
   onProductClick: (product: Product) => void;
 }
 
-/**
- * html2canvas 캡처 시 CORS 이슈를 방지하기 위해 
- * 엘리먼트 내의 모든 이미지를 Base64 DataURL로 변환합니다.
- */
-async function convertImagesToBase64(el: HTMLElement) {
-  const images = el.querySelectorAll("img");
-  for (const img of Array.from(images)) {
-    if (img.src.startsWith("data:")) continue;
-    try {
-      const response = await fetch(img.src);
-      const blob = await response.blob();
-      await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          img.src = reader.result as string;
-          resolve(null);
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
-      });
-    } catch (e) {
-      console.warn("Failed to convert image to base64:", img.src, e);
-    }
-  }
-}
-
 export default function InsightReportSection({ results, onProductClick }: InsightReportSectionProps) {
   const { ref: ref1, isVisible: vis1 } = useIntersectionObserver();
   const { ref: ref2, isVisible: vis2 } = useIntersectionObserver();
@@ -137,8 +111,8 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
       const canvas = await html2canvas(reportElement, {
         backgroundColor: "#FDFCF0",
         scale: 2, // 1.5에서 2로 상향하여 선명도 복구
-        useCORS: false, // Base64 변환 후에는 필요 없음
-        allowTaint: false, // Base64 변환 후에는 필요 없음
+        useCORS: true, // 외부 이미지를 위해 필요
+        allowTaint: true, // CORS 정책이 엄격할 경우 캔버스 오염을 허용해서라도 이미지를 그림
         logging: false,
         imageTimeout: 15000,
         scrollX: 0,
@@ -147,8 +121,93 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
           const el = clonedDoc.getElementById("report-content");
           if (!el) return;
           
-          // 이미지를 Base64로 변환하여 CORS 방지
-          await convertImagesToBase64(el);
+          // 클론된 DOM의 이미지를 스타일리시한 플레이스홀더로 교체 (CORS 방지)
+          const clonedImages = el.querySelectorAll("img");
+          clonedImages.forEach((img) => {
+            if (img.src.startsWith("data:")) return; // 사용자 업로드 이미지는 유지
+
+            const parent = img.parentElement;
+            if (!parent) return;
+
+            // 계열 정보 획득 (Carousel 카드에 주입한 data-family 활용)
+            const family = img.closest("[data-family]")?.getAttribute("data-family") || "기본";
+            
+            // 계열별 테마 설정
+            const themes: Record<string, { bg: string; color: string }> = {
+              "플로랄": { bg: "#FAE8EF", color: "#A03060" },
+              "우디": { bg: "#EDE8E0", color: "#7A5C3A" },
+              "머스크": { bg: "#E8EAF0", color: "#4A5070" },
+              "시트러스": { bg: "#FEF5E0", color: "#8A6010" },
+              "앰버": { bg: "#F5EAD8", color: "#8A5520" },
+              "프레쉬": { bg: "#E4F2EC", color: "#2A6B4A" },
+              "기본": { bg: "#F0EDE8", color: "#6B4423" },
+            };
+            const theme = themes[family] || themes["기본"];
+
+            // 이름에서 이니셜 추출 (숫자 제거 후 앞 2글자)
+            const cleanName = img.alt.replace(/[0-9]/g, "").trim();
+            const initial = cleanName.substring(0, 2).toUpperCase();
+
+            // 플레이스홀더 컨테이너 생성
+            const placeholder = clonedDoc.createElement("div");
+            placeholder.style.cssText = `
+              width: 100%;
+              height: 100%;
+              background-color: ${theme.bg};
+              color: ${theme.color};
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              position: relative;
+              overflow: hidden;
+              border-radius: 2px;
+            `;
+
+            // 사선 패턴 추가
+            const pattern = clonedDoc.createElement("div");
+            pattern.style.cssText = `
+              position: absolute;
+              top: 0; left: 0; right: 0; bottom: 0;
+              background-image: repeating-linear-gradient(45deg, ${theme.color} 0, ${theme.color} 1px, transparent 1px, transparent 8px);
+              opacity: 0.07;
+              z-index: 0;
+            `;
+            placeholder.appendChild(pattern);
+
+            // 이니셜 텍스트
+            const initialEl = clonedDoc.createElement("div");
+            initialEl.textContent = initial;
+            initialEl.style.cssText = `
+              font-family: 'Playfair Display', serif;
+              font-size: 32px;
+              font-weight: 400;
+              position: relative;
+              z-index: 1;
+              margin-bottom: 12px;
+            `;
+            placeholder.appendChild(initialEl);
+
+            // 계열명 배지
+            const badge = clonedDoc.createElement("div");
+            badge.textContent = family;
+            badge.style.cssText = `
+              font-size: 11px;
+              letter-spacing: 0.15em;
+              border: 1px solid ${theme.color};
+              border-radius: 999px;
+              padding: 4px 10px;
+              opacity: 0.6;
+              position: relative;
+              z-index: 1;
+              text-transform: uppercase;
+            `;
+            placeholder.appendChild(badge);
+
+            // 기존 img 제거 및 교체
+            img.style.display = "none";
+            parent.appendChild(placeholder);
+          });
           
           el.style.width = "1000px";
           el.style.maxWidth = "1000px";

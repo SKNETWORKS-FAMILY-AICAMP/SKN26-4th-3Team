@@ -31,6 +31,7 @@ export default function ProductCarousel({ products, onProductClick }: ProductCar
               <div key={item.id} className="flex-[0_0_100%] min-w-0 px-4">
                 <div 
                   onClick={() => onProductClick(item)}
+                  data-family={item.family}
                   className="group cursor-pointer bg-white/50 backdrop-blur-sm border border-wood/5 p-8 sm:p-12 rounded-sm hover:bg-wood hover:border-wood transition-all duration-700 overflow-hidden flex flex-col md:flex-row items-center gap-10"
                 >
                   <div className="w-full md:w-1/2 aspect-square overflow-hidden bg-cream/50 rounded-sm relative">
