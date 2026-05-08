@@ -88,17 +88,26 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
 
     try {
       const canvas = await html2canvas(reportRef.current, {
-        backgroundColor: "#FDFCF0",
+        backgroundColor: "#FDFCF0", // bg-cream hex color
         scale: 2,
         useCORS: true,
         logging: false,
+        allowTaint: true,
+        scrollX: 0,
+        scrollY: -window.scrollY, // scrollY offset fix
+        windowWidth: document.documentElement.offsetWidth,
+        windowHeight: document.documentElement.offsetHeight,
         onclone: (clonedDoc) => {
-          // 캡처 시점에만 특정 스타일을 강제로 고정하거나 조정할 수 있음
           const el = clonedDoc.getElementById("report-content");
-          if (el) el.style.filter = "none";
+          if (el) {
+            el.style.filter = "none";
+            el.style.transform = "none";
+            el.style.visibility = "visible";
+            el.style.opacity = "1";
+          }
         }
       });
-      const image = canvas.toDataURL("image/png");
+      const image = canvas.toDataURL("image/png", 1.0);
       const link = document.createElement("a");
       link.href = image;
       link.download = `Olfit_Report.png`;
@@ -160,7 +169,7 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
               </button>
             </div>
 
-            <div ref={reportRef} id="report-content" className="p-4 md:p-8 rounded-lg">
+            <div ref={reportRef} id="report-content" className="p-4 md:p-8 rounded-lg bg-[#FDFCF0]">
               {/* 01. Aura Analysis */}
               <div className="mb-32 animate-in fade-in duration-1000">
                 <div className="flex items-center gap-4 mb-12">
