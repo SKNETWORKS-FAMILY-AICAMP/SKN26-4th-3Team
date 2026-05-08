@@ -38,6 +38,60 @@ export default function NoteGlossary({ onNotesChange }: NoteGlossaryProps) {
     if (onNotesChange) onNotesChange([]);
   };
 
+  const renderNoteCard = (note: ScentNote) => {
+    const isSelected = selectedNotes.find((n) => n.enName === note.enName);
+    return (
+      <div
+        key={note.enName}
+        className={`group relative h-40 md:h-44 border rounded-sm p-4 cursor-pointer transition-all duration-500 overflow-hidden ${
+          isSelected 
+            ? 'bg-wood border-wood shadow-lg' 
+            : 'bg-white/40 border-wood/5 hover:border-wood/20'
+        }`}
+        onClick={() => toggleNote(note)}
+        onMouseEnter={() => setHoveredNote(note.enName)}
+        onMouseLeave={() => setHoveredNote(null)}
+      >
+        {/* 선택 표시 */}
+        {isSelected && (
+          <div className="absolute top-3 right-3 text-cream animate-in zoom-in duration-300">
+            <Check size={14} strokeWidth={3} />
+          </div>
+        )}
+
+        {/* 기본 노출: 원료 이름 */}
+        <div className={`flex flex-col justify-between h-full transition-all duration-300 ${hoveredNote === note.enName && !isSelected ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
+          <span className={`text-[9px] uppercase tracking-widest ${isSelected ? 'text-cream/40' : 'text-wood/40'}`}>
+            {note.category} Note
+          </span>
+          <div>
+            <h4 className={`text-sm md:text-base font-medium transition-colors ${isSelected ? 'text-cream' : 'text-wood'}`}>
+              {note.name}
+            </h4>
+            <p className={`text-[9px] uppercase tracking-tighter ${isSelected ? 'text-cream/30' : 'text-wood/20'}`}>
+              {note.enName}
+            </p>
+          </div>
+        </div>
+
+        {/* 호버 시 노출: 상세 설명 (선택되지 않았을 때만) */}
+        {!isSelected && (
+          <div className={`absolute inset-0 p-4 flex flex-col justify-center transition-all duration-500 ${hoveredNote === note.enName ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}>
+            <p className="text-[11px] leading-relaxed text-wood/80 break-keep mb-3">
+              {note.description}
+            </p>
+            <div className="pt-2 border-t border-wood/10">
+              <p className="text-[8px] uppercase tracking-widest text-wood/30 mb-0.5">Origin</p>
+              <p className="text-[9px] text-wood/50 line-clamp-1">{note.origin}</p>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const categories: ("Top" | "Middle" | "Base")[] = ["Top", "Middle", "Base"];
+
   return (
     <div className="mt-24 pt-24 border-t border-wood/10">
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
@@ -76,55 +130,20 @@ export default function NoteGlossary({ onNotesChange }: NoteGlossaryProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4">
-        {scentNotes.map((note: ScentNote) => {
-          const isSelected = selectedNotes.find((n) => n.enName === note.enName);
+      <div className="space-y-12">
+        {categories.map(category => {
+          const notes = scentNotes.filter(n => n.category === category);
+          if (notes.length === 0) return null;
+          
           return (
-            <div
-              key={note.enName}
-              className={`group relative h-40 md:h-44 border rounded-sm p-4 cursor-pointer transition-all duration-500 overflow-hidden ${
-                isSelected 
-                  ? 'bg-wood border-wood shadow-lg' 
-                  : 'bg-white/40 border-wood/5 hover:border-wood/20'
-              }`}
-              onClick={() => toggleNote(note)}
-              onMouseEnter={() => setHoveredNote(note.enName)}
-              onMouseLeave={() => setHoveredNote(null)}
-            >
-              {/* 선택 표시 */}
-              {isSelected && (
-                <div className="absolute top-3 right-3 text-cream animate-in zoom-in duration-300">
-                  <Check size={14} strokeWidth={3} />
-                </div>
-              )}
-
-              {/* 기본 노출: 원료 이름 */}
-              <div className={`flex flex-col justify-between h-full transition-all duration-300 ${hoveredNote === note.enName && !isSelected ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
-                <span className={`text-[9px] uppercase tracking-widest ${isSelected ? 'text-cream/40' : 'text-wood/40'}`}>
-                  {note.category} Note
-                </span>
-                <div>
-                  <h4 className={`text-sm md:text-base font-medium transition-colors ${isSelected ? 'text-cream' : 'text-wood'}`}>
-                    {note.name}
-                  </h4>
-                  <p className={`text-[9px] uppercase tracking-tighter ${isSelected ? 'text-cream/30' : 'text-wood/20'}`}>
-                    {note.enName}
-                  </p>
-                </div>
+            <div key={category}>
+              <div className="flex items-center gap-3 mb-6">
+                <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-wood/20">{category}</span>
+                <div className="h-px bg-wood/5 flex-1" />
               </div>
-
-              {/* 호버 시 노출: 상세 설명 (선택되지 않았을 때만) */}
-              {!isSelected && (
-                <div className={`absolute inset-0 p-4 flex flex-col justify-center transition-all duration-500 ${hoveredNote === note.enName ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}>
-                  <p className="text-[11px] leading-relaxed text-wood/80 break-keep mb-3">
-                    {note.description}
-                  </p>
-                  <div className="pt-2 border-t border-wood/10">
-                    <p className="text-[8px] uppercase tracking-widest text-wood/30 mb-0.5">Origin</p>
-                    <p className="text-[9px] text-wood/50 line-clamp-1">{note.origin}</p>
-                  </div>
-                </div>
-              )}
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4">
+                {notes.map(renderNoteCard)}
+              </div>
             </div>
           );
         })}
