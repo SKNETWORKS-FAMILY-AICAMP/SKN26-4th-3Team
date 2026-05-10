@@ -4,7 +4,7 @@
  * 개인정보 동의 프로세스, AI 분석 결과 브릿징, 그리고 각 섹션의 배치를 제어합니다.
  */
 
-import { useState } from "react";
+import { useOlfitStore } from "@/store/useStore";
 import Navigation from "@/components/layout/Navigation";
 import HeroSection from "@/components/sections/HeroSection";
 import PhilosophySection from "@/components/sections/PhilosophySection";
@@ -18,28 +18,18 @@ import PrivacyConsentModal from "@/components/common/PrivacyConsentModal";
 import ProductModal from "@/components/curated/ProductModal";
 
 import type { AnalysisResults } from "@/types";
-import type { Product } from "@/data/productData";
 
 export default function App() {
-  /** AI 인터뷰 분석 최종 결과 상태 */
-  const [analysisResults, setAnalysisResults] = useState<AnalysisResults | null>(null);
-  
-  /** 사용자가 가이드 섹션에서 선택한 향기 원료 리스트 */
-  const [selectedNotes, setSelectedNotes] = useState<string[]>([]);
-  
-  /** 
-   * 개인정보 동의 여부 및 세션 유지 상태 
-   * 로컬 스토리지를 참조하여 초기값 설정
-   */
-  const [hasConsented, setHasConsented] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    const consented = localStorage.getItem("olfit_consent") === "true";
-    const sessionId = localStorage.getItem("olfit_session_id");
-    return !!(consented && sessionId);
-  });
-
-  /** 제품 상세 모달에 표시될 제품 정보 상태 */
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const { 
+    analysisResults, 
+    selectedNotes, 
+    hasConsented, 
+    selectedProduct,
+    setAnalysisResults,
+    setSelectedNotes,
+    setHasConsented,
+    setSelectedProduct
+  } = useOlfitStore();
 
   /**
    * 사용자가 개인정보 수집에 동의했을 때 실행되는 핸들러

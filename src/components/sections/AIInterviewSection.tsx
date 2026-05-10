@@ -5,8 +5,11 @@
 
 import { useState } from "react";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
-import { Sparkles, Loader2, CheckCircle2 } from "lucide-react";
+import { Sparkles, CheckCircle2 } from "lucide-react";
 import ImageUploader from "@/components/common/ImageUploader";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
+import ErrorFallback from "@/components/common/ErrorFallback";
+import { useOlfitStore } from "@/store/useStore";
 import type { AnalysisResults } from "@/types";
 
 interface AIInterviewSectionProps {
@@ -16,10 +19,11 @@ interface AIInterviewSectionProps {
 
 export default function AIInterviewSection({ onComplete, selectedNotes = [] }: AIInterviewSectionProps) {
   const { ref, isVisible } = useIntersectionObserver();
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const { isLoading, error, setLoading, setError } = useOlfitStore();
   const [isComplete, setIsComplete] = useState(false);
   const [analysisStatus, setAnalysisStatus] = useState("");
   const [progress, setProgress] = useState(0);
+  const [lastProcessedBase64, setLastProcessedBase64] = useState<string | null>(null);
   
   const getSteps = () => [
     { threshold: 10, text: "이미지 픽셀 데이터 추출 중..." },
@@ -30,11 +34,13 @@ export default function AIInterviewSection({ onComplete, selectedNotes = [] }: A
   ];
 
   const handleImageProcessed = (base64: string) => {
-    setIsAnalyzing(true);
+    setLastProcessedBase64(base64);
+    setLoading(true);
+    setError(null);
     setProgress(0);
     
     const analysisSteps = getSteps();
-    const duration = 5000; // 설계 단계이므로 시뮬레이션 시간을 5초로 단축
+    const duration = 5000; // 시뮬레이션 5초
     const interval = 100;
     const step = (interval / duration) * 100;
 
@@ -46,7 +52,7 @@ export default function AIInterviewSection({ onComplete, selectedNotes = [] }: A
 
         if (next >= 100) {
           clearInterval(timer);
-          setIsAnalyzing(false);
+          setLoading(false);
           setIsComplete(true);
           
           if (onComplete) {
@@ -69,6 +75,12 @@ export default function AIInterviewSection({ onComplete, selectedNotes = [] }: A
     }, interval);
   };
 
+  const handleRetry = () => {
+    if (lastProcessedBase64) {
+      handleImageProcessed(lastProcessedBase64);
+    }
+  };
+
   return (
     <section id="interview" className="bg-wood text-cream py-24 md:py-40">
       <div className="max-w-[1440px] mx-auto px-6 md:px-8">
@@ -81,18 +93,20 @@ export default function AIInterviewSection({ onComplete, selectedNotes = [] }: A
           </div>
 
           <div className="max-w-2xl mx-auto">
-            {!isComplete ? (
+            {error ? (
+              <ErrorFallback message={error} onRetry={handleRetry} />
+            ) : !isComplete ? (
               <div className="relative">
-                <ImageUploader onImageProcessed={handleImageProcessed} isAnalyzing={isAnalyzing} />
-                {isAnalyzing && (
+                <ImageUploader onImageProcessed={handleImageProcessed} isAnalyzing={isLoading} />
+                {isLoading && (
                   <div className="mt-12 space-y-6">
                     <div className="h-px bg-cream/10 w-full relative overflow-hidden">
                       <div className="absolute inset-y-0 left-0 bg-cream transition-all duration-300 ease-out" style={{ width: `${progress}%` }} />
                     </div>
                     <div className="flex justify-between items-center">
-                      <p className="text-[11px] uppercase tracking-[0.2em] text-cream/60 flex items-center gap-2">
-                        <Loader2 size={12} className="animate-spin" /> {analysisStatus}
-                      </p>
+                      <div className="flex items-center gap-3">
+                        <LoadingSpinner className="p-0 gap-2 flex-row" message={analysisStatus} />
+                      </div>
                       <span className="text-[11px] font-mono text-cream/40">{Math.round(progress)}%</span>
                     </div>
                   </div>

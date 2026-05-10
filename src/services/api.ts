@@ -1,0 +1,54 @@
+import axios from 'axios';
+import { useOlfitStore } from '@/store/useStore';
+
+/**
+ * 장고 백엔드 서버 기본 주소
+ */
+const BASE_URL = "http://localhost:8000";
+
+const api = axios.create({
+  baseURL: BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  timeout: 30000,
+});
+
+// Response Interceptor: 공통 에러 처리
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const { setError } = useOlfitStore.getState();
+    
+    if (axios.isAxiosError(error)) {
+      const message = error.response?.data?.message || error.message || '서버와의 통신 중 오류가 발생했습니다.';
+      setError(message);
+      console.error('API Error:', message);
+    } else {
+      setError('알 수 없는 오류가 발생했습니다.');
+    }
+    
+    return Promise.reject(error);
+  }
+);
+
+/**
+ * AI 아우라 분석 요청을 백엔드로 전송합니다.
+ */
+export const requestAuraAnalysis = async (base64Image: string, selectedNotes: string[]) => {
+  const { setLoading, setError } = useOlfitStore.getState();
+  
+  try {
+    setLoading(true);
+    setError(null);
+    const response = await api.post('/api/analyze/', {
+      image: base64Image,
+      selectedNotes: selectedNotes,
+    });
+    return response.data;
+  } finally {
+    setLoading(false);
+  }
+};
+
+export default api;
