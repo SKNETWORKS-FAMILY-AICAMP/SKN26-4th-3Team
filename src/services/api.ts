@@ -2,9 +2,9 @@ import axios from 'axios';
 import { useOlfitStore } from '@/store/useStore';
 
 /**
- * 장고 백엔드 서버 기본 주소
+ * 백엔드 서버 주소 (환경 변수 또는 로컬 환경)
  */
-const BASE_URL = "http://localhost:8000";
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 const api = axios.create({
   baseURL: BASE_URL,
