@@ -9,6 +9,38 @@
 export type ScentType = "personal";
 
 /**
+ * 향수 제품 상세 정보 구조
+ */
+export interface Product {
+  id: number;
+  name: string;
+  brand: string;
+  price: string;
+  size: string;
+  image: string;
+  tags: string[];
+  notes: string; // 간략한 노트 요약 (호버용)
+  family: string;
+  mainAccords: string[];
+  moods: string[];
+  occasions: string[];
+  featured?: boolean;
+  category: "Personal";
+  /** 유사도 점수 (추천 엔진에서 계산됨) */
+  similarity?: number;
+  /** 추천 사유 */
+  matchReason?: string;
+  /** 클릭 시 모달에 노출될 상세 정보 */
+  details: {
+    story: string; // 향수의 탄생 스토리 또는 분위기 설명
+    topNotes: string[]; // 탑 노트 상세
+    heartNotes: string[]; // 미들(하트) 노트 상세
+    baseNotes: string[]; // 베이스 노트 상세
+    bestFor: string; // 추천 어울리는 순간/룩
+  };
+}
+
+/**
  * AI 인터뷰 최종 분석 결과 데이터 구조
  */
 export interface AnalysisResults {
