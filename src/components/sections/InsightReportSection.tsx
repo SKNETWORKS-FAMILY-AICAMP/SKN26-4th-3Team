@@ -125,7 +125,7 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
           <>
             <div ref={refHeader}>
               <ReportHeader 
-                isVisible={visHeader} 
+                isVisible={visHeader || !!results} 
                 isSaving={isSaving} 
                 feedback={feedback} 
                 onShare={handleShareResults} 
@@ -135,7 +135,7 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
             <div ref={reportRef} id="report-content" className="p-4 md:p-8 rounded-lg bg-[#FDFCF0]">
               <div ref={refPyramid}>
                 <ScentBlueprint 
-                  isVisible={visPyramid} 
+                  isVisible={visPyramid || !!results} 
                   slots={slots} 
                   matchPercent={matchPercent} 
                   accentClass={theme.accent} 
@@ -150,12 +150,12 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
                 </div>
                 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 mb-12">
-                  <div ref={refRadar} className={`transition-all duration-800 delay-100 ${visRadar ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+                  <div ref={refRadar} className={`transition-all duration-800 delay-100 ${(visRadar || !!results) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
                     <RadarChart data={currentRadarData} forceDraw={true} />
                   </div>
                   <div ref={refSteps}>
                     <AuraAnalysisSteps 
-                      isVisible={visSteps} 
+                      isVisible={visSteps || !!results} 
                       logicSteps={dynamicLogicSteps} 
                       borderClass={theme.border} 
                     />
