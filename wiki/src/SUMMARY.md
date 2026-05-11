@@ -7,7 +7,7 @@
   - [Commit](./conventions/commit.md)
   - [Naming](./conventions/naming.md)
   - [Python Style](./conventions/python-style.md)
-- Backend
+- [Backend](./backend.md)
   - [MySQL Document Store Roadmap](./backend/mysql-document-store-roadmap.md)
   - [Vector RAG](./backend/vector-rag.md)
 - [Frontend](./frontend/info.md)
