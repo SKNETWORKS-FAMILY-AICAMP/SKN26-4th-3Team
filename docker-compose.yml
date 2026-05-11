@@ -45,7 +45,8 @@ services:
       dockerfile: Dockerfile
     container_name: django_docker_playground_backend
     env_file:
-      - .env
+      - path: .env
+        required: false
     cgroup: host
     cpus: ${BACKEND_CPUS}
     mem_limit: ${BACKEND_MEMORY_LIMIT}
@@ -84,5 +85,40 @@ services:
         max-size: ${LOG_MAX_SIZE}
         max-file: ${LOG_MAX_FILE}
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: django_docker_playground_frontend
+    env_file:
+      - path: .env
+        required: false
+    cgroup: host
+    cpus: ${FRONTEND_CPUS}
+    mem_limit: ${FRONTEND_MEMORY_LIMIT}
+    mem_reservation: ${FRONTEND_MEMORY_RESERVATION}
+    pids_limit: ${FRONTEND_PIDS_LIMIT}
+    restart: unless-stopped
+    ulimits:
+      nofile:
+        soft: ${FRONTEND_NOFILE_SOFT}
+        hard: ${FRONTEND_NOFILE_HARD}
+    environment:
+      TZ: ${TZ}
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    volumes:
+      - ./frontend:/frontend
+      - frontend_node_modules:/frontend/node_modules
+    logging:
+      driver: json-file
+      options:
+        max-size: ${LOG_MAX_SIZE}
+        max-file: ${LOG_MAX_FILE}
+
 volumes:
   mysql_data:
+  frontend_node_modules:

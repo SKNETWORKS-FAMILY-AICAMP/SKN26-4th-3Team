@@ -75,9 +75,10 @@
 
 | Stack | Usage |
 | --- | --- |
-| Docker | 백엔드와 데이터베이스 컨테이너 이미지 빌드 |
-| Docker Compose | MySQL과 Django 백엔드 로컬 오케스트레이션 |
+| Docker | 프론트엔드, 백엔드, 데이터베이스 컨테이너 이미지 빌드 |
+| Docker Compose | Vite, Django 백엔드, MySQL 로컬 오케스트레이션 |
 | Named volume `mysql_data` | MySQL 데이터 영속화 |
+| Named volume `frontend_node_modules` | 프론트엔드 컨테이너 의존성 보존 |
 | Healthcheck | MySQL 준비 상태 확인 후 백엔드 기동 |
 | JSON file logging | 컨테이너 로그 크기와 보관 개수 제한 |
 
