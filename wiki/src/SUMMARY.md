@@ -6,7 +6,9 @@
   - [Commit](./conventions/commit.md)
   - [Naming](./conventions/naming.md)
   - [Python Style](./conventions/python-style.md)
-- [Backend](./backend/vector-rag.md)
+- Backend
+  - [MySQL Document Store Roadmap](./backend/mysql-document-store-roadmap.md)
+  - [Vector RAG](./backend/vector-rag.md)
 - [Frontend](./frontend/info.md)
   - [JavaScript vs TypeScript](./frontend/presentation/01_JS_vs_TS.md)
   - [React Overview](./frontend/presentation/02_React_Overview.md)
