@@ -1,108 +1,59 @@
-# SKN26 Project Template Repository
+# Olfít Connect: AI-Driven Fragrance Matching Platform
 
-SKN26 4차 프로젝트부터 최종 프로젝트까지 공통으로 사용할 수 있는 템플릿 저장소입니다.
+나만의 시각적 아우라와 향기 취향을 연결하여 최적의 향수를 제안하는 **Olfít Connect** 프로젝트의 공식 풀스택 저장소입니다.
 
-아직 기술 스택은 확정하지 않았으며, 프로젝트를 시작할 때 필요한 기본 디렉터리, 문서, 협업 규칙을 먼저 정리하는 것을 목적으로 합니다.
+## 🌟 Overview
 
-## Purpose
+Olfít Connect는 사용자가 업로드한 이미지(OOTD, 공간, 무드 등)를 **NVIDIA NIM (Gemma VLM)**으로 정밀 분석하고, 사용자의 명시적 성분 취향을 결합하여 개인화된 '향기 아우라'를 도출합니다. 800여 개의 실제 향수 데이터를 기반으로 한 다차원 벡터 매칭 알고리즘을 통해 감성과 데이터의 완벽한 연결(Connect)을 제공합니다.
 
-- 4차 프로젝트부터 최종 프로젝트까지 반복해서 사용할 기본 저장소 구조를 제공합니다.
-- 프로젝트별 기술 스택이 달라져도 공통으로 필요한 문서와 협업 규칙을 유지합니다.
-- Git flow, commit convention, naming, code style, API contract, development process를 wiki로 관리합니다.
-- 팀원이 새 프로젝트에 합류했을 때 저장소 사용 기준을 빠르게 확인할 수 있게 합니다.
+## 🏗️ Architecture
 
-## Project Scope
-
-이 템플릿은 다음 프로젝트 구간에서 사용합니다.
-
-- SKN26 4차 프로젝트
-- SKN26 최종 프로젝트
-
-## Tech Stack
-
-기술 스택은 프로젝트별 요구사항에 따라 결정합니다.
-
-확정 후 이 영역에 다음 내용을 업데이트합니다.
-
-- Backend:
-- Frontend:
-- Database:
-- AI / Model:
-- Infra:
-- Collaboration:
-
-## Structure
+본 저장소는 프론트엔드와 백엔드가 통합된 모노레포 구조로 설계되었습니다.
 
 ```text
-.
-├── .github/
-│   └── workflows/
-├── backend/
-├── frontend/
-├── database/
-├── models/
-├── docs/
-├── wiki/
-│   ├── book.toml
-│   └── src/
-│       ├── SUMMARY.md
-│       ├── overview.md
-│       ├── conventions.md
-│       └── conventions/
-│           ├── git-flow.md
-│           ├── commit.md
-│           ├── naming.md
-│           └── code-style.md
-├── README.md
-└── LICENSE
+4th_olfit_connect_playground/
+├── frontend/           # React + TypeScript + TailwindCSS + Vite
+│   ├── src/            # UI 컴포넌트 및 클라이언트 로직
+│   └── Dockerfile      # Vite 개발 서버 컨테이너
+├── backend/            # Django 6 + Django REST Framework
+│   ├── app/            # Django 소스 및 지능형 추천 엔진 (scent_engine)
+│   └── requirements.txt # 백엔드 의존성 통합 관리
+├── database/           # MySQL 8.4 Docker 설정 및 초기화 SQL
+├── docker-compose.yml  # 전체 시스템 오케스트레이션
+└── .env                # NVIDIA API 키 및 DB 자격 증명 (통합 관리)
 ```
 
-## Directory Guide
+## 🚀 Getting Started
 
-- `backend/`: 백엔드 애플리케이션 코드
-- `frontend/`: 프론트엔드 애플리케이션 코드
-- `database/`: DB schema, migration, seed, ERD 관련 파일
-- `models/`: AI 모델, 학습/추론 관련 파일
-- `docs/`: 프로젝트 산출물, 외부 공유 문서
-- `wiki/`: 팀 내부 규칙과 개발 컨벤션
-- `.github/`: GitHub template, workflow, automation 설정
+### 1. 환경 변수 설정
+루트 디렉토리(`.env`)에 필요한 키를 입력합니다.
+```env
+NVIDIA_API_KEY=your_nvidia_api_key_here
+SQL_DB_PASSWORD=your_db_password
+```
 
-## Wiki
+### 2. 전체 시스템 가동 (Docker)
+Docker Compose를 통해 프론트엔드, 백엔드, 데이터베이스를 한 번에 구축합니다. 데이터베이스 마이그레이션 및 초기 데이터(800+ 향수) 적재가 자동으로 진행됩니다.
+```powershell
+docker compose up -d --build
+```
+*   **Frontend Web**: `http://localhost:3000`
+*   **Backend API**: `http://localhost:8000`
+*   **Database Host**: `localhost:3307` (External Access)
 
-프로젝트 규칙은 `wiki/` 아래 mdBook 문서로 관리합니다.
+## 🧠 Key Features
 
-주요 문서:
+- **AI Emotional Mapping**: 이미지에서 색상, 사물, 무드를 추출하여 5축(Floral, Woody, Oriental, Fresh, Gourmand) 아우라 스코어 산출.
+- **Symmetric Scent Search**: 100% 한글화된 대칭형 쿼리를 생성하여 이미지의 감성과 향수의 노트를 직관적으로 매칭.
+- **High-Resolution Insights**: 분석 결과를 레이더 차트와 함께 고해상도 이미지 리포트로 캡처 및 공유.
+- **Hybrid Storage Strategy**: 관계형 메타데이터와 유연한 JSON 상세 정보를 결합한 고성능 하이브리드 아키텍처.
 
-- Git flow
-- Commit convention
-- Naming convention
-- Code style
+## 🛠️ Tech Stack
 
-## Getting Started
+- **Frontend**: React, TypeScript, Zustand, TailwindCSS, Framer Motion, html2canvas.
+- **Backend**: Python 3.12, Django 6, DRF, OpenAI SDK (NVIDIA NIM).
+- **AI/ML**: NVIDIA NIM (google/gemma-3n-e4b-it), NumPy, Scikit-learn.
+- **Infrastructure**: Docker Compose, MySQL 8.4.
 
-새 프로젝트에서 이 템플릿을 사용할 때는 다음 항목을 먼저 수정합니다.
-
-1. 프로젝트명과 설명
-2. 확정된 기술 스택
-3. `wiki/book.toml`의 book title
-4. `wiki/src/overview.md`의 프로젝트 개요
-5. `wiki/src/conventions/`의 팀별 상세 규칙
-6. `.github/workflows/`의 브랜치, secrets, 배포 조건
-
-## mdBook
-
-github acitons로 인해서 자동으로 deploy까지 가능합니다.
-사용하는 branch는 docs입니다.
-
-## GitHub Actions
-
-이 저장소는 GitHub Actions workflow를 통해 다음 작업을 수행할 수 있도록 구성합니다.
-
-- mdBook 기반 wiki 배포
-- PR 코드 리뷰 자동화
-
-프로젝트에 맞게 브랜치 이름, secrets, action 버전을 확인한 뒤 사용합니다.
-
-## License
-
-See [LICENSE](./LICENSE).
+## 📝 License
+이 프로젝트는 MIT License를 따릅니다.

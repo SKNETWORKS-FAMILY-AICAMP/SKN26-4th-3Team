@@ -1,0 +1,127 @@
+name: olfit
+
+services:
+  database:
+    build:
+      context: ./database
+      dockerfile: Dockerfile
+    cgroup: host
+    cpus: ${DATABASE_CPUS}
+    mem_limit: ${DATABASE_MEMORY_LIMIT}
+    mem_reservation: ${DATABASE_MEMORY_RESERVATION}
+    pids_limit: ${DATABASE_PIDS_LIMIT}
+    restart: unless-stopped
+    ulimits:
+      nofile:
+        soft: ${DATABASE_NOFILE_SOFT}
+        hard: ${DATABASE_NOFILE_HARD}
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_INITDB_SKIP_TZINFO: ${MYSQL_INITDB_SKIP_TZINFO}
+      SQL_DB_NAME: ${SQL_DB_NAME}
+      SQL_TEST_DB_NAME: ${SQL_TEST_DB_NAME:-test_olfit_db}
+      SQL_DB_USER: ${SQL_DB_USER:-olfit_admin}
+      SQL_DB_PASSWORD: ${SQL_DB_PASSWORD:-olfit_password}
+      TZ: ${TZ}
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "mysqladmin ping -h 127.0.0.1 -uroot -p$${MYSQL_ROOT_PASSWORD}
+            --silent",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: ${LOG_MAX_SIZE}
+        max-file: ${LOG_MAX_FILE}
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      - path: .env
+        required: false
+    cgroup: host
+    cpus: ${BACKEND_CPUS}
+    mem_limit: ${BACKEND_MEMORY_LIMIT}
+    mem_reservation: ${BACKEND_MEMORY_RESERVATION}
+    pids_limit: ${BACKEND_PIDS_LIMIT}
+    restart: unless-stopped
+    ulimits:
+      nofile:
+        soft: ${BACKEND_NOFILE_SOFT}
+        hard: ${BACKEND_NOFILE_HARD}
+    environment:
+      TZ: ${TZ}
+      PYTHONUNBUFFERED: 1
+      SQL_DB_HOST: ${SQL_DB_HOST}
+      SQL_DB_PORT: ${SQL_DB_PORT}
+      SQL_DB_NAME: ${SQL_DB_NAME}
+      SQL_TEST_DB_NAME: ${SQL_TEST_DB_NAME:-test_olfit_db}
+      SQL_DB_USER: ${SQL_DB_USER:-olfit_admin}
+      SQL_DB_PASSWORD: ${SQL_DB_PASSWORD:-olfit_password}
+    command: >
+      sh -c "python app/manage.py makemigrations perfumes &&
+             python app/manage.py migrate --noinput &&
+             sleep 5 &&
+             python app/manage.py load_perfumes &&
+             python app/manage.py runserver 0.0.0.0:8000"
+    depends_on:
+      database:
+        condition: service_healthy
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    volumes:
+      - ./backend:/backend
+    logging:
+      driver: json-file
+      options:
+        max-size: ${LOG_MAX_SIZE}
+        max-file: ${LOG_MAX_FILE}
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    env_file:
+      - path: .env
+        required: false
+    cgroup: host
+    cpus: ${FRONTEND_CPUS}
+    mem_limit: ${FRONTEND_MEMORY_LIMIT}
+    mem_reservation: ${FRONTEND_MEMORY_RESERVATION}
+    pids_limit: ${FRONTEND_PIDS_LIMIT}
+    restart: unless-stopped
+    ulimits:
+      nofile:
+        soft: ${FRONTEND_NOFILE_SOFT}
+        hard: ${FRONTEND_NOFILE_HARD}
+    environment:
+      TZ: ${TZ}
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    volumes:
+      - ./frontend:/frontend
+      - frontend_node_modules:/frontend/node_modules
+    logging:
+      driver: json-file
+      options:
+        max-size: ${LOG_MAX_SIZE}
+        max-file: ${LOG_MAX_FILE}
+
+volumes:
+  mysql_data:
+  frontend_node_modules:

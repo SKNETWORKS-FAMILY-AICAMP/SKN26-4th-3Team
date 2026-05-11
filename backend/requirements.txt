@@ -1,0 +1,29 @@
+# Web framework - Core Django and REST API support
+django>=6.0.5
+djangorestframework>=3.17.1
+
+# Environment - Read settings from environment variables
+django-environ>=0.13.0
+
+# Database - MySQL
+mysqlclient>=2.2.8
+
+# API - CORS
+django-cors-headers>=4.9.0
+
+# API - Documentation
+drf-spectacular>=0.28.0
+
+# Test - Pytest runner and Django integration
+pytest>=8.0.0
+pytest-django>=4.9.0
+
+# Olfit Specific Dependencies
+requests>=2.32.3
+numpy>=1.26.0
+scikit-learn>=1.4.0
+openai>=1.12.0
+python-dotenv>=1.0.1
+pillow>=10.2.0
+sqlparse>=0.5.5
+tzdata>=2026.2

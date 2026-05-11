@@ -1,0 +1,152 @@
+/**
+ * @file index.css
+ * @description 애플리케이션 전역 스타일 시트입니다.
+ * Tailwind CSS 핵심 지시어와 함께 프로젝트 고유의 디자인 시스템(HSL 변수), 커스텀 레이어 스타일을 정의합니다.
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* 디자인 시스템 기초 색상 팔레트 (HSL) */
+    --background: 34 33% 98%;      /* #FDFCF0 (Cream) */
+    --foreground: 24 33% 18%;      /* #3D2B1F (Deep Wood) */
+    --card: 34 33% 98%;
+    --card-foreground: 24 33% 18%;
+    --popover: 34 33% 98%;
+    --popover-foreground: 24 33% 18%;
+    --primary: 24 33% 18%;
+    --primary-foreground: 34 33% 98%;
+    --secondary: 38 40% 93%;
+    --secondary-foreground: 24 33% 18%;
+    --muted: 38 40% 93%;
+    --muted-foreground: 24 20% 40%;
+    --accent: 38 40% 93%;
+    --accent-foreground: 24 33% 18%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 34 20% 90%;
+    --input: 34 20% 90%;
+    --ring: 24 33% 18%;
+    --radius: 0rem;                /* 에디토리얼 무드를 위한 각진 모서리 */
+    
+    /* 사이드바 전용 테마 변수 */
+    --sidebar-background: 34 33% 98%;
+    --sidebar-foreground: 24 33% 26%;
+    --sidebar-primary: 24 33% 18%;
+    --sidebar-primary-foreground: 34 33% 98%;
+    --sidebar-accent: 38 40% 95%;
+    --sidebar-accent-foreground: 24 33% 18%;
+    --sidebar-border: 34 20% 91%;
+    --sidebar-ring: 24 33% 60%;
+
+    /* RGB 변수 (JS/Dynamic Shadow용) */
+    --wood-rgb: 61, 43, 31;         /* #3D2B1F */
+  }
+
+  /* 글로벌 박스 모델링 및 보더 컬러 고정 */
+  * {
+    @apply border-border;
+  }
+
+  /* HTML/BODY 기본 인터랙션 및 렌더링 최적화 */
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-feature-settings: "kern" 1, "liga" 1;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* 브랜드 고유 컬러를 적용한 커스텀 스크롤바 */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #6B4423;
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #4A2B0F;
+  }
+}
+
+@layer components {
+  /* 라벨링용 유틸리티: 소문자 폰트 사이즈 + 대문자 변환 */
+  .label-upper {
+    @apply text-[11px] font-medium uppercase tracking-widest;
+  }
+
+  /* 가느다란 구분선 스타일링 */
+  .hairline {
+    @apply h-px bg-wood/10;
+  }
+
+  .hairline-dark {
+    @apply h-px bg-cream/20;
+  }
+
+  /* 텍스트 가독성 향상을 위한 자동 줄바꿈 밸런싱 */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* 부드러운 하단 라인 애니메이션 */
+  .underline-hover {
+    @apply relative inline-block;
+  }
+
+  .underline-hover::after {
+    content: '';
+    @apply absolute left-0 bottom-0 w-full h-px bg-current transform origin-left scale-x-0 transition-transform duration-400;
+    transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .underline-hover:hover::after {
+    @apply scale-x-100;
+  }
+
+  /* 뷰포트 진입 시 위로 솟아오르는 애니메이션 */
+  .fade-up-entrance {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .fade-up-entrance.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* 레이아웃용 그리드 시스템 */
+  .editorial-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 2rem;
+  }
+}
+
+@layer utilities {
+  /* 트랜지션 시간 및 딜레이 변수 확장 */
+  .duration-400 { transition-duration: 400ms; }
+  .duration-600 { transition-duration: 600ms; }
+  .duration-800 { transition-duration: 800ms; }
+
+  .delay-100 { transition-delay: 100ms; }
+  .delay-200 { transition-delay: 200ms; }
+  .delay-300 { transition-delay: 300ms; }
+  .delay-400 { transition-delay: 400ms; }
+  .delay-500 { transition-delay: 500ms; }
+}
+
+/* EOF: index.css */

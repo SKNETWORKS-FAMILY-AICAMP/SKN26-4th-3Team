@@ -216,3 +216,52 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Root & general settings
+.env.local
+.env.*.local
+.DS_Store
+Thumbs.db
+.vite/
+logs/
+*.sublime-project
+*.sublime-workspace
+
+# Frontend: React/Vite
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/*.local
+frontend/coverage/
+frontend/.vite/
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+
+# Backend: Django
+backend/app/*/migrations/[0-9]*.py
+!backend/app/*/migrations/__init__.py
+backend/app/db.sqlite3
+backend/app/db.sqlite3-journal
+backend/app/.venv/
+backend/app/venv/
+backend/app/htmlcov/
+
+# Database and infrastructure
+mysql_data/
+database/init/*.sql.bak
+
+# IDE/editor
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Local migration scratch space
+.source_olfit_playground/
