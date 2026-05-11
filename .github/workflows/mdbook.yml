@@ -2,7 +2,7 @@ name: Deploy Wiki to Pages
 
 on:
   push:
-    branches: ["dev"]
+    branches: ["docs"]
     paths:
       - "wiki/**"
       - ".github/workflows/mdbook.yml"
