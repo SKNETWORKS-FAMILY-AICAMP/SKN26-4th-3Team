@@ -1,10 +1,9 @@
 import json
 import os
 import glob
-from copy import deepcopy
 import numpy as np
 from django.core.management.base import BaseCommand
-from perfumes.models import Brand, Perfume, PerfumeDetail, PerfumeRawData
+from perfumes.models import Brand, Perfume
 from perfumes.utils import load_master_map
 from scent_engine.mapper import VISUAL_TO_FRAGRANCE_RULES, KOREAN_VISUAL_TRIGGERS
 
@@ -12,7 +11,15 @@ class Command(BaseCommand):
     help = 'Load perfumes into MySQL with Symmetric Aura Scoring (v4.0)'
 
     def handle(self, *args, **options):
-        self.stdout.write("Starting intelligent data ingestion...")
+        # 데이터 존재 여부 체크 (중복 적재 방지)
+        try:
+            if Perfume.objects.exists():
+                self.stdout.write(self.style.SUCCESS("Data already exists. Skipping load_perfumes..."))
+                return
+        except Exception:
+            pass
+
+        self.stdout.write("DB is empty. Starting intelligent data ingestion...")
         master_map = load_master_map()
         accord_to_cat = master_map["accord_to_category"]
         
@@ -58,9 +65,7 @@ class Command(BaseCommand):
                     # 2. Booster Scoring (Keywords/Notes)
                     perfume_metadata = set(item.get("keywords", []))
                     notes = item.get("notes", [])
-                    if isinstance(notes, dict):
-                        item["notes_parsed"] = translate_notes_pyramid(notes, master_map)
-                        notes = [n for sub in notes.values() for n in sub]
+                    if isinstance(notes, dict): notes = [n for sub in notes.values() for n in sub]
                     perfume_metadata.update(notes)
 
                     for kw in perfume_metadata:

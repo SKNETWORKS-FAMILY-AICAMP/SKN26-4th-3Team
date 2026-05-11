@@ -7,7 +7,10 @@ django-environ>=0.13.0
 
 # Database - MySQL
 mysqlclient>=2.2.8
+<<<<<<< HEAD
 cryptography>=42.0.0
+=======
+>>>>>>> 12b8384 (feat(backend): migrate django fragrance apiAdds the Django REST backend, scent engine services, perfume data loaders, raw fragrance datasets, and API endpoints needed for image-aura analysis and recommendation workflows.)
 
 # API - CORS
 django-cors-headers>=4.9.0
@@ -21,7 +24,10 @@ pytest-django>=4.9.0
 
 # Olfit Specific Dependencies
 requests>=2.32.3
+<<<<<<< HEAD
 scrapling[fetchers]>=0.4.8
+=======
+>>>>>>> 12b8384 (feat(backend): migrate django fragrance apiAdds the Django REST backend, scent engine services, perfume data loaders, raw fragrance datasets, and API endpoints needed for image-aura analysis and recommendation workflows.)
 numpy>=1.26.0
 scikit-learn>=1.4.0
 openai>=1.12.0

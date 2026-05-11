@@ -35,7 +35,6 @@ class RecommendationService:
     def recommend(self, user_aura_dict, query_text, selected_notes):
         """
         사용자 아우라 벡터와 취향을 기반으로 맞춤형 향수를 추천합니다.
-
         @param user_aura_dict: 사용자의 5축 아우라 점수 딕셔너리
         @param query_text: RAG 검색용 쿼리 문장 (향후 벡터 검색 확장 포인트)
         @param selected_notes: 사용자가 선택한 성분 리스트
@@ -278,5 +277,8 @@ class RecommendationService:
             return f"선택하신 #{match_str} 성분이 포함되어 있으며, 당신의 #{main_family} 아우라와 완벽하게 조화됩니다."
         return f"당신의 분위기를 결정짓는 #{main_family} 계열의 베스트 추천 향수입니다."
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 12b8384 (feat(backend): migrate django fragrance apiAdds the Django REST backend, scent engine services, perfume data loaders, raw fragrance datasets, and API endpoints needed for image-aura analysis and recommendation workflows.)
 # EOF: recommendation_service.py
