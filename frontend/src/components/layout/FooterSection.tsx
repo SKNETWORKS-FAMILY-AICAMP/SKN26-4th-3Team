@@ -77,11 +77,7 @@ export default function FooterSection() {
           <p className="font-medium text-wood text-[13px]">2. 분석 결과의 소유권</p>
           <p>생성된 향기 아우라 리포트 및 이미지는 사용자의 개인적 용도로만 사용 가능하며, 상업적 목적으로의 무단 배포를 금합니다.</p>
           <p className="font-medium text-wood text-[13px]">3. 면책 조항</p>
-<<<<<<< HEAD
           <p>추천 결과는 AI의 주관적 분석과 사용자 입력에 근거하며, 실제 제품의 향기 체감은 개인마다 다를 수 있음을 고지합니다.</p>
-=======
-          <p>추천 결과는 AI의 주관적 분석에 근거하며, 실제 제품의 향기 체감은 개인마다 다를 수 있음을 고지합니다.</p>
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
           <p className="pt-4 border-t border-wood/5 text-[10px] text-wood/40">본 약관은 추후 서비스 운영 정책에 따라 변경될 수 있습니다.</p>
         </div>
       )

@@ -40,11 +40,7 @@ export const radarData = [
     description: "나무의 결에서 느껴지는 따뜻하고 묵직한 힘"
   },
   { 
-<<<<<<< HEAD
     axis: "앰버", 
-=======
-    axis: "오리엔탈", 
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     value: 0.45,
     description: "이국적인 향신료와 따스한 수지가 어우러진 깊은 잔향"
   },

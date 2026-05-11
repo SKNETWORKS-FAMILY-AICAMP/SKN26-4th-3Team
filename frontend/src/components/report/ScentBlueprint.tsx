@@ -23,7 +23,6 @@ export default function ScentBlueprint({ isVisible, slots, matchPercent, accentC
     <div className={`mb-32 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
       <div className="flex items-center gap-4 mb-12">
         <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-wood/30">My Scent Blueprint</span>
-<<<<<<< HEAD
         <h3 className={`text-xl font-light tracking-widest uppercase ${accentClass}`}>Scent Blueprint</h3>
         <div className="h-px bg-wood/10 flex-1" />
       </div>
@@ -34,18 +33,6 @@ export default function ScentBlueprint({ isVisible, slots, matchPercent, accentC
         </div>
         <div className="flex flex-col justify-center text-center lg:text-left">
           <p className="text-wood/60 uppercase tracking-widest text-[11px] mb-2 font-mono">AI Analysis Result</p>
-=======
-        <h3 className={`text-xl font-light tracking-widest uppercase ${accentClass}`}>나의 설계도</h3>
-        <div className="h-px bg-wood/10 flex-1" />
-      </div>
-
-      <div className="flex flex-col md:flex-row items-center justify-center gap-12 md:gap-24">
-        <div className="w-64 h-64 md:w-80 md:h-80">
-          <ScentPyramid slots={slots} isStatic={true} />
-        </div>
-        <div className="text-center md:text-left">
-          <p className="text-wood/40 uppercase tracking-widest text-[11px] mb-2 font-mono">AI Analysis Result</p>
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
           <h4 className="text-2xl md:text-3xl font-light text-wood break-keep leading-tight">
             {hasNoNotes ? (
               <>당신의 시각적 아우라와 <br/> 향기 싱크로율이 <span className="font-medium text-gold">{matchPercent}%</span> 입니다</>
@@ -53,11 +40,7 @@ export default function ScentBlueprint({ isVisible, slots, matchPercent, accentC
               <>AI가 분석한 당신의 무드와 <br/> <span className="font-medium text-gold">{matchPercent}%</span> 일치합니다</>
             )}
           </h4>
-<<<<<<< HEAD
           <p className="mt-6 text-[13px] text-wood leading-relaxed max-w-lg mx-auto lg:mx-0 break-keep">
-=======
-          <p className="mt-6 text-[13px] text-wood/60 leading-relaxed max-w-xs break-keep">
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
             {hasNoNotes ? (
               "선택하신 향기 정보가 없어, 업로드하신 이미지의 색채와 실루엣 분석 데이터만을 바탕으로 당신에게 가장 잘 어울리는 향기 밸런스를 도출했습니다."
             ) : (
@@ -66,7 +49,6 @@ export default function ScentBlueprint({ isVisible, slots, matchPercent, accentC
                   [slots.Top?.name, slots.Middle?.name, slots.Base?.name]
                     .filter(Boolean)
                     .join(", ")
-<<<<<<< HEAD
                 } 노트를 바탕으로 <br /> 당신의 시각적 아우라와 가장 조화로운 향기 밸런스를 찾았습니다.
               </>
             )}
@@ -80,12 +62,6 @@ export default function ScentBlueprint({ isVisible, slots, matchPercent, accentC
               <ArrowRight size={11} />
             </a>
           )}
-=======
-                } 노트를 바탕으로 당신의 시각적 아우라와 가장 조화로운 향기 밸런스를 찾았습니다.
-              </>
-            )}
-          </p>
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
         </div>
       </div>
     </div>

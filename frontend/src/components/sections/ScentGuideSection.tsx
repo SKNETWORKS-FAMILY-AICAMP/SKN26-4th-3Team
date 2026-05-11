@@ -8,11 +8,7 @@ import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import ConcentrationList from "@/components/guide/ConcentrationList";
 import FamilyCarousel from "@/components/guide/FamilyCarousel";
 import ScentNoteCarousel from "@/components/guide/ScentNoteCarousel";
-<<<<<<< HEAD
 import { scentFamilies, concentrations, concentrationDescription } from "@/data/scentData";
-=======
-import { scentFamilies, concentrations } from "@/data/scentData";
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
 
 interface ScentGuideSectionProps {
   /** 사용자가 노트를 선택했을 때 상태를 부모 컴포넌트로 전달하는 콜백 */

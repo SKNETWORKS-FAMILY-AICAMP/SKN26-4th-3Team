@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import type { Product } from '@/types';
-=======
 import type { Product } from './productData';
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
 
 export const personalProducts: Product[] = [
   {

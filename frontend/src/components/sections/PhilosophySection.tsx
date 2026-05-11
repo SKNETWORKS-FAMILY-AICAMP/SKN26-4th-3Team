@@ -29,13 +29,8 @@ export default function PhilosophySection() {
             
             <div ref={ref2} className={`transition-all duration-800 delay-200 ${vis2 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               <p className="text-sm md:text-[15px] leading-[1.8] text-wood/60 mb-8 md:mb-12 max-w-xl break-keep">
-<<<<<<< HEAD
                 단순 상품 검색을 넘어, 사용자가 추구하는 패션 스타일을 분석하여 <br className="hidden sm:inline" />
                 최적의 향기를 논리적으로 연결해 주는 토탈 향기 컨설팅 경험을 제공합니다. <br className="hidden sm:inline" />
-=======
-                단순 상품 검색을 넘어, 사용자가 추구하는 패션 스타일을 분석하여
-                최적의 향기를 논리적으로 연결해 주는 토탈 향기 컨설팅 경험을 제공합니다.<br className="hidden md:block" />
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
                 AI는 전문 조향 지식과 심리학을 결합하여 당신만의 완벽한 향기 세계관을 완성합니다.
               </p>
               
@@ -71,10 +66,7 @@ export default function PhilosophySection() {
                 src="/philosophy_img.jpg"
                 alt="Brand Philosophy"
                 className="w-full h-full object-cover"
-<<<<<<< HEAD
                 loading="lazy"
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
               />
             </div>
           </div>

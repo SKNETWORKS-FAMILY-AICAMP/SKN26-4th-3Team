@@ -3,21 +3,14 @@
  * @description 사용자의 스타일(OOTD) 이미지를 분석하여 맞춤형 향기를 추천하기 위한 인터뷰 섹션입니다.
  */
 
-<<<<<<< HEAD
 import { useState, useEffect, useRef } from "react";
-=======
-import { useState } from "react";
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import { Sparkles, CheckCircle2 } from "lucide-react";
 import ImageUploader from "@/components/common/ImageUploader";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import ErrorFallback from "@/components/common/ErrorFallback";
 import { useOlfitStore } from "@/store/useStore";
-<<<<<<< HEAD
 import { requestAuraAnalysis } from "@/services/api";
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
 import type { AnalysisResults } from "@/types";
 
 interface AIInterviewSectionProps {
@@ -32,13 +25,9 @@ export default function AIInterviewSection({ onComplete, selectedNotes = [] }: A
   const [analysisStatus, setAnalysisStatus] = useState("");
   const [progress, setProgress] = useState(0);
   const [lastProcessedBase64, setLastProcessedBase64] = useState<string | null>(null);
-<<<<<<< HEAD
   const base64Ref = useRef<string | null>(null);
   const hasCalledAPIRef = useRef(false);
 
-=======
-  
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
   const getSteps = () => [
     { threshold: 10, text: "이미지 픽셀 데이터 추출 중..." },
     { threshold: 30, text: "스타일 실루엣 및 텍스처 분석..." },
@@ -47,7 +36,6 @@ export default function AIInterviewSection({ onComplete, selectedNotes = [] }: A
     { threshold: 90, text: "최적의 향기 아우라 생성 완료" },
   ];
 
-<<<<<<< HEAD
   useEffect(() => {
     if (progress < 100) return;
     if (isComplete) return;
@@ -75,54 +63,22 @@ export default function AIInterviewSection({ onComplete, selectedNotes = [] }: A
 
     base64Ref.current = base64;
     hasCalledAPIRef.current = false;
-=======
-  const handleImageProcessed = async (base64: string, remoteUrl: string) => {
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     setLastProcessedBase64(base64);
     setLoading(true);
     setError(null);
     setProgress(0);
 
     const analysisSteps = getSteps();
-<<<<<<< HEAD
-    const duration = 5000; // 시뮬레이션 5초
-    const interval = 100;
-    const step = (interval / duration) * 100;
-
-    const timer = setInterval(async () => {
-=======
     const duration = 5000; 
     const interval = 100;
     const step = (interval / duration) * 100;
 
     // 시각적인 프로그레스 바 업데이트
     const progressTimer = setInterval(() => {
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
       setProgress((prev) => {
         const next = prev + step;
         const currentStep = analysisSteps.find(s => next <= s.threshold) || analysisSteps[analysisSteps.length - 1];
         setAnalysisStatus(currentStep.text);
-<<<<<<< HEAD
-
-        if (next >= 100) {
-          clearInterval(timer);
-          return 100;
-        }
-        return next;
-      });
-    }, interval);
-  };
-
-  const handleRetry = (e?: React.MouseEvent) => {
-    if (e) {
-      e.preventDefault(); // 🚨 FIX: POST 중복 요청 방지
-      e.stopPropagation(); // 🚨 FIX: POST 중복 요청 방지
-    }
-    // 🛠️ REFACTOR (UX 안정성): 재시도 시 사용자에게 시각적 피드백 제공
-    setError(null);
-    if (lastProcessedBase64) {
-      handleImageProcessed(lastProcessedBase64);
-=======
         return next >= 95 ? 95 : next; // API 응답 전까지는 95%에서 대기
       });
     }, interval);
@@ -155,7 +111,6 @@ export default function AIInterviewSection({ onComplete, selectedNotes = [] }: A
   const handleRetry = () => {
     if (lastProcessedBase64) {
       handleImageProcessed(lastProcessedBase64, "retry-mock-url");
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     }
   };
 
@@ -172,20 +127,11 @@ export default function AIInterviewSection({ onComplete, selectedNotes = [] }: A
 
           <div className="max-w-2xl mx-auto">
             {error ? (
-<<<<<<< HEAD
-              // 🛠️ REFACTOR (UX 안정성): ErrorFallback에 구체적인 가이드 메시지 전달
-              <ErrorFallback
-                message={`${error} \n서버 연결이 원활하지 않을 수 있습니다. 잠시 후 다시 시도해 주세요.`}
-                onRetry={handleRetry}
-              />
-=======
               <ErrorFallback message={error} onRetry={handleRetry} />
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
             ) : !isComplete ? (
               <div className="relative">
                 <ImageUploader onImageProcessed={handleImageProcessed} isAnalyzing={isLoading} />
                 {isLoading && (
-<<<<<<< HEAD
                   <div className="mt-12 space-y-10 animate-in fade-in duration-700">
                     {/* 🛠️ REFACTOR (UX 안정성): 투박한 프로그레스 바 대신 우아한 스켈레톤 UI와 진행 상태 결합 */}
                     <div className="space-y-4">
@@ -212,17 +158,6 @@ export default function AIInterviewSection({ onComplete, selectedNotes = [] }: A
                           <div className="h-3 bg-cream/40 rounded-full w-1/2 animate-pulse" />
                         </div>
                       </div>
-=======
-                  <div className="mt-12 space-y-6">
-                    <div className="h-px bg-cream/10 w-full relative overflow-hidden">
-                      <div className="absolute inset-y-0 left-0 bg-cream transition-all duration-300 ease-out" style={{ width: `${progress}%` }} />
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-3">
-                        <LoadingSpinner className="p-0 gap-2 flex-row" message={analysisStatus} />
-                      </div>
-                      <span className="text-[11px] font-mono text-cream/40">{Math.round(progress)}%</span>
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
                     </div>
                   </div>
                 )}
@@ -232,15 +167,11 @@ export default function AIInterviewSection({ onComplete, selectedNotes = [] }: A
                 <div className="w-20 h-20 rounded-full bg-cream/10 flex items-center justify-center mb-8 border border-cream/20">
                   <CheckCircle2 className="text-cream w-10 h-10" strokeWidth={1} />
                 </div>
-<<<<<<< HEAD
                 <a
                   href="#report"
                   onClick={(e) => { e.stopPropagation(); }} // 🚨 FIX: POST 중복 요청 방지
                   className="group flex items-center gap-3 bg-cream text-wood px-10 py-4 text-[12px] font-medium uppercase tracking-[0.2em] transition-all duration-300 hover:bg-white active:scale-95"
                 >
-=======
-                <a href="#report" className="group flex items-center gap-3 bg-cream text-wood px-10 py-4 text-[12px] font-medium uppercase tracking-[0.2em] transition-all duration-300 hover:bg-white active:scale-95">
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
                   View Insight Report <Sparkles size={16} className="group-hover:rotate-12 transition-transform" />
                 </a>
               </div>

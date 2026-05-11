@@ -38,11 +38,7 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
         <div className="md:w-1/2 bg-stone-100 flex items-center justify-center p-8 md:p-12">
           <div className="aspect-[3/4] w-full max-w-[360px] shadow-editorial overflow-hidden">
             <img 
-<<<<<<< HEAD
               src={product.image || undefined} 
-=======
-              src={product.image} 
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
               alt={product.name} 
               className="w-full h-full object-cover mix-blend-multiply opacity-90"
             />

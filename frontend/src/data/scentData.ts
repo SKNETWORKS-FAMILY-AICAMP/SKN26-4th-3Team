@@ -4,7 +4,6 @@
  * 각 계열의 특징과 대표 성분, 부향률별 지속시간 정보를 포함합니다.
  */
 
-<<<<<<< HEAD
 import { Leaf, Mountain, Sparkles, Wind, Cookie } from "lucide-react";
 
 /**
@@ -44,24 +43,6 @@ export const scentFamilies = [
       },
       { name: "Cedarwood", 
         desc: "연필심처럼 건조하고 깨끗한 연필 향이 <br className=\"hidden sm:inline\" /> 현대적이고 지적인 세련미를 완성합니다."
-=======
-import { Leaf, Mountain, Sun, Sparkles } from "lucide-react";
-
-/**
- * 향기 계열 데이터: Woody, Floral, Citrus, Oriental 정보
- */
-export const scentFamilies = [
-  {
-    title: "Woody",
-    subtitle: "대지의 깊은 안식",
-    description: "나무의 결에서 느껴지는 따뜻하고 묵직한 힘입니다. 숲속을 걷는 듯한 차분함과 지적인 신뢰감을 동시에 전달하며, 당신의 분위기에 안정적인 무게감을 더해줍니다.",
-    details: [
-      { name: "Sandalwood", 
-        desc: "부드럽고 크리미한 우유빛 나무 향이 마음을 깊게 가라앉혀 평온을 선사합니다."
-      },
-      { name: "Cedarwood", 
-        desc: "연필심처럼 건조하고 깨끗한 연필 향이 현대적이고 지적인 세련미를 완성합니다."
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
       },
     ],
     icon: Mountain,

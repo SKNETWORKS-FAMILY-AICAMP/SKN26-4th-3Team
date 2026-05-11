@@ -1,15 +1,11 @@
 import json
 import base64
-<<<<<<< HEAD
 from datetime import datetime, timezone
-=======
->>>>>>> 12b8384 (feat(backend): migrate django fragrance apiAdds the Django REST backend, scent engine services, perfume data loaders, raw fragrance datasets, and API endpoints needed for image-aura analysis and recommendation workflows.)
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 from unittest.mock import patch
-<<<<<<< HEAD
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -25,8 +21,6 @@ from perfumes.services.fragrantica_image_backfill import (
     parse_product_page_image_url,
 )
 from perfumes.services.recommendation_service import RecommendationService
-=======
->>>>>>> 12b8384 (feat(backend): migrate django fragrance apiAdds the Django REST backend, scent engine services, perfume data loaders, raw fragrance datasets, and API endpoints needed for image-aura analysis and recommendation workflows.)
 
 class AnalyzeViewTest(TestCase):
     def setUp(self):
@@ -69,7 +63,6 @@ class AnalyzeViewTest(TestCase):
         response = self.client.post(self.url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('error', response.data)
-<<<<<<< HEAD
 
 
 class PerfumeImageExtractorTest(TestCase):
@@ -574,5 +567,3 @@ class RecommendationServiceTest(TestCase):
         self.assertEqual(recommendation["details"]["topNotes"], "네롤리, 베르가못")
         self.assertEqual(recommendation["details"]["middleNotes"], "오렌지 블라썸, 시더우드")
         self.assertEqual(recommendation["details"]["baseNotes"], "나르가모타")
-=======
->>>>>>> 12b8384 (feat(backend): migrate django fragrance apiAdds the Django REST backend, scent engine services, perfume data loaders, raw fragrance datasets, and API endpoints needed for image-aura analysis and recommendation workflows.)

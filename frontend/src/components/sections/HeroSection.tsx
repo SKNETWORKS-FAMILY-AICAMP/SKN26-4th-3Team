@@ -91,10 +91,7 @@ export default function HeroSection() {
                 src="https://www.byredo.com/cdn-cgi/image/width=auto,height=1200,fit=scale-down,gravity=auto,format=webp,quality=70/https://www.byredo.com/media/catalog/product/cache/74c1057f7991b4edb2bc7bdaa94de933/8/0/806014_1_full_no.jpg"
                 alt="Scent Exploration"
                 className="w-full h-full object-cover mix-blend-lighten opacity-90"
-<<<<<<< HEAD
                 loading="lazy"
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
               />
             </div>
             {/* 텍스트 영역 */}
@@ -104,21 +101,12 @@ export default function HeroSection() {
                   Ingredient Discovery
                 </p>
                 <p className="text-[13px] sm:text-sm font-medium leading-snug text-cream break-keep">
-<<<<<<< HEAD
                   3가지 원료 선택과 AI 분석으로 <br className="hidden sm:inline" />
                   당신만의 향기를 발견하세요
                 </p>
               </div>
               <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-cream/80 mt-2 group-hover:text-cream transition-colors">
                 <span>Start Analysis</span>
-=======
-                  취향에 맞는 3가지 원료를 선택해 <br className="hidden sm:inline" /> 
-                  당신의 향을 발견하세요
-                </p>
-              </div>
-              <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-cream/80 mt-2 group-hover:text-cream transition-colors">
-                <span>Explore Ingredients</span>
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
                 <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
               </div>
             </div>

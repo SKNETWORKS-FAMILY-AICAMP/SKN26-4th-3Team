@@ -8,17 +8,13 @@ class BrandSerializer(serializers.ModelSerializer):
 
 class PerfumeSerializer(serializers.ModelSerializer):
     brand_name = serializers.CharField(source='brand.name', read_only=True)
-<<<<<<< HEAD
     data = serializers.SerializerMethodField()
     image_asset = serializers.SerializerMethodField()
-=======
->>>>>>> 12b8384 (feat(backend): migrate django fragrance apiAdds the Django REST backend, scent engine services, perfume data loaders, raw fragrance datasets, and API endpoints needed for image-aura analysis and recommendation workflows.)
     
     class Meta:
         model = Perfume
         fields = [
             'id', 'brand', 'brand_name', 'korean_name', 'english_name', 
-<<<<<<< HEAD
             'product_type', 'family', 'release_year', 'data', 'image_asset', 'created_at'
         ]
 
@@ -140,7 +136,3 @@ class AnalyzeResponseSerializer(serializers.Serializer):
     fashionStyle = serializers.CharField()
     analysisMetadata = AnalysisMetadataSerializer()
     recommendations = RecommendationSerializer(many=True)
-=======
-            'product_type', 'family', 'release_year', 'data', 'created_at'
-        ]
->>>>>>> 12b8384 (feat(backend): migrate django fragrance apiAdds the Django REST backend, scent engine services, perfume data loaders, raw fragrance datasets, and API endpoints needed for image-aura analysis and recommendation workflows.)

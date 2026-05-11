@@ -15,31 +15,19 @@ const values = [
     icon: Shield,
     title: "알레르기 안전성",
     description:
-<<<<<<< HEAD
       "성분별 알레르기 유발 물질 데이터베이스와 교차 분석해 <br className=\"hidden sm:inline\" /> 사용자의 건강 정보를 반영한 안전한 추천을 제공합니다.",
-=======
-      "성분별 알레르기 유발 물질 데이터베이스와 교차 분석해 사용자의 건강 정보를 반영한 안전한 추천을 제공합니다.",
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
   },
   {
     icon: Leaf,
     title: "비건 & 에코 인증",
     description:
-<<<<<<< HEAD
       "동물성 원료 제외 및 지속가능성 인증을 받은 브랜드만을 선별하여 <br className=\"hidden sm:inline\" /> 가치 소비를 지원합니다.",
-=======
-      "동물성 원료 제외 및 지속가능성 인증을 받은 브랜드만을 선별하여 가치 소비를 지원합니다.",
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
   },
   {
     icon: Clock,
     title: "TPO 기반 스타일링",
     description:
-<<<<<<< HEAD
       "사용자의 일상과 상황(Time, Context, Occasion)을 고려하여 <br className=\"hidden sm:inline\" /> 현재의 무드에 최적화된 향기 스타일을 제안합니다.",
-=======
-      "사용자의 일상과 상황(Time, Context, Occasion)을 고려하여 현재의 무드에 최적화된 향기 스타일을 제안합니다.",
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
   },
 ];
 
@@ -76,11 +64,7 @@ export default function SafetyValuesSection() {
                 </div>
                 {/* 콘텐츠 영역 */}
                 <h3 className="text-lg font-medium mb-4 tracking-tight">{v.title}</h3>
-<<<<<<< HEAD
-                <p className="text-[14px] leading-relaxed text-cream/50 break-keep" dangerouslySetInnerHTML={{ __html: v.description }} />
-=======
                 <p className="text-[14px] leading-relaxed text-cream/50 break-keep">{v.description}</p>
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
               </div>
             ))}
           </div>
