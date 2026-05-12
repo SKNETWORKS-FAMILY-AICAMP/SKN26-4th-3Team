@@ -4,7 +4,7 @@
  * Embla Carousel을 기반으로 자동 전환, 수동 슬라이드, 제품 피드백(좋아요/싫어요) 기능을 제공합니다.
  */
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, memo } from "react"; // 🛠️ REFACTOR (성능 최적화): memo 도입
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import { ArrowRight, ThumbsUp, ThumbsDown } from "lucide-react";
@@ -27,7 +27,127 @@ interface ProductCarouselProps {
 
 type Feedback = "like" | "dislike" | null;
 
-export default function ProductCarousel({ products, onProductClick, slots }: ProductCarouselProps) {
+// 🛠️ REFACTOR (성능 최적화): 개별 상품 카드 컴포넌트 분리 및 메모이제이션
+const ProductCard = memo(({ 
+  item, 
+  index, 
+  onProductClick, 
+  feedback, 
+  onFeedback, 
+  slots 
+}: { 
+  item: Product & { similarity: number };
+  index: number;
+  onProductClick: (product: Product) => void;
+  feedback: Feedback;
+  onFeedback: (e: React.MouseEvent, productId: number, type: Feedback) => void;
+  slots: ProductCarouselProps["slots"];
+}) => (
+  <div className="flex-[0_0_100%] min-w-0 px-4">
+    <div 
+      onClick={() => onProductClick(item)}
+      data-family={item.family}
+      className="group cursor-pointer bg-white/50 backdrop-blur-sm border border-wood/5 p-8 sm:p-12 rounded-sm hover:bg-wood hover:border-wood transition-all duration-700 overflow-hidden flex flex-col md:flex-row items-center gap-10"
+    >
+      {/* 제품 이미지 및 유사도 배지 */}
+      <div className="w-full md:w-1/2 aspect-square overflow-hidden bg-cream/50 rounded-sm relative">
+        <img 
+          src={item.image} 
+          alt={item.name} 
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" 
+          loading="lazy"
+        />
+        <div
+          className="absolute top-4 right-4 h-7 min-w-[74px] px-3 inline-flex items-center justify-center rounded-full bg-wood/80 text-cream text-[10px] leading-none font-mono group-hover:bg-cream group-hover:text-wood transition-colors"
+          data-capture-pill="match"
+        >
+          <span className="inline-block leading-none translate-y-[1.5px]">{item.similarity}% Match</span>
+        </div>
+      </div>
+      
+      {/* 제품 정보 영역 */}
+      <div className="w-full md:w-1/2 text-left relative">
+        {/* 상단 피드백 버튼 그룹 */}
+        <div className="absolute top-0 right-0 flex gap-2">
+          <button
+            type="button"
+            onClick={(e) => onFeedback(e, item.id, "like")}
+            className={`w-8 h-8 inline-flex items-center justify-center rounded-full transition-all duration-300 ${
+              feedback === "like"
+                ? "bg-wood text-cream group-hover:bg-cream group-hover:text-wood scale-110"
+                : "bg-wood/5 text-wood/40 group-hover:bg-cream/10 group-hover:text-cream/40 hover:scale-110"
+            }`}
+          >
+            <ThumbsUp size={14} fill={feedback === "like" ? "currentColor" : "none"} />
+          </button>
+          <button
+            type="button"
+            onClick={(e) => onFeedback(e, item.id, "dislike")}
+            className={`w-8 h-8 inline-flex items-center justify-center rounded-full transition-all duration-300 ${
+              feedback === "dislike"
+                ? "bg-red-900/80 text-cream scale-110"
+                : "bg-wood/5 text-wood/40 group-hover:bg-cream/10 group-hover:text-cream/40 hover:scale-110 hover:text-red-400"
+            }`}
+          >
+            <ThumbsDown size={14} fill={feedback === "dislike" ? "currentColor" : "none"} />
+          </button>
+        </div>
+
+        {/* 베스트 추천 표시 */}
+        {index === 0 && (
+          <div
+            className="h-6 min-w-[78px] px-2 inline-flex items-center justify-center bg-wood/10 border border-wood/20 rounded-sm mb-3 group-hover:bg-cream/10 group-hover:border-cream/30 transition-colors"
+            data-capture-pill="best"
+          >
+            <span className="inline-block translate-y-px text-[9px] leading-none font-bold text-wood group-hover:text-cream tracking-[0.15em] uppercase [text-indent:0.15em]">Best Pick</span>
+          </div>
+        )}
+        <p className="text-[11px] uppercase tracking-[0.2em] text-wood/70 group-hover:text-cream/70 group-hover:font-semibold mb-2 transition-all">{item.brand}</p>
+        <h4 className="text-2xl sm:text-3xl font-light text-wood group-hover:text-cream group-hover:font-medium mb-6 break-keep transition-all leading-tight pr-16">
+          {item.name}
+        </h4>
+        
+        {/* 요약 상세 정보 */}
+        <div className="space-y-4 mb-8">
+          <div>
+            <span className="text-[10px] uppercase tracking-widest text-wood/60 group-hover:text-cream/60 group-hover:font-semibold block mb-1 transition-all">Notes</span>
+            <p className="text-sm text-wood group-hover:text-cream group-hover:font-semibold line-clamp-2 break-keep text-balance transition-all">
+              {item.notes}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-x-8 gap-y-4">
+            <div>
+              <span className="text-[10px] uppercase tracking-widest text-wood/60 group-hover:text-cream/60 group-hover:font-semibold block mb-1 transition-all">Family</span>
+              <p className="text-sm font-medium text-wood group-hover:text-cream group-hover:font-bold transition-all">{item.family}</p>
+            </div>
+            <div>
+              <span className="text-[10px] uppercase tracking-widest text-wood/60 group-hover:text-cream/60 group-hover:font-semibold block mb-1 transition-all">Size</span>
+              <p className="text-sm font-medium text-wood group-hover:text-cream group-hover:font-bold transition-all">{item.size}</p>
+            </div>
+            <div>
+              <span className="text-[10px] uppercase tracking-widest text-wood/60 group-hover:text-cream/60 group-hover:font-semibold block mb-1 transition-all">Price</span>
+              <p className="text-sm font-medium text-wood group-hover:text-cream group-hover:font-bold transition-all">{item.price}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* 추가 블록 2: 매칭 근거 텍스트 (Why This Scent) */}
+        <div className="mb-6 opacity-0 group-hover:opacity-100 transition-opacity duration-700 delay-100">
+          <p className="text-cream/60 text-xs italic break-keep">
+            당신이 설계한 '{slots.Base?.name || slots.Middle?.name || slots.Top?.name || "선택된"}' 향기가 이 향수의 {item.family} 분위기를 완성해 줍니다
+          </p>
+        </div>
+
+        <div className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-wood group-hover:text-cream group-hover:font-bold pt-6 border-t border-wood/10 group-hover:border-cream/20 transition-all">
+          <span>Explore Details</span>
+          <ArrowRight size={14} className="group-hover:translate-x-2 transition-transform" />
+        </div>
+      </div>
+    </div>
+  </div>
+));
+
+function ProductCarousel({ products, onProductClick, slots }: ProductCarouselProps) {
   /** 캐러셀 엔진 및 자동 재생 설정 (30초 간격) */
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
     Autoplay({ delay: 30000, stopOnInteraction: false })
@@ -36,27 +156,31 @@ export default function ProductCarousel({ products, onProductClick, slots }: Pro
   /** 각 제품별 피드백 상태 관리 */
   const [feedbacks, setFeedbacks] = useState<Record<number, Feedback>>({});
 
+  // 🛠️ REFACTOR (성능 최적화): 캐러셀 제어 함수 메모이제이션
   const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi]);
   const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi]);
 
   /**
    * 제품에 대한 긍정/부정 피드백 처리
    */
-  const handleFeedback = (e: React.MouseEvent, productId: number, type: Feedback) => {
+  // 🛠️ REFACTOR (성능 최적화): 피드백 핸들러 메모이제이션
+  const handleFeedback = useCallback((e: React.MouseEvent, productId: number, type: Feedback) => {
     e.stopPropagation(); // 카드 클릭(모달 열기) 방지
     
-    const currentFeedback = feedbacks[productId];
-    const newFeedback = currentFeedback === type ? null : type;
-    
-    setFeedbacks(prev => ({ ...prev, [productId]: newFeedback }));
-    
-    // 사용자 경험 향상을 위한 토스트 알림
-    if (newFeedback === "like") {
-      toast.success("이 향수를 위시리스트에 담았습니다.");
-    } else if (newFeedback === "dislike") {
-      toast.info("취향 피드백이 반영되었습니다.");
-    }
-  };
+    setFeedbacks(prev => {
+      const currentFeedback = prev[productId];
+      const newFeedback = currentFeedback === type ? null : type;
+      
+      // 사용자 경험 향상을 위한 토스트 알림 (상태 업데이트 내부에서 실행하여 의존성 제거)
+      if (newFeedback === "like") {
+        toast.success("이 향수를 위시리스트에 담았습니다.");
+      } else if (newFeedback === "dislike") {
+        toast.info("취향 피드백이 반영되었습니다.");
+      }
+      
+      return { ...prev, [productId]: newFeedback };
+    });
+  }, []);
 
   return (
     <div>
@@ -64,108 +188,15 @@ export default function ProductCarousel({ products, onProductClick, slots }: Pro
         <div className="overflow-hidden" ref={emblaRef}>
           <div className="flex">
             {products.map((item, index) => (
-              <div key={item.id} className="flex-[0_0_100%] min-w-0 px-4">
-                <div 
-                  onClick={() => onProductClick(item)}
-                  data-family={item.family}
-                  className="group cursor-pointer bg-white/50 backdrop-blur-sm border border-wood/5 p-8 sm:p-12 rounded-sm hover:bg-wood hover:border-wood transition-all duration-700 overflow-hidden flex flex-col md:flex-row items-center gap-10"
-                >
-                  {/* 제품 이미지 및 유사도 배지 */}
-                  <div className="w-full md:w-1/2 aspect-square overflow-hidden bg-cream/50 rounded-sm relative">
-                    <img 
-                      src={item.image} 
-                      alt={item.name} 
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" 
-                      loading="lazy"
-                    />
-                    <div
-                      className="absolute top-4 right-4 h-7 min-w-[74px] px-3 inline-flex items-center justify-center rounded-full bg-wood/80 text-cream text-[10px] leading-none font-mono group-hover:bg-cream group-hover:text-wood transition-colors"
-                      data-capture-pill="match"
-                    >
-                      <span className="inline-block leading-none translate-y-[1.5px]">{item.similarity}% Match</span>
-                    </div>
-                  </div>
-                  
-                  {/* 제품 정보 영역 */}
-                  <div className="w-full md:w-1/2 text-left relative">
-                    {/* 상단 피드백 버튼 그룹 */}
-                    <div className="absolute top-0 right-0 flex gap-2">
-                      <button
-                        type="button"
-                        onClick={(e) => handleFeedback(e, item.id, "like")}
-                        className={`w-8 h-8 inline-flex items-center justify-center rounded-full transition-all duration-300 ${
-                          feedbacks[item.id] === "like"
-                            ? "bg-wood text-cream group-hover:bg-cream group-hover:text-wood scale-110"
-                            : "bg-wood/5 text-wood/40 group-hover:bg-cream/10 group-hover:text-cream/40 hover:scale-110"
-                        }`}
-                      >
-                        <ThumbsUp size={14} fill={feedbacks[item.id] === "like" ? "currentColor" : "none"} />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={(e) => handleFeedback(e, item.id, "dislike")}
-                        className={`w-8 h-8 inline-flex items-center justify-center rounded-full transition-all duration-300 ${
-                          feedbacks[item.id] === "dislike"
-                            ? "bg-red-900/80 text-cream scale-110"
-                            : "bg-wood/5 text-wood/40 group-hover:bg-cream/10 group-hover:text-cream/40 hover:scale-110 hover:text-red-400"
-                        }`}
-                      >
-                        <ThumbsDown size={14} fill={feedbacks[item.id] === "dislike" ? "currentColor" : "none"} />
-                      </button>
-                    </div>
-
-                    {/* 베스트 추천 표시 */}
-                    {index === 0 && (
-                      <div
-                        className="h-6 min-w-[78px] px-2 inline-flex items-center justify-center bg-wood/10 border border-wood/20 rounded-sm mb-3 group-hover:bg-cream/10 group-hover:border-cream/30 transition-colors"
-                        data-capture-pill="best"
-                      >
-                        <span className="inline-block translate-y-px text-[9px] leading-none font-bold text-wood group-hover:text-cream tracking-[0.15em] uppercase [text-indent:0.15em]">Best Pick</span>
-                      </div>
-                    )}
-                    <p className="text-[11px] uppercase tracking-[0.2em] text-wood/70 group-hover:text-cream/70 group-hover:font-semibold mb-2 transition-all">{item.brand}</p>
-                    <h4 className="text-2xl sm:text-3xl font-light text-wood group-hover:text-cream group-hover:font-medium mb-6 break-keep transition-all leading-tight pr-16">
-                      {item.name}
-                    </h4>
-                    
-                    {/* 요약 상세 정보 */}
-                    <div className="space-y-4 mb-8">
-                      <div>
-                        <span className="text-[10px] uppercase tracking-widest text-wood/60 group-hover:text-cream/60 group-hover:font-semibold block mb-1 transition-all">Notes</span>
-                        <p className="text-sm text-wood group-hover:text-cream group-hover:font-semibold line-clamp-2 break-keep text-balance transition-all">
-                          {item.notes}
-                        </p>
-                      </div>
-                      <div className="flex flex-wrap gap-x-8 gap-y-4">
-                        <div>
-                          <span className="text-[10px] uppercase tracking-widest text-wood/60 group-hover:text-cream/60 group-hover:font-semibold block mb-1 transition-all">Family</span>
-                          <p className="text-sm font-medium text-wood group-hover:text-cream group-hover:font-bold transition-all">{item.family}</p>
-                        </div>
-                        <div>
-                          <span className="text-[10px] uppercase tracking-widest text-wood/60 group-hover:text-cream/60 group-hover:font-semibold block mb-1 transition-all">Size</span>
-                          <p className="text-sm font-medium text-wood group-hover:text-cream group-hover:font-bold transition-all">{item.size}</p>
-                        </div>
-                        <div>
-                          <span className="text-[10px] uppercase tracking-widest text-wood/60 group-hover:text-cream/60 group-hover:font-semibold block mb-1 transition-all">Price</span>
-                          <p className="text-sm font-medium text-wood group-hover:text-cream group-hover:font-bold transition-all">{item.price}</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* 추가 블록 2: 매칭 근거 텍스트 (Why This Scent) */}
-                    <div className="mb-6 opacity-0 group-hover:opacity-100 transition-opacity duration-700 delay-100">
-                      <p className="text-cream/60 text-xs italic break-keep">
-                        당신이 설계한 '{slots.Base?.name || slots.Middle?.name || slots.Top?.name || "선택된"}' 향기가 이 향수의 {item.family} 분위기를 완성해 줍니다
-                      </p>
-                    </div>
-
-                    <div className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-wood group-hover:text-cream group-hover:font-bold pt-6 border-t border-wood/10 group-hover:border-cream/20 transition-all">
-                      <span>Explore Details</span>
-                      <ArrowRight size={14} className="group-hover:translate-x-2 transition-transform" />
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <ProductCard 
+                key={item.id}
+                item={item}
+                index={index}
+                onProductClick={onProductClick}
+                feedback={feedbacks[item.id] || null}
+                onFeedback={handleFeedback}
+                slots={slots}
+              />
             ))}
           </div>
         </div>
@@ -195,5 +226,8 @@ export default function ProductCarousel({ products, onProductClick, slots }: Pro
     </div>
   );
 }
+
+// 🛠️ REFACTOR (성능 최적화): 캐러셀 컴포넌트 메모이제이션
+export default memo(ProductCarousel);
 
 // EOF: ProductCarousel.tsx

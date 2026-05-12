@@ -1,3 +1,4 @@
+import { memo, useCallback } from "react"; // 🛠️ REFACTOR (성능 최적화): memo, useCallback 도입
 import ProductCarousel from "./ProductCarousel";
 import type { Product } from "@/data/productData";
 import type { ScentNote } from "@/data/noteData";
@@ -14,7 +15,7 @@ interface RecommendationListProps {
   onSortChange: (sort: "recommended" | "price") => void;
 }
 
-export default function RecommendationList({ 
+function RecommendationList({ 
   recommendations, 
   onProductClick, 
   slots, 
@@ -24,13 +25,17 @@ export default function RecommendationList({
   const sortButtonClass = "h-8 min-w-[72px] px-5 inline-flex items-center justify-center rounded-full text-[10px] leading-none font-medium uppercase tracking-widest [text-indent:0.15em] transition-all hover:font-bold";
   const sortLabelClass = "inline-block leading-none translate-y-[1.5px]";
 
+  // 🛠️ REFACTOR (성능 최적화): 핸들러 메모이제이션으로 하위 컴포넌트 리렌더링 방지
+  const handleRecommendedSort = useCallback(() => onSortChange("recommended"), [onSortChange]);
+  const handlePriceSort = useCallback(() => onSortChange("price"), [onSortChange]);
+
   return (
     <div className="mt-32 pt-24 border-t border-wood/10">
       <div className="flex flex-col items-center mb-16 gap-8">
         <div className="inline-flex h-10 items-center gap-1 p-1 bg-wood/5 rounded-full border border-wood/10">
           <button
             type="button"
-            onClick={() => onSortChange("recommended")}
+            onClick={handleRecommendedSort}
             className={`${sortButtonClass} ${
               sortBy === "recommended" ? "bg-wood text-cream shadow-md" : "text-wood"
             }`}
@@ -40,7 +45,7 @@ export default function RecommendationList({
           </button>
           <button
             type="button"
-            onClick={() => onSortChange("price")}
+            onClick={handlePriceSort}
             className={`${sortButtonClass} ${
               sortBy === "price" ? "bg-wood text-cream shadow-md" : "text-wood"
             }`}
@@ -72,3 +77,6 @@ export default function RecommendationList({
     </div>
   );
 }
+
+// 🛠️ REFACTOR (성능 최적화): 결과 리스트 컴포넌트 메모이제이션
+export default memo(RecommendationList);

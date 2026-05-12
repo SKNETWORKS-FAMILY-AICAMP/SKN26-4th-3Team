@@ -23,11 +23,62 @@ export default function ImageUploader({ onImageProcessed, isAnalyzing }: ImageUp
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   /**
+   * 🛠️ REFACTOR (보안 강화): 파일의 바이너리 헤더(Magic Number)를 확인하여 
+   * 위조된 확장자를 가진 악성 파일(Web Shell 등)의 업로드를 차단합니다.
+   */
+  const validateFileSignature = async (file: File): Promise<boolean> => {
+    const header = await new Promise<string>((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = (e) => {
+        if (!e.target?.result || !(e.target.result instanceof ArrayBuffer)) return resolve("");
+        const arr = new Uint8Array(e.target.result).subarray(0, 4);
+        let header = "";
+        for (let i = 0; i < arr.length; i++) {
+          header += arr[i].toString(16);
+        }
+        resolve(header.toLowerCase());
+      };
+      reader.readAsArrayBuffer(file.slice(0, 4));
+    });
+
+    // Magic Numbers: JPEG(ffd8ffe0/1/2/3/8), PNG(89504e47), WEBP(52494646)
+    const signatures: Record<string, string[]> = {
+      "image/jpeg": ["ffd8ff"],
+      "image/png": ["89504e47"],
+      "image/webp": ["52494646"]
+    };
+
+    const fileType = file.type;
+    return signatures[fileType]?.some(sig => header.startsWith(sig)) ?? false;
+  };
+
+  /**
    * 이미지 리사이징 및 클라우드 업로드 시뮬레이션
    */
   const processImage = async (file: File) => {
-    if (!file.type.startsWith("image/")) {
-      setError("이미지 파일만 업로드 가능합니다.");
+    if (isUploading || isAnalyzing) return; // 🚨 FIX: POST 중복 요청 방지
+    
+    // 🛡️ SECURITY FIX: 허용된 이미지 MIME 타입 및 확장자 엄격 검사
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+    const allowedExtensions = ["jpg", "jpeg", "png", "webp"];
+    const fileExtension = file.name.split(".").pop()?.toLowerCase();
+
+    if (!allowedTypes.includes(file.type) || !fileExtension || !allowedExtensions.includes(fileExtension)) {
+      setError("JPG, PNG, WEBP 형식의 이미지만 업로드 가능합니다.");
+      return;
+    }
+
+    // 🛠️ REFACTOR (보안 강화): 바이너리 시그니처 검증으로 파일 위조 차단
+    const isValidSignature = await validateFileSignature(file);
+    if (!isValidSignature) {
+      setError("유효하지 않은 이미지 파일입니다. 파일 내용이 손상되었거나 위조되었습니다.");
+      return;
+    }
+
+    // 🛡️ SECURITY FIX: 파일 크기 제한 (10MB) 설정하여 Image Bomb 및 DOS 공격 방어
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+    if (file.size > MAX_FILE_SIZE) {
+      setError("파일 크기는 10MB 이하만 가능합니다.");
       return;
     }
 
@@ -38,6 +89,13 @@ export default function ImageUploader({ onImageProcessed, isAnalyzing }: ImageUp
       const img = new Image();
       img.onload = async () => {
         try {
+          // 🛡️ SECURITY FIX: 캔버스 크기 상한선 강제 적용 (비정상적으로 큰 이미지의 픽셀 공격 방어)
+          const MAX_CANVAS_SIZE = 4096;
+          if (img.width > MAX_CANVAS_SIZE || img.height > MAX_CANVAS_SIZE) {
+            setError("이미지 해상도가 너무 높습니다.");
+            return;
+          }
+
           const canvas = document.createElement("canvas");
           const MAX_WIDTH = 1200; 
           const MAX_HEIGHT = 1200;
@@ -68,20 +126,34 @@ export default function ImageUploader({ onImageProcessed, isAnalyzing }: ImageUp
           // 클라우드 업로드 시뮬레이션 시작
           setIsUploading(true);
           const remoteUrl = await uploadToCloudStorage(base64);
-          setIsUploading(false);
           
-          onImageProcessed(base64, remoteUrl);
+          await onImageProcessed(base64, remoteUrl); // 🚨 FIX: POST 중복 요청 방지
+          setIsUploading(false); // 🚨 FIX: POST 중복 요청 방지
         } catch {
           setError("이미지 처리 중 오류가 발생했습니다.");
           setIsUploading(false);
         }
       };
+      
+      // 🛡️ SECURITY FIX: onerror 핸들러 추가하여 이미지 로딩 실패 시 자원 해제
+      img.onerror = () => {
+        setError("이미지를 불러올 수 없습니다. 파일이 손상되었거나 올바른 형식이 아닙니다.");
+        setIsUploading(false);
+      };
+
       img.src = event.target?.result as string;
     };
+
+    // 🛡️ SECURITY FIX: FileReader 오류 핸들링 추가
+    reader.onerror = () => {
+      setError("파일을 읽는 중 오류가 발생했습니다.");
+    };
+
     reader.readAsDataURL(file);
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault(); // 🚨 FIX: POST 중복 요청 방지
     if (e.target.files && e.target.files[0]) {
       processImage(e.target.files[0]);
     }
@@ -89,22 +161,28 @@ export default function ImageUploader({ onImageProcessed, isAnalyzing }: ImageUp
 
   const handleDragOver = (e: DragEvent) => {
     e.preventDefault();
+    e.stopPropagation(); // 🚨 FIX: POST 중복 요청 방지
     setIsDragging(true);
   };
 
-  const handleDragLeave = () => {
+  const handleDragLeave = (e: DragEvent) => {
+    e.preventDefault(); // 🚨 FIX: POST 중복 요청 방지
+    e.stopPropagation(); // 🚨 FIX: POST 중복 요청 방지
     setIsDragging(false);
   };
 
   const handleDrop = (e: DragEvent) => {
     e.preventDefault();
+    e.stopPropagation(); // 🚨 FIX: POST 중복 요청 방지
     setIsDragging(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       processImage(e.dataTransfer.files[0]);
     }
   };
 
-  const removeImage = () => {
+  const removeImage = (e: React.MouseEvent) => {
+    e.preventDefault(); // 🚨 FIX: POST 중복 요청 방지
+    e.stopPropagation(); // 🚨 FIX: POST 중복 요청 방지
     setPreview(null);
     setError(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
@@ -124,7 +202,7 @@ export default function ImageUploader({ onImageProcessed, isAnalyzing }: ImageUp
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          onClick={() => fileInputRef.current?.click()}
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); fileInputRef.current?.click(); }} // 🚨 FIX: POST 중복 요청 방지
           className={`relative aspect-video flex flex-col items-center justify-center border-2 border-dashed transition-all duration-300 cursor-pointer rounded-sm ${
             isDragging ? "border-wood bg-cream/20" : "border-cream/20 bg-white/10 hover:bg-white/20"
           }`}
@@ -158,6 +236,7 @@ export default function ImageUploader({ onImageProcessed, isAnalyzing }: ImageUp
           {!isAnalyzing && (
             <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
               <button
+                type="button" // 🚨 FIX: POST 중복 요청 방지
                 onClick={removeImage}
                 className="p-3 bg-cream text-wood rounded-full hover:scale-110 shadow-lg transition-transform"
                 title="이미지 제거"

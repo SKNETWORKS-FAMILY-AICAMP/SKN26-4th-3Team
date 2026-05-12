@@ -196,6 +196,12 @@ export const captureReportBlob = async (reportElement: HTMLElement | null): Prom
       windowWidth: CAPTURE_VIEWPORT_WIDTH,
       windowHeight: Math.max(reportElement.scrollHeight, window.innerHeight),
       onclone: async (clonedDoc) => {
+        // 🛠️ FIX (중복 복사 해결): 반응형 구조에서 동일 ID가 여러 개 존재할 가능성을 차단하고, 캡처 전용 타겟만 남김
+        const targets = clonedDoc.querySelectorAll("#report-content");
+        targets.forEach((target, index) => {
+          if (index > 0) target.remove(); 
+        });
+
         const el = clonedDoc.getElementById("report-content");
         if (!el) return;
 

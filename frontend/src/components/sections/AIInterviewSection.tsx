@@ -35,6 +35,8 @@ export default function AIInterviewSection({ onComplete, selectedNotes = [] }: A
   ];
 
   const handleImageProcessed = (base64: string) => {
+    if (isLoading) return; // 🚨 FIX: POST 중복 요청 방지
+    
     setLastProcessedBase64(base64);
     setLoading(true);
     setError(null);
@@ -75,7 +77,13 @@ export default function AIInterviewSection({ onComplete, selectedNotes = [] }: A
     }, interval);
   };
 
-  const handleRetry = () => {
+  const handleRetry = (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault(); // 🚨 FIX: POST 중복 요청 방지
+      e.stopPropagation(); // 🚨 FIX: POST 중복 요청 방지
+    }
+    // 🛠️ REFACTOR (UX 안정성): 재시도 시 사용자에게 시각적 피드백 제공
+    setError(null);
     if (lastProcessedBase64) {
       handleImageProcessed(lastProcessedBase64);
     }
@@ -94,20 +102,41 @@ export default function AIInterviewSection({ onComplete, selectedNotes = [] }: A
 
           <div className="max-w-2xl mx-auto">
             {error ? (
-              <ErrorFallback message={error} onRetry={handleRetry} />
+              // 🛠️ REFACTOR (UX 안정성): ErrorFallback에 구체적인 가이드 메시지 전달
+              <ErrorFallback 
+                message={`${error} \n서버 연결이 원활하지 않을 수 있습니다. 잠시 후 다시 시도해 주세요.`} 
+                onRetry={handleRetry} 
+              />
             ) : !isComplete ? (
               <div className="relative">
                 <ImageUploader onImageProcessed={handleImageProcessed} isAnalyzing={isLoading} />
                 {isLoading && (
-                  <div className="mt-12 space-y-6">
-                    <div className="h-px bg-cream/10 w-full relative overflow-hidden">
-                      <div className="absolute inset-y-0 left-0 bg-cream transition-all duration-300 ease-out" style={{ width: `${progress}%` }} />
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-3">
-                        <LoadingSpinner className="p-0 gap-2 flex-row" message={analysisStatus} />
+                  <div className="mt-12 space-y-10 animate-in fade-in duration-700">
+                    {/* 🛠️ REFACTOR (UX 안정성): 투박한 프로그레스 바 대신 우아한 스켈레톤 UI와 진행 상태 결합 */}
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-end mb-2">
+                        <span className="text-[11px] uppercase tracking-[0.3em] text-cream/30 font-bold">Analysis in progress</span>
+                        <span className="text-[10px] font-mono text-cream/60">{Math.round(progress)}%</span>
                       </div>
-                      <span className="text-[11px] font-mono text-cream/40">{Math.round(progress)}%</span>
+                      <div className="h-[2px] bg-cream/5 w-full relative overflow-hidden">
+                        <div 
+                          className="absolute inset-y-0 left-0 bg-cream/40 transition-all duration-300 ease-out shadow-[0_0_8px_rgba(253,252,240,0.3)]" 
+                          style={{ width: `${progress}%` }} 
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 gap-6">
+                      <div className="p-8 border border-cream/5 bg-white/[0.02] rounded-sm backdrop-blur-sm relative overflow-hidden">
+                        <div className="flex items-center gap-4">
+                          <LoadingSpinner className="p-0 gap-3 flex-row" message={analysisStatus} />
+                        </div>
+                        {/* 🛠️ REFACTOR (UX 안정성): 로딩 중 컨텐츠의 뼈대를 보여주는 스켈레톤 펄스 효과 */}
+                        <div className="mt-8 space-y-3 opacity-20">
+                          <div className="h-3 bg-cream/40 rounded-full w-3/4 animate-pulse" />
+                          <div className="h-3 bg-cream/40 rounded-full w-1/2 animate-pulse" />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -117,7 +146,11 @@ export default function AIInterviewSection({ onComplete, selectedNotes = [] }: A
                 <div className="w-20 h-20 rounded-full bg-cream/10 flex items-center justify-center mb-8 border border-cream/20">
                   <CheckCircle2 className="text-cream w-10 h-10" strokeWidth={1} />
                 </div>
-                <a href="#report" className="group flex items-center gap-3 bg-cream text-wood px-10 py-4 text-[12px] font-medium uppercase tracking-[0.2em] transition-all duration-300 hover:bg-white active:scale-95">
+                <a 
+                  href="#report" 
+                  onClick={(e) => { e.stopPropagation(); }} // 🚨 FIX: POST 중복 요청 방지
+                  className="group flex items-center gap-3 bg-cream text-wood px-10 py-4 text-[12px] font-medium uppercase tracking-[0.2em] transition-all duration-300 hover:bg-white active:scale-95"
+                >
                   View Insight Report <Sparkles size={16} className="group-hover:rotate-12 transition-transform" />
                 </a>
               </div>
