@@ -103,9 +103,9 @@ class RecommendationService:
                 "matchReason": self._generate_reason(matches, main_family),
                 "details": {
                     "story": p_data.get("description", ""),
-                    "topNotes": p_data.get("notes_parsed", {}).get("top", []),
-                    "heartNotes": p_data.get("notes_parsed", {}).get("middle", []),
-                    "baseNotes": p_data.get("notes_parsed", {}).get("base", []),
+                    "topNotes": ", ".join(p_data.get("notes_parsed", {}).get("top", [])),
+                    "middleNotes": ", ".join(p_data.get("notes_parsed", {}).get("middle", [])),
+                    "baseNotes": ", ".join(p_data.get("notes_parsed", {}).get("base", [])),
                     "bestFor": ", ".join(p_data.get("keywords", [])[:3])
                 }
             })
