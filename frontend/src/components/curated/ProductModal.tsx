@@ -77,15 +77,15 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
             <div className="grid grid-cols-1 gap-4">
               <div className="flex items-start gap-4">
                 <span className="text-[10px] uppercase tracking-widest text-wood/40 mt-1 w-12">Top</span>
-                <p className="text-sm font-medium">{product.details.topNotes.join(", ")}</p>
+                <p className="text-sm font-medium">{product.details.topNotes}</p>
               </div>
               <div className="flex items-start gap-4">
                 <span className="text-[10px] uppercase tracking-widest text-wood/40 mt-1 w-12">Mid</span>
-                <p className="text-sm font-medium">{product.details.middleNotes.join(", ")}</p>
+                <p className="text-sm font-medium">{product.details.middleNotes}</p>
               </div>
               <div className="flex items-start gap-4">
                 <span className="text-[10px] uppercase tracking-widest text-wood/40 mt-1 w-12">Base</span>
-                <p className="text-sm font-medium">{product.details.baseNotes.join(", ")}</p>
+                <p className="text-sm font-medium">{product.details.baseNotes}</p>
               </div>
             </div>
           </div>

@@ -34,9 +34,9 @@ export function getRecommendedProducts(results: AnalysisResults | null): (Produc
       if (!userNote) return;
       const targetText = `
         ${product.notes.toLowerCase()} 
-        ${product.details.topNotes.join(", ").toLowerCase()} 
-        ${product.details.middleNotes.join(", ").toLowerCase()} 
-        ${product.details.baseNotes.join(", ").toLowerCase()}
+        ${product.details.topNotes.toLowerCase()} 
+        ${product.details.middleNotes.toLowerCase()} 
+        ${product.details.baseNotes.toLowerCase()}
       `.replace(/\s+/g, '');
       
       if (targetText.includes(userNote.toLowerCase().replace(/\s+/g, ''))) {
