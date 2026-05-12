@@ -30,11 +30,19 @@ export default function ConcentrationList({ concentrations }: ConcentrationListP
               <div className="flex justify-between items-end mb-2 md:mb-3 text-wood">
                 <div className="flex items-baseline gap-2 md:gap-3">
                   <h4 className="text-lg md:text-xl font-medium">{c.type}</h4>
+<<<<<<< HEAD
                   <span className="text-[11px] md:text-[12px] text-wood/70 font-normal">{c.koType}</span>
                 </div>
                 <span className="text-[10px] md:text-[12px] font-mono text-wood/70">{c.ratio} / {c.duration}</span>
               </div>
               <p className="text-[14px] md:text-[15px] text-wood group-hover:font-semibold transition-all duration-300 break-keep">
+=======
+                  <span className="text-[11px] md:text-[12px] text-wood/50 font-normal">{c.koType}</span>
+                </div>
+                <span className="text-[10px] md:text-[12px] font-mono text-wood/40">{c.ratio} / {c.duration}</span>
+              </div>
+              <p className="text-[14px] md:text-[15px] text-wood/60 group-hover:text-wood transition-colors duration-300 break-keep">
+>>>>>>> olfit-repo/dev
                 {c.desc}
               </p>
             </div>

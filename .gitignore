@@ -264,4 +264,9 @@ database/init/*.sql.bak
 *.sln
 
 # Local migration scratch space
+<<<<<<< HEAD
 .source_olfit_playground/
+=======
+.source_olfit_playground/
+>>>>>>> olfit-repo/dev
+node_modules/
