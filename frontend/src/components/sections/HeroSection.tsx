@@ -91,10 +91,7 @@ export default function HeroSection() {
                 src="https://www.byredo.com/cdn-cgi/image/width=auto,height=1200,fit=scale-down,gravity=auto,format=webp,quality=70/https://www.byredo.com/media/catalog/product/cache/74c1057f7991b4edb2bc7bdaa94de933/8/0/806014_1_full_no.jpg"
                 alt="Scent Exploration"
                 className="w-full h-full object-cover mix-blend-lighten opacity-90"
-<<<<<<< HEAD
                 loading="lazy"
-=======
->>>>>>> olfit-repo/dev
               />
             </div>
             {/* 텍스트 영역 */}

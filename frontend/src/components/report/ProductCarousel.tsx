@@ -75,7 +75,6 @@ export default function ProductCarousel({ products, onProductClick, slots }: Pro
                     <img 
                       src={item.image} 
                       alt={item.name} 
-<<<<<<< HEAD
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" 
                       loading="lazy"
                     />
@@ -84,13 +83,6 @@ export default function ProductCarousel({ products, onProductClick, slots }: Pro
                       data-capture-pill="match"
                     >
                       <span className="inline-block leading-none translate-y-[1.5px]">{item.similarity}% Match</span>
-=======
-                      crossOrigin="anonymous"
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" 
-                    />
-                    <div className="absolute top-4 right-4 bg-wood/80 text-cream px-3 py-1 rounded-full text-[10px] font-mono group-hover:bg-cream group-hover:text-wood transition-colors">
-                      {item.similarity}% Match
->>>>>>> olfit-repo/dev
                     </div>
                   </div>
                   
@@ -99,14 +91,9 @@ export default function ProductCarousel({ products, onProductClick, slots }: Pro
                     {/* 상단 피드백 버튼 그룹 */}
                     <div className="absolute top-0 right-0 flex gap-2">
                       <button
-<<<<<<< HEAD
                         type="button"
                         onClick={(e) => handleFeedback(e, item.id, "like")}
                         className={`w-8 h-8 inline-flex items-center justify-center rounded-full transition-all duration-300 ${
-=======
-                        onClick={(e) => handleFeedback(e, item.id, "like")}
-                        className={`p-2 rounded-full transition-all duration-300 ${
->>>>>>> olfit-repo/dev
                           feedbacks[item.id] === "like"
                             ? "bg-wood text-cream group-hover:bg-cream group-hover:text-wood scale-110"
                             : "bg-wood/5 text-wood/40 group-hover:bg-cream/10 group-hover:text-cream/40 hover:scale-110"
@@ -115,14 +102,9 @@ export default function ProductCarousel({ products, onProductClick, slots }: Pro
                         <ThumbsUp size={14} fill={feedbacks[item.id] === "like" ? "currentColor" : "none"} />
                       </button>
                       <button
-<<<<<<< HEAD
                         type="button"
                         onClick={(e) => handleFeedback(e, item.id, "dislike")}
                         className={`w-8 h-8 inline-flex items-center justify-center rounded-full transition-all duration-300 ${
-=======
-                        onClick={(e) => handleFeedback(e, item.id, "dislike")}
-                        className={`p-2 rounded-full transition-all duration-300 ${
->>>>>>> olfit-repo/dev
                           feedbacks[item.id] === "dislike"
                             ? "bg-red-900/80 text-cream scale-110"
                             : "bg-wood/5 text-wood/40 group-hover:bg-cream/10 group-hover:text-cream/40 hover:scale-110 hover:text-red-400"
@@ -134,7 +116,6 @@ export default function ProductCarousel({ products, onProductClick, slots }: Pro
 
                     {/* 베스트 추천 표시 */}
                     {index === 0 && (
-<<<<<<< HEAD
                       <div
                         className="h-6 min-w-[78px] px-2 inline-flex items-center justify-center bg-wood/10 border border-wood/20 rounded-sm mb-3 group-hover:bg-cream/10 group-hover:border-cream/30 transition-colors"
                         data-capture-pill="best"
@@ -144,33 +125,19 @@ export default function ProductCarousel({ products, onProductClick, slots }: Pro
                     )}
                     <p className="text-[11px] uppercase tracking-[0.2em] text-wood/70 group-hover:text-cream/70 group-hover:font-semibold mb-2 transition-all">{item.brand}</p>
                     <h4 className="text-2xl sm:text-3xl font-light text-wood group-hover:text-cream group-hover:font-medium mb-6 break-keep transition-all leading-tight pr-16">
-=======
-                      <div className="inline-flex items-center justify-center px-2 py-1 bg-wood/10 border border-wood/20 rounded-sm mb-3 group-hover:bg-cream/10 group-hover:border-cream/30 transition-colors">
-                        <span className="text-[9px] font-bold text-wood group-hover:text-cream tracking-[0.15em] uppercase leading-none">Best Pick</span>
-                      </div>
-                    )}
-                    <p className="text-[11px] uppercase tracking-[0.2em] text-wood/40 group-hover:text-cream/40 mb-2 transition-colors">{item.brand}</p>
-                    <h4 className="text-2xl sm:text-3xl font-light text-wood group-hover:text-cream mb-6 break-keep transition-colors leading-tight pr-16">
->>>>>>> olfit-repo/dev
                       {item.name}
                     </h4>
                     
                     {/* 요약 상세 정보 */}
                     <div className="space-y-4 mb-8">
                       <div>
-<<<<<<< HEAD
                         <span className="text-[10px] uppercase tracking-widest text-wood/60 group-hover:text-cream/60 group-hover:font-semibold block mb-1 transition-all">Notes</span>
                         <p className="text-sm text-wood group-hover:text-cream group-hover:font-semibold line-clamp-2 break-keep text-balance transition-all">
-=======
-                        <span className="text-[10px] uppercase tracking-widest text-wood/30 group-hover:text-cream/30 block mb-1 transition-colors">Notes</span>
-                        <p className="text-sm text-wood/70 group-hover:text-cream/70 line-clamp-2 break-keep text-balance transition-colors">
->>>>>>> olfit-repo/dev
                           {item.notes}
                         </p>
                       </div>
                       <div className="flex flex-wrap gap-x-8 gap-y-4">
                         <div>
-<<<<<<< HEAD
                           <span className="text-[10px] uppercase tracking-widest text-wood/60 group-hover:text-cream/60 group-hover:font-semibold block mb-1 transition-all">Family</span>
                           <p className="text-sm font-medium text-wood group-hover:text-cream group-hover:font-bold transition-all">{item.family}</p>
                         </div>
@@ -181,18 +148,6 @@ export default function ProductCarousel({ products, onProductClick, slots }: Pro
                         <div>
                           <span className="text-[10px] uppercase tracking-widest text-wood/60 group-hover:text-cream/60 group-hover:font-semibold block mb-1 transition-all">Price</span>
                           <p className="text-sm font-medium text-wood group-hover:text-cream group-hover:font-bold transition-all">{item.price}</p>
-=======
-                          <span className="text-[10px] uppercase tracking-widest text-wood/30 group-hover:text-cream/30 block mb-1 transition-colors">Family</span>
-                          <p className="text-sm font-medium text-wood group-hover:text-cream transition-colors">{item.family}</p>
-                        </div>
-                        <div>
-                          <span className="text-[10px] uppercase tracking-widest text-wood/30 group-hover:text-cream/30 block mb-1 transition-colors">Size</span>
-                          <p className="text-sm font-medium text-wood group-hover:text-cream transition-colors">{item.size}</p>
-                        </div>
-                        <div>
-                          <span className="text-[10px] uppercase tracking-widest text-wood/30 group-hover:text-cream/30 block mb-1 transition-colors">Price</span>
-                          <p className="text-sm font-medium text-wood group-hover:text-cream transition-colors">{item.price}</p>
->>>>>>> olfit-repo/dev
                         </div>
                       </div>
                     </div>
@@ -204,11 +159,7 @@ export default function ProductCarousel({ products, onProductClick, slots }: Pro
                       </p>
                     </div>
 
-<<<<<<< HEAD
                     <div className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-wood group-hover:text-cream group-hover:font-bold pt-6 border-t border-wood/10 group-hover:border-cream/20 transition-all">
-=======
-                    <div className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-wood group-hover:text-cream pt-6 border-t border-wood/10 group-hover:border-cream/20 transition-all">
->>>>>>> olfit-repo/dev
                       <span>Explore Details</span>
                       <ArrowRight size={14} className="group-hover:translate-x-2 transition-transform" />
                     </div>

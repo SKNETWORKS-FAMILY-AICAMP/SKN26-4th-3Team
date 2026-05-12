@@ -11,10 +11,7 @@ interface Family {
   title: string;
   subtitle: string;
   description: string;
-<<<<<<< HEAD
   keyNotes?: string[];
-=======
->>>>>>> olfit-repo/dev
   icon: LucideIcon;
   color: string;
   details: { name: string; desc: string }[];
@@ -42,24 +39,17 @@ export default function FamilyCarousel({ families }: FamilyCarouselProps) {
   return (
     <div className="flex flex-col h-full">
       {/* 상단 컨트롤 영역: 타이틀 (인디케이터는 하단으로 이동) */}
-<<<<<<< HEAD
       <div className="flex flex-col mb-8 md:mb-10">
         <h3 className="text-[11px] md:text-[12px] font-bold uppercase tracking-[0.2em] text-wood/30 mb-4">
           02. Scent Family (계열의 차이)
         </h3>
-        <p className="text-[14px] md:text-[15px] text-wood/60 leading-relaxed break-keep">
+        <p className="text-[14px] md:text-[15px] text-wood/60 leading-relaxed break-keep min-h-[3rem] md:min-h-[4.5rem]">
           향기 계열은 향수의 성격과 분위기를 결정하는 가장 큰 기준입니다. 비슷한 성질을 가진 향료들을 그룹화하여, 당신이 선호하는 향의 지도를 그리는 첫걸음이 됩니다.
         </p>
-=======
-      <div className="flex justify-between items-center mb-8 md:mb-10">
-        <h3 className="text-[11px] md:text-[12px] font-bold uppercase tracking-[0.2em] text-wood/30">
-          02. Scent Family (계열의 차이)
-        </h3>
->>>>>>> olfit-repo/dev
       </div>
 
       {/* 메인 슬라이드 영역 */}
-      <div className="relative overflow-hidden flex-1 h-[440px] sm:h-[480px] lg:h-auto min-h-[440px]">
+      <div className="relative overflow-hidden flex-1 h-[540px] sm:h-[580px] lg:h-[620px] min-h-[540px]">
         {families.map((f, idx) => (
           <div 
             key={f.title} 
@@ -79,16 +69,11 @@ export default function FamilyCarousel({ families }: FamilyCarouselProps) {
                 </div>
                 <div>
                   <h4 className="text-xl md:text-2xl font-light tracking-tight">{f.title}</h4>
-<<<<<<< HEAD
                   <p className="text-[9px] md:text-[11px] text-wood/70 uppercase tracking-[0.2em]">{f.subtitle}</p>
-=======
-                  <p className="text-[9px] md:text-[11px] text-wood/40 uppercase tracking-[0.2em]">{f.subtitle}</p>
->>>>>>> olfit-repo/dev
                 </div>
               </div>
 
               {/* 본문 설명 */}
-<<<<<<< HEAD
               <p className="text-[13.5px] sm:text-[16px] leading-[1.7] md:leading-[1.8] text-wood mb-6 md:mb-8 font-light break-keep tracking-tight text-left">
                 {f.description}
               </p>
@@ -104,22 +89,12 @@ export default function FamilyCarousel({ families }: FamilyCarouselProps) {
                 </div>
               )}
 
-=======
-              <p className="text-[13.5px] sm:text-[16px] leading-[1.7] md:leading-[1.8] text-wood/70 mb-8 md:mb-12 font-light break-keep tracking-tight text-left">
-                {f.description}
-              </p>              
->>>>>>> olfit-repo/dev
               {/* 하단 성분 상세 목록 */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-10 pt-6 md:pt-10 border-t border-wood/10 mt-auto">
                 {f.details.map((d) => (
                   <div key={d.name}>
-<<<<<<< HEAD
                     <p className="text-[12px] md:text-[14px] font-semibold mb-1 md:mb-2 tracking-wide uppercase text-wood">{d.name}</p>
                     <div className="text-[12px] md:text-[13px] leading-relaxed text-wood/90 break-keep">
-=======
-                    <p className="text-[12px] md:text-[14px] font-semibold mb-1 md:mb-2 tracking-wide uppercase text-wood/80">{d.name}</p>
-                    <div className="text-[12px] md:text-[13px] leading-relaxed text-wood/60 break-keep">
->>>>>>> olfit-repo/dev
                       {d.desc}
                     </div>
                   </div>

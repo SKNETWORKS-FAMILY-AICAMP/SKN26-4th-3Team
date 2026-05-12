@@ -8,7 +8,7 @@ import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import ConcentrationList from "@/components/guide/ConcentrationList";
 import FamilyCarousel from "@/components/guide/FamilyCarousel";
 import ScentNoteCarousel from "@/components/guide/ScentNoteCarousel";
-import { scentFamilies, concentrations } from "@/data/scentData";
+import { scentFamilies, concentrations, concentrationDescription } from "@/data/scentData";
 
 interface ScentGuideSectionProps {
   /** 사용자가 노트를 선택했을 때 상태를 부모 컴포넌트로 전달하는 콜백 */
@@ -40,7 +40,7 @@ export default function ScentGuideSection({ onNotesChange }: ScentGuideSectionPr
           {/* 지식 가이드 그리드 영역 */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-stretch mb-20">
             {/* 01. 부향률(Concentration) 가이드 */}
-            <ConcentrationList concentrations={concentrations} />
+            <ConcentrationList concentrations={concentrations} description={concentrationDescription} />
 
             {/* 02. 향기 계열(Family) 가로 스크롤 가이드 */}
             <FamilyCarousel families={scentFamilies} />

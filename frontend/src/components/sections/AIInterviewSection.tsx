@@ -33,16 +33,11 @@ export default function AIInterviewSection({ onComplete, selectedNotes = [] }: A
     { threshold: 90, text: "최적의 향기 아우라 생성 완료" },
   ];
 
-<<<<<<< HEAD
   const handleImageProcessed = (base64: string, remoteUrl: string) => {
-=======
-  const handleImageProcessed = async (base64: string, remoteUrl: string) => {
->>>>>>> olfit-repo/dev
     setLastProcessedBase64(base64);
     setLoading(true);
     setError(null);
     setProgress(0);
-<<<<<<< HEAD
     
     const analysisSteps = getSteps();
     const duration = 5000; // 시뮬레이션 5초
@@ -50,21 +45,10 @@ export default function AIInterviewSection({ onComplete, selectedNotes = [] }: A
     const step = (interval / duration) * 100;
 
     const timer = setInterval(() => {
-=======
-
-    const analysisSteps = getSteps();
-    const duration = 5000; 
-    const interval = 100;
-    const step = (interval / duration) * 100;
-
-    // 시각적인 프로그레스 바 업데이트
-    const progressTimer = setInterval(() => {
->>>>>>> olfit-repo/dev
       setProgress((prev) => {
         const next = prev + step;
         const currentStep = analysisSteps.find(s => next <= s.threshold) || analysisSteps[analysisSteps.length - 1];
         setAnalysisStatus(currentStep.text);
-<<<<<<< HEAD
 
         if (next >= 100) {
           clearInterval(timer);
@@ -92,37 +76,6 @@ export default function AIInterviewSection({ onComplete, selectedNotes = [] }: A
     }, interval);
   };
 
-=======
-        return next >= 95 ? 95 : next; // API 응답 전까지는 95%에서 대기
-      });
-    }, interval);
-
-    try {
-      const { requestAuraAnalysis } = await import("@/services/api");
-      const results = await requestAuraAnalysis(base64, selectedNotes);
-
-      clearInterval(progressTimer);
-      setProgress(100);
-      setAnalysisStatus("최적의 향기 아우라 생성 완료");
-
-      setTimeout(() => {
-        setLoading(false);
-        setIsComplete(true);
-        if (onComplete) {
-          onComplete(results);
-          console.log("Analysis completed with backend results:", results);
-        }
-      }, 500);
-
-    } catch (err: any) {
-      clearInterval(progressTimer);
-      setLoading(false);
-      setError(err.message || "분석 중 오류가 발생했습니다.");
-    }
-  };
-
-
->>>>>>> olfit-repo/dev
   const handleRetry = () => {
     if (lastProcessedBase64) {
       handleImageProcessed(lastProcessedBase64, "retry-mock-url");

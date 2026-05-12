@@ -25,21 +25,15 @@ interface InsightReportSectionProps {
   onProductClick: (product: Product) => void;
 }
 
-<<<<<<< HEAD
 const fallbackRadarAdjustments = [0.06, 0.03, 0.08, 0.05, 0.02];
 
-=======
->>>>>>> olfit-repo/dev
 export default function InsightReportSection({ results, onProductClick }: InsightReportSectionProps) {
   const { ref: refHeader, isVisible: visHeader } = useIntersectionObserver();
   const { ref: refRadar, isVisible: visRadar } = useIntersectionObserver();
   const { ref: refSteps, isVisible: visSteps } = useIntersectionObserver();
   const { ref: refPyramid, isVisible: visPyramid } = useIntersectionObserver();
   const reportRef = useRef<HTMLDivElement>(null);
-<<<<<<< HEAD
   const isCapturingRef = useRef(false);
-=======
->>>>>>> olfit-repo/dev
 
   const [sortBy, setSortBy] = useState<"recommended" | "price">("recommended");
   const [isSaving, setIsSaving] = useState(false);
@@ -62,14 +56,8 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
     const sorted = [...baseRecommendations];
     if (sortBy === "price") {
       return sorted.sort((a, b) => {
-<<<<<<< HEAD
         const priceA = parseInt(a.price.replace(/[^0-9]/g, "")) || 0;
         const priceB = parseInt(b.price.replace(/[^0-9]/g, "")) || 0;
-=======
-        // 백엔드에서 제공하는 수치형 원화 가격(price_krw) 사용
-        const priceA = (a as any).price_krw || 0;
-        const priceB = (b as any).price_krw || 0;
->>>>>>> olfit-repo/dev
         return priceA - priceB;
       });
     }
@@ -92,7 +80,6 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
     return [
       { axis: "플로랄", value: scores?.["플로랄"] ?? 0.2 },
       { axis: "우디", value: scores?.["우디"] ?? 0.5 },
-<<<<<<< HEAD
       { axis: "앰버", value: scores?.["앰버"] ?? 0.3 },
       { axis: "프레시", value: scores?.["프레시"] ?? 0.4 },
       { axis: "구르망", value: scores?.["구르망"] ?? 0.2 },
@@ -100,23 +87,12 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
       ...d,
       description: radarData.find(rd => rd.axis === d.axis)?.description,
       value: scores ? d.value : Math.max(0.1, Math.min(0.95, d.value + fallbackRadarAdjustments[index]))
-=======
-      { axis: "오리엔탈", value: scores?.["오리엔탈"] ?? 0.3 },
-      { axis: "프레시", value: scores?.["프레시"] ?? 0.4 },
-      { axis: "구르망", value: scores?.["구르망"] ?? 0.2 },
-    ].map(d => ({
-      ...d,
-      description: radarData.find(rd => rd.axis === d.axis)?.description,
-      // API 데이터가 있으면 그대로 쓰고, 없으면 랜덤 보정값 사용
-      value: scores ? d.value : Math.max(0.1, Math.min(0.95, d.value + (Math.random() * 0.1)))
->>>>>>> olfit-repo/dev
     }));
   }, [results]);
 
   const theme = { bg: "bg-cream", accent: "text-wood", border: "border-wood/10" };
 
   const handleShareResults = async () => {
-<<<<<<< HEAD
     if (isCapturingRef.current) return;
     isCapturingRef.current = true;
     setIsSaving(true);
@@ -135,41 +111,6 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
       console.error("Report processing error:", err);
     } finally {
       isCapturingRef.current = false;
-=======
-    if (isSaving) return;
-    setIsSaving(true);
-    setFeedback(null); // 기존 피드백 초기화
-
-    try {
-      // 1. 렌더링 안정화를 위해 아주 짧은 지연
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      // 2. 리포트 캡처 (공유창이 뜨기 전에 완전히 완료해야 함)
-      const blob = await captureReportBlob(reportRef.current);
-      if (!blob) throw new Error("Blob creation failed");
-      
-      // 3. 캡처가 완료된 후 아주 짧은 지연 뒤에 공유 창 호출
-      await new Promise(resolve => setTimeout(resolve, 200));
-      const result = await shareOrDownloadImage(blob);
-      
-      // 4. 결과 피드백 처리
-      if (result === "copied") {
-        setFeedback("이미지 복사 완료!");
-      } else if (result === "downloaded") {
-        setFeedback("리포트 저장 완료!");
-      } else if (result === "shared") {
-        setFeedback("공유 완료!");
-      }
-      
-      if (result !== "failed") {
-        setTimeout(() => setFeedback(null), 3000);
-      }
-    } catch (err) {
-      console.error("Report processing error:", err);
-      setFeedback("캡처 중 오류 발생");
-      setTimeout(() => setFeedback(null), 3000);
-    } finally {
->>>>>>> olfit-repo/dev
       setIsSaving(false);
     }
   };
@@ -188,11 +129,7 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
           <>
             <div ref={refHeader}>
               <ReportHeader 
-<<<<<<< HEAD
                 isVisible={visHeader || !!results} 
-=======
-                isVisible={true} // 결과가 있으면 무조건 보이도록 강제 (디버깅 및 UX 개선)
->>>>>>> olfit-repo/dev
                 isSaving={isSaving} 
                 feedback={feedback} 
                 onShare={handleShareResults} 

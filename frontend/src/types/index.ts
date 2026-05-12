@@ -9,7 +9,6 @@
 export type ScentType = "personal";
 
 /**
-<<<<<<< HEAD
  * 향수 제품 상세 정보 구조
  */
 export interface Product {
@@ -42,8 +41,6 @@ export interface Product {
 }
 
 /**
-=======
->>>>>>> olfit-repo/dev
  * AI 인터뷰 최종 분석 결과 데이터 구조
  */
 export interface AnalysisResults {
@@ -64,11 +61,6 @@ export interface AnalysisResults {
     /** 백엔드에서 계산된 레이더 차트 수치 */
     radarScores?: Record<string, number>;
   };
-<<<<<<< HEAD
-=======
-  /** 백엔드에서 추천된 향수 리스트 */
-  recommendations?: any[];
->>>>>>> olfit-repo/dev
 }
 
 // EOF: types.ts

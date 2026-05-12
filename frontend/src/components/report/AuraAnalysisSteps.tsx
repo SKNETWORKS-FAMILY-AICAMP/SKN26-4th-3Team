@@ -24,13 +24,8 @@ export default function AuraAnalysisSteps({
       <div className="space-y-0 mb-12">
         {logicSteps.map((step, i) => (
           <div key={i} className={`group py-5 border-b ${borderClass} flex items-start gap-4 hover:bg-wood/[0.01] transition-colors duration-300`}>
-<<<<<<< HEAD
             <span className="text-[11px] font-medium text-wood/60 group-hover:text-wood mt-0.5 font-mono transition-all group-hover:font-bold">0{i + 1}</span>
             <p className="text-[15px] leading-relaxed text-wood group-hover:font-semibold transition-all break-keep">
-=======
-            <span className="text-[11px] font-medium text-wood/30 mt-0.5 font-mono">0{i + 1}</span>
-            <p className="text-[15px] leading-relaxed text-wood/70 group-hover:text-wood break-keep">
->>>>>>> olfit-repo/dev
               {renderText(step)}
             </p>
           </div>

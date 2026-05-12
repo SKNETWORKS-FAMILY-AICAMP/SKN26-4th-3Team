@@ -66,10 +66,7 @@ export default function PhilosophySection() {
                 src="/philosophy_img.jpg"
                 alt="Brand Philosophy"
                 className="w-full h-full object-cover"
-<<<<<<< HEAD
                 loading="lazy"
-=======
->>>>>>> olfit-repo/dev
               />
             </div>
           </div>

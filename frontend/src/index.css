@@ -66,7 +66,6 @@
 
   /* 브랜드 고유 컬러를 적용한 커스텀 스크롤바 */
   ::-webkit-scrollbar {
-<<<<<<< HEAD
     width: 4px;
   }
   ::-webkit-scrollbar-track {
@@ -79,19 +78,6 @@
   }
   ::-webkit-scrollbar-thumb:hover {
     background: rgba(107, 68, 35, 0.6);
-=======
-    width: 6px;
-  }
-  ::-webkit-scrollbar-track {
-    background: hsl(var(--background));
-  }
-  ::-webkit-scrollbar-thumb {
-    background: #6B4423;
-    border-radius: 10px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: #4A2B0F;
->>>>>>> olfit-repo/dev
   }
 }
 

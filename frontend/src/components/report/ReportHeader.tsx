@@ -17,10 +17,7 @@ export default function ReportHeader({ isVisible, isSaving, feedback, onShare }:
       
       <div className="flex justify-center">
         <button 
-<<<<<<< HEAD
           type="button"
-=======
->>>>>>> olfit-repo/dev
           onClick={onShare}
           disabled={isSaving}
           className={`group flex items-center gap-3 px-8 py-3.5 border rounded-full text-[11px] sm:text-[12px] uppercase tracking-[0.2em] transition-all duration-300 ${

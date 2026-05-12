@@ -18,44 +18,12 @@ import type { Product } from "@/data/productData";
 export function getRecommendedProducts(results: AnalysisResults | null): (Product & { similarity: number, matchReason: string })[] {
   if (!results) return [];
 
-<<<<<<< HEAD
   // 분석 메타데이터에서 사용자 선택 정보 추출
   const selectedNotes = (results.analysisMetadata?.selectedNotes || []).filter(Boolean);
   const perfumeKeywords = (results.perfumeKeywords || []).filter(Boolean);
   const mood = results.personalMood || "";
   
   // 전체 제품군에 대하여 개별 유사도 점수 산출
-=======
-  // 1. 백엔드에서 전달된 추천 결과가 있으면 최우선 사용 및 데이터 정규화
-  if (results.recommendations && Array.isArray(results.recommendations)) {
-    return results.recommendations.map((rec, idx) => ({
-      ...rec,
-      // ID가 문자열인 경우 숫자로 해싱하거나 인덱스 활용하여 충돌 방지
-      id: typeof rec.id === 'number' ? rec.id : (idx + 1000), 
-      brand: rec.brand || "Unknown",
-      name: rec.name || "Unknown",
-      price: rec.price || "정보 없음",
-      size: rec.size || "N/A",
-      image: rec.image || "",
-      tags: Array.isArray(rec.tags) ? rec.tags : [],
-      notes: rec.notes || "",
-      family: rec.family || "프레시",
-      similarity: rec.similarity ?? 90,
-      matchReason: rec.matchReason || "AI가 선정한 당신의 스타일 매칭 향수입니다.",
-      details: rec.details || {
-        story: "",
-        topNotes: "",
-        middleNotes: "",
-        baseNotes: "",
-        bestFor: ""
-      }
-    })) as any;
-  }
-
-  // 2. 백엔드 결과가 없는 경우 로컬 데이터 fallback
-  const meta = results.analysisMetadata;
-  if (!meta) return [];
->>>>>>> olfit-repo/dev
   const scoredProducts = personalProducts.map((product) => {
     let score = 0;
     const matchedNotes: string[] = [];
@@ -66,15 +34,9 @@ export function getRecommendedProducts(results: AnalysisResults | null): (Produc
       if (!userNote) return;
       const targetText = `
         ${product.notes.toLowerCase()} 
-<<<<<<< HEAD
         ${product.details.topNotes.join(", ").toLowerCase()} 
         ${product.details.heartNotes.join(", ").toLowerCase()} 
         ${product.details.baseNotes.join(", ").toLowerCase()}
-=======
-        ${product.details.topNotes.toLowerCase()} 
-        ${product.details.middleNotes.toLowerCase()} 
-        ${product.details.baseNotes.toLowerCase()}
->>>>>>> olfit-repo/dev
       `.replace(/\s+/g, '');
       
       if (targetText.includes(userNote.toLowerCase().replace(/\s+/g, ''))) {
@@ -119,7 +81,6 @@ export function getRecommendedProducts(results: AnalysisResults | null): (Produc
     }
 
     // 정량적 점수를 백분율(0-100%) 유사도로 변환 및 보정
-<<<<<<< HEAD
     const maxPossibleScore = (selectedNotes.length * 2) + (perfumeKeywords.length * 2) || 4;
     const rawSimilarity = (score / maxPossibleScore) * 100;
     
@@ -129,14 +90,6 @@ export function getRecommendedProducts(results: AnalysisResults | null): (Produc
     
     // 변별력을 위해 기본 점수를 60으로 낮추고, 가중치를 0.35로 조정하여 수치가 더 들쭉날쭉하게 나오도록 함
     const similarity = Math.min(Math.round(rawSimilarity * 0.35 + 60 + stableRandom), 99);
-=======
-    const maxPossibleScore = (selectedNotes.length * 2) + (perfumeKeywords.length * 2) || 1.5;
-    const rawSimilarity = (score / maxPossibleScore) * 100;
-    
-    // 데이터 쏠림 방지를 위한 안정적인 난수 보정값 추가 (시각적 다양성 확보)
-    const stableRandom = (product.id % 10) / 10;
-    const similarity = Math.min(Math.round(rawSimilarity * 0.3 + 65 + stableRandom), 98);
->>>>>>> olfit-repo/dev
     
     return { ...product, similarity, matchReason };
   });
