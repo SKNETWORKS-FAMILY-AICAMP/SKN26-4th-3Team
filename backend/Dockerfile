@@ -18,8 +18,11 @@ COPY requirements.txt .
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt
 
+COPY docker-entrypoint.sh ./docker-entrypoint.sh
+RUN chmod +x ./docker-entrypoint.sh
+
 COPY app ./app
 
 EXPOSE 8000
 
-CMD ["python", "app/manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["sh", "/backend/docker-entrypoint.sh"]

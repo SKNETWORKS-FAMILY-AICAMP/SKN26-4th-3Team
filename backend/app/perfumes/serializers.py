@@ -8,6 +8,7 @@ class BrandSerializer(serializers.ModelSerializer):
 
 class PerfumeSerializer(serializers.ModelSerializer):
     brand_name = serializers.CharField(source='brand.name', read_only=True)
+    data = serializers.SerializerMethodField()
     
     class Meta:
         model = Perfume
@@ -15,3 +16,7 @@ class PerfumeSerializer(serializers.ModelSerializer):
             'id', 'brand', 'brand_name', 'korean_name', 'english_name', 
             'product_type', 'family', 'release_year', 'data', 'created_at'
         ]
+
+    def get_data(self, obj):
+        detail = getattr(obj, 'detail', None)
+        return getattr(detail, 'data', {}) or {}

@@ -27,10 +27,6 @@ class Perfume(models.Model):
     
     release_year = models.IntegerField(null=True, blank=True, help_text="출시년도")
     
-    # NoSQL 스타일의 상세 정보 통합 필드 (Price, Volume, Notes, Accords, Keywords, Image 등)
-    # MySQL의 JSON 타입을 활용
-    data = models.JSONField(default=dict, help_text="상세 정보 (NoSQL 스타일)")
-    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -40,3 +36,44 @@ class Perfume(models.Model):
 
     def __str__(self):
         return f"[{self.brand.name}] {self.english_name}"
+
+
+class PerfumeDetail(models.Model):
+    """
+    향수 추천과 표시 로직에서 사용하는 상세 JSON 데이터를 관리하는 테이블
+    """
+    perfume = models.OneToOneField(Perfume, on_delete=models.CASCADE, related_name='detail', help_text="향수 참조")
+    data = models.JSONField(default=dict, help_text="서비스용 향수 상세 JSON 문서")
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Detail for {self.perfume}"
+
+
+class PerfumeRawData(models.Model):
+    """
+    수집 원본 JSON과 출처 URL을 보존하는 테이블
+    """
+    perfume = models.OneToOneField(Perfume, on_delete=models.CASCADE, related_name='raw_data', help_text="향수 참조")
+    raw_json = models.JSONField(default=dict, help_text="변형 전 원본 향수 JSON 문서")
+    source_url = models.CharField(max_length=500, blank=True, null=True, help_text="원본 페이지 URL")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Raw data for {self.perfume}"
+
+
+class PerfumeImage(models.Model):
+    """
+    향수 상세 데이터에 연결된 원본 이미지 URL과 로컬 처리 경로를 관리하는 테이블
+    """
+    perfume_detail = models.ForeignKey(PerfumeDetail, on_delete=models.CASCADE, related_name='images', help_text="향수 상세 참조")
+    original_url = models.CharField(max_length=500, help_text="원본 이미지 URL")
+    processed_path = models.CharField(max_length=500, blank=True, help_text="다운로드 또는 처리된 이미지 경로")
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('perfume_detail', 'original_url')
+
+    def __str__(self):
+        return self.original_url

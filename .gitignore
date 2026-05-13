@@ -247,6 +247,8 @@ backend/app/db.sqlite3-journal
 backend/app/.venv/
 backend/app/venv/
 backend/app/htmlcov/
+backend/app/static/perfumes/images/*
+!backend/app/static/perfumes/images/.gitkeep
 
 # Database and infrastructure
 mysql_data/
