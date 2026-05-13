@@ -1,9 +1,10 @@
 import json
 import os
 import glob
+from copy import deepcopy
 import numpy as np
 from django.core.management.base import BaseCommand
-from perfumes.models import Brand, Perfume
+from perfumes.models import Brand, Perfume, PerfumeDetail, PerfumeRawData
 from perfumes.utils import load_master_map
 from scent_engine.mapper import VISUAL_TO_FRAGRANCE_RULES, KOREAN_VISUAL_TRIGGERS
 
@@ -46,7 +47,7 @@ class Command(BaseCommand):
 
                 brand_count = 0
                 for item in data:
-                    raw_item = build_raw_json(item)
+                    raw_item = deepcopy(item)
                     # [식별자 무결성 로직]
                     # 1순위: 공식 영문명, 2순위: 정규화된 영문 슬러그, 3순위: 한글명 (최후의 보루)
                     eng_name = item.get("english_name") or item.get("normalized_name")
@@ -116,12 +117,13 @@ class Command(BaseCommand):
                     )
                     PerfumeDetail.objects.update_or_create(
                         perfume=perfume,
-                        defaults={"data": build_detail_data(item)},
+                        defaults={"data": item},
                     )
                     PerfumeRawData.objects.update_or_create(
                         perfume=perfume,
                         defaults={
                             "raw_json": raw_item,
+                            "source_url": raw_item.get("source_url") or raw_item.get("product_url"),
                         },
                     )
                     brand_count += 1

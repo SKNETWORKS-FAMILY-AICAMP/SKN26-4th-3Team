@@ -27,10 +27,6 @@ class Perfume(models.Model):
     
     release_year = models.IntegerField(null=True, blank=True, help_text="출시년도")
     
-    # NoSQL 스타일의 상세 정보 통합 필드 (Price, Volume, Notes, Accords, Keywords, Image 등)
-    # MySQL의 JSON 타입을 활용
-    data = models.JSONField(default=dict, help_text="상세 정보 (NoSQL 스타일)")
-    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
