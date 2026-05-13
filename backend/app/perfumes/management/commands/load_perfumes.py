@@ -12,15 +12,7 @@ class Command(BaseCommand):
     help = 'Load perfumes into MySQL with Symmetric Aura Scoring (v4.0)'
 
     def handle(self, *args, **options):
-        # 데이터 존재 여부 체크 (중복 적재 방지)
-        try:
-            if Perfume.objects.exists():
-                self.stdout.write(self.style.SUCCESS("Data already exists. Skipping load_perfumes..."))
-                return
-        except Exception:
-            pass
-
-        self.stdout.write("DB is empty. Starting intelligent data ingestion...")
+        self.stdout.write("Starting intelligent data ingestion...")
         master_map = load_master_map()
         accord_to_cat = master_map["accord_to_category"]
         
@@ -47,7 +39,7 @@ class Command(BaseCommand):
 
                 brand_count = 0
                 for item in data:
-                    raw_item = deepcopy(item)
+                    raw_item = build_raw_json(item)
                     # [식별자 무결성 로직]
                     # 1순위: 공식 영문명, 2순위: 정규화된 영문 슬러그, 3순위: 한글명 (최후의 보루)
                     eng_name = item.get("english_name") or item.get("normalized_name")
@@ -117,13 +109,12 @@ class Command(BaseCommand):
                     )
                     PerfumeDetail.objects.update_or_create(
                         perfume=perfume,
-                        defaults={"data": item},
+                        defaults={"data": build_detail_data(item)},
                     )
                     PerfumeRawData.objects.update_or_create(
                         perfume=perfume,
                         defaults={
                             "raw_json": raw_item,
-                            "source_url": raw_item.get("source_url") or raw_item.get("product_url"),
                         },
                     )
                     brand_count += 1
