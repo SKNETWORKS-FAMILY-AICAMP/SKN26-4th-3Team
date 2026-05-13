@@ -34,28 +34,7 @@ export function getRecommendedProducts(results: AnalysisResults | null): (Produc
 =======
   // 1. 백엔드에서 전달된 추천 결과가 있으면 최우선 사용 및 데이터 정규화
   if (results.recommendations && Array.isArray(results.recommendations)) {
-    return results.recommendations.map((rec, idx) => ({
-      ...rec,
-      // ID가 문자열인 경우 숫자로 해싱하거나 인덱스 활용하여 충돌 방지
-      id: typeof rec.id === 'number' ? rec.id : (idx + 1000), 
-      brand: rec.brand || "Unknown",
-      name: rec.name || "Unknown",
-      price: rec.price || "정보 없음",
-      size: rec.size || "N/A",
-      image: rec.image || "",
-      tags: Array.isArray(rec.tags) ? rec.tags : [],
-      notes: rec.notes || "",
-      family: rec.family || "프레시",
-      similarity: rec.similarity ?? 90,
-      matchReason: rec.matchReason || "AI가 선정한 당신의 스타일 매칭 향수입니다.",
-      details: rec.details || {
-        story: "",
-        topNotes: "",
-        middleNotes: "",
-        baseNotes: "",
-        bestFor: ""
-      }
-    })) as any;
+    return results.recommendations.map((rec, idx) => normalizeBackendRecommendation(rec, idx)) as any;
   }
 
   // 2. 백엔드 결과가 없는 경우 로컬 데이터 fallback
