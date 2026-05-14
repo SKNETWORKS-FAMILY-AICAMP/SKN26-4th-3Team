@@ -233,6 +233,8 @@ frontend/dist/
 frontend/dist-ssr/
 frontend/*.local
 frontend/coverage/
+frontend/playwright-report/
+frontend/test-results/
 frontend/.vite/
 frontend/npm-debug.log*
 frontend/yarn-debug.log*
@@ -241,12 +243,16 @@ frontend/pnpm-debug.log*
 
 # Backend: Django
 backend/app/*/migrations/[0-9]*.py
+!backend/app/perfumes/migrations/[0-9]*.py
 !backend/app/*/migrations/__init__.py
 backend/app/db.sqlite3
 backend/app/db.sqlite3-journal
 backend/app/.venv/
 backend/app/venv/
 backend/app/htmlcov/
+backend/app/static/perfumes/images/*
+!backend/app/static/perfumes/images/.gitkeep
+backend/app/data/raw_backup_*/
 
 # Database and infrastructure
 mysql_data/

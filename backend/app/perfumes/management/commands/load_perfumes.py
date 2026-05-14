@@ -1,9 +1,10 @@
 import json
 import os
 import glob
+from copy import deepcopy
 import numpy as np
 from django.core.management.base import BaseCommand
-from perfumes.models import Brand, Perfume
+from perfumes.models import Brand, Perfume, PerfumeDetail, PerfumeRawData
 from perfumes.utils import load_master_map
 from scent_engine.mapper import VISUAL_TO_FRAGRANCE_RULES, KOREAN_VISUAL_TRIGGERS
 
@@ -11,15 +12,7 @@ class Command(BaseCommand):
     help = 'Load perfumes into MySQL with Symmetric Aura Scoring (v4.0)'
 
     def handle(self, *args, **options):
-        # 데이터 존재 여부 체크 (중복 적재 방지)
-        try:
-            if Perfume.objects.exists():
-                self.stdout.write(self.style.SUCCESS("Data already exists. Skipping load_perfumes..."))
-                return
-        except Exception:
-            pass
-
-        self.stdout.write("DB is empty. Starting intelligent data ingestion...")
+        self.stdout.write("Starting intelligent data ingestion...")
         master_map = load_master_map()
         accord_to_cat = master_map["accord_to_category"]
         
@@ -46,6 +39,7 @@ class Command(BaseCommand):
 
                 brand_count = 0
                 for item in data:
+                    raw_item = build_raw_json(item)
                     # [식별자 무결성 로직]
                     # 1순위: 공식 영문명, 2순위: 정규화된 영문 슬러그, 3순위: 한글명 (최후의 보루)
                     eng_name = item.get("english_name") or item.get("normalized_name")
@@ -64,7 +58,9 @@ class Command(BaseCommand):
                     # 2. Booster Scoring (Keywords/Notes)
                     perfume_metadata = set(item.get("keywords", []))
                     notes = item.get("notes", [])
-                    if isinstance(notes, dict): notes = [n for sub in notes.values() for n in sub]
+                    if isinstance(notes, dict):
+                        item["notes_parsed"] = translate_notes_pyramid(notes, master_map)
+                        notes = [n for sub in notes.values() for n in sub]
                     perfume_metadata.update(notes)
 
                     for kw in perfume_metadata:
@@ -103,7 +99,7 @@ class Command(BaseCommand):
                     item["embedding_doc"] = embedding_doc
 
                     # 5. Save to MySQL
-                    Perfume.objects.update_or_create(
+                    perfume, _ = Perfume.objects.update_or_create(
                         brand=brand,
                         english_name=eng_name, # 시스템 식별자로 유지
                         defaults={
@@ -111,8 +107,17 @@ class Command(BaseCommand):
                             "product_type": item.get("product_subtype", "perfume"),
                             "family": p_family,
                             "release_year": item.get("meta", {}).get("release_year"),
-                            "data": item
                         }
+                    )
+                    PerfumeDetail.objects.update_or_create(
+                        perfume=perfume,
+                        defaults={"data": build_detail_data(item)},
+                    )
+                    PerfumeRawData.objects.update_or_create(
+                        perfume=perfume,
+                        defaults={
+                            "raw_json": raw_item,
+                        },
                     )
                     brand_count += 1
                 
@@ -120,3 +125,52 @@ class Command(BaseCommand):
                 total_count += brand_count
 
         self.stdout.write(self.style.SUCCESS(f"Total {total_count} perfumes loaded into MySQL."))
+
+
+def build_raw_json(item):
+    raw_item = deepcopy(item)
+    raw_item.pop("source_url", None)
+    return raw_item
+
+
+DETAIL_DATA_KEYS = {
+    "price",
+    "description",
+    "ingredients_raw",
+    "notes",
+    "accords",
+    "keywords",
+    "meta",
+    "volume",
+    "aura_profile",
+    "standardized_notes",
+    "representative_notes",
+    "notes_parsed",
+    "embedding_doc",
+}
+
+
+def build_detail_data(item):
+    detail_data = {
+        key: deepcopy(item[key])
+        for key in DETAIL_DATA_KEYS
+        if key in item
+    }
+    meta = detail_data.get("meta")
+    if isinstance(meta, dict):
+        meta.pop("release_year", None)
+        if not meta:
+            detail_data.pop("meta", None)
+    return detail_data
+
+
+def translate_notes_pyramid(notes, master_map):
+    return {
+        key: [
+            master_map["note_translations"].get(note, note)
+            for note in value
+            if isinstance(note, str)
+        ]
+        for key, value in notes.items()
+        if key in {"top", "middle", "base"} and isinstance(value, list)
+    }

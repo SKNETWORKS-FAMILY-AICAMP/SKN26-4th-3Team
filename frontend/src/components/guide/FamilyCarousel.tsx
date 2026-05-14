@@ -44,8 +44,7 @@ export default function FamilyCarousel({ families }: FamilyCarouselProps) {
           02. Scent Family (계열의 차이)
         </h3>
         <p className="text-[14px] md:text-[15px] text-wood/60 leading-relaxed break-keep min-h-[3rem] md:min-h-[4.5rem]">
-          향기 계열은 향수의 성격과 분위기를 결정하는 가장 큰 기준입니다. <br className="hidden sm:inline" />
-          비슷한 성질을 가진 향료들을 그룹화하여, 당신이 선호하는 향의 지도를 그리는 첫걸음이 됩니다.
+          향기 계열은 향수의 성격과 분위기를 결정하는 가장 큰 기준입니다. 비슷한 성질을 가진 향료들을 그룹화하여, 당신이 선호하는 향의 지도를 그리는 첫걸음이 됩니다.
         </p>
       </div>
 
@@ -75,10 +74,9 @@ export default function FamilyCarousel({ families }: FamilyCarouselProps) {
               </div>
 
               {/* 본문 설명 */}
-              <p 
-                className="text-[13.5px] sm:text-[16px] leading-[1.7] md:leading-[1.8] text-wood mb-6 md:mb-8 font-light break-keep tracking-tight text-left"
-                dangerouslySetInnerHTML={{ __html: f.description }}
-              />
+              <p className="text-[13.5px] sm:text-[16px] leading-[1.7] md:leading-[1.8] text-wood mb-6 md:mb-8 font-light break-keep tracking-tight text-left">
+                {f.description}
+              </p>
 
               {/* 대표 노트 태그 리스트 */}
               {f.keyNotes && (
@@ -96,10 +94,9 @@ export default function FamilyCarousel({ families }: FamilyCarouselProps) {
                 {f.details.map((d) => (
                   <div key={d.name}>
                     <p className="text-[12px] md:text-[14px] font-semibold mb-1 md:mb-2 tracking-wide uppercase text-wood">{d.name}</p>
-                    <div 
-                      className="text-[12px] md:text-[13px] leading-relaxed text-wood/90 break-keep"
-                      dangerouslySetInnerHTML={{ __html: d.desc }}
-                    />
+                    <div className="text-[12px] md:text-[13px] leading-relaxed text-wood/90 break-keep">
+                      {d.desc}
+                    </div>
                   </div>
                 ))}
               </div>

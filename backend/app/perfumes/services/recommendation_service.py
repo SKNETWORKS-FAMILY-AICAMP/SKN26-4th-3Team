@@ -35,7 +35,6 @@ class RecommendationService:
     def recommend(self, user_aura_dict, query_text, selected_notes):
         """
         사용자 아우라 벡터와 취향을 기반으로 맞춤형 향수를 추천합니다.
-
         @param user_aura_dict: 사용자의 5축 아우라 점수 딕셔너리
         @param query_text: RAG 검색용 쿼리 문장 (향후 벡터 검색 확장 포인트)
         @param selected_notes: 사용자가 선택한 성분 리스트
@@ -45,12 +44,14 @@ class RecommendationService:
 
         # [Step 1] 1차 필터링: 메인 계열 기반 후보군 추출 (DB 최적화)
         # TODO: 향후 이 단계를 Pinecone 벡터 검색(Semantic Search)으로 교체 예정
-        candidates = Perfume.objects.filter(family=main_family).select_related("brand")[
-            :100
-        ]
+        candidates = Perfume.objects.filter(family=main_family).select_related(
+            "brand", "detail"
+        ).prefetch_related("detail__images")[:100]
 
         if candidates.count() < 20:
-            candidates = Perfume.objects.all().select_related("brand")[:100]
+            candidates = Perfume.objects.all().select_related(
+                "brand", "detail"
+            ).prefetch_related("detail__images")[:100]
 
         # 사용자 아우라 벡터화
         user_aura_vector = np.array([user_aura_dict.get(a, 0.2) for a in self.axes])
@@ -69,7 +70,8 @@ class RecommendationService:
         ranked_results = []
         for p in candidates:
             # DB JSON 필드에서 상세 정보 및 사전 계산된 아우라 로드
-            p_data = p.data
+            detail = getattr(p, "detail", None)
+            p_data = getattr(detail, "data", {}) or {}
             p_aura = p_data.get("aura_profile")
 
             if not p_aura:
@@ -92,6 +94,12 @@ class RecommendationService:
 
             # 원화 환산 가격 계산 (정렬용)
             price_krw = self._convert_to_krw(p_data.get("price"))
+            image_asset = self._image_asset_for(p)
+            image_detail = self._image_payload_for(image_asset)
+            image_url = image_detail.get("url") or image_detail.get("originalUrl", "")
+            absolute_image_url = self._absolute_image_url(image_url) or image_url
+            image_base64 = image_detail.get("base64", "")
+            notes_pyramid = self._notes_pyramid_for(p_data)
 
             ranked_results.append(
                 {
@@ -101,7 +109,12 @@ class RecommendationService:
                     "price": p_data.get("price", {}).get("raw", "정보없음"),
                     "price_krw": price_krw,
                     "size": p_data.get("volume", "N/A"),
-                    "image": p_data.get("image_url", ""),
+                    "image": image_url,
+                    "imageUrl": absolute_image_url,
+                    "imageBase64": image_base64,
+                    "perfume": self._detail_payload_for(p, p_data),
+                    "imageDetail": image_detail,
+                    "imageAsset": image_asset,
                     "tags": p_data.get("accords", [])[:3],
                     "notes": ", ".join(
                         (p_data.get("representative_notes") or p_data.get("notes", []))[
@@ -114,16 +127,12 @@ class RecommendationService:
                     "matchReason": self._generate_reason(matches, main_family),
                     "details": {
                         "story": p_data.get("description", ""),
-                        "topNotes": ", ".join(
-                            p_data.get("notes_parsed", {}).get("top", [])
+                        "topNotes": ", ".join(notes_pyramid.get("top", [])),
+                        "middleNotes": ", ".join(notes_pyramid.get("middle", [])),
+                        "baseNotes": ", ".join(notes_pyramid.get("base", [])),
+                        "bestFor": ", ".join(
+                            self._keyword_values(p_data.get("keywords", []))[:3]
                         ),
-                        "middleNotes": ", ".join(
-                            p_data.get("notes_parsed", {}).get("middle", [])
-                        ),
-                        "baseNotes": ", ".join(
-                            p_data.get("notes_parsed", {}).get("base", [])
-                        ),
-                        "bestFor": ", ".join(p_data.get("keywords", [])[:3]),
                     },
                 }
             )
@@ -155,12 +164,140 @@ class RecommendationService:
             return {a: 0.2 for a in self.axes}
         return {k: round(v / max_s, 2) for k, v in scores.items()}
 
+    def _image_asset_for(self, perfume):
+        detail = getattr(perfume, "detail", None)
+        if detail is None:
+            return {}
+
+        image = next(iter(detail.images.all()), None)
+        if image is None:
+            return {}
+
+        return {
+            "original_url": image.original_url,
+            "backend_path": image.processed_path,
+            "base64": image.base64_data,
+        }
+
+    def _detail_payload_for(self, perfume, detail_data):
+        notes = detail_data.get("notes", [])
+        representative_notes = detail_data.get("representative_notes") or notes[:5]
+
+        return {
+            "id": perfume.id,
+            "brand": perfume.brand.name,
+            "koreanName": perfume.korean_name,
+            "englishName": perfume.english_name,
+            "productType": perfume.product_type,
+            "family": perfume.family,
+            "releaseYear": perfume.release_year,
+            "price": detail_data.get("price") or {},
+            "description": detail_data.get("description", ""),
+            "ingredientsRaw": detail_data.get("ingredients_raw", ""),
+            "notes": notes,
+            "representativeNotes": representative_notes,
+            "notesPyramid": self._notes_pyramid_for(detail_data),
+            "accords": detail_data.get("accords", []),
+            "keywords": detail_data.get("keywords", {}),
+            "auraProfile": detail_data.get("aura_profile", {}),
+            "volume": detail_data.get("volume", ""),
+            "meta": detail_data.get("meta", {}),
+        }
+
+    def _image_payload_for(self, image_asset):
+        if not image_asset:
+            return {}
+
+        backend_path = image_asset.get("backend_path", "")
+        original_url = image_asset.get("original_url", "")
+        return {
+            "url": self._public_image_url(backend_path) or original_url,
+            "originalUrl": original_url,
+            "backendPath": backend_path,
+            "base64": image_asset.get("base64", ""),
+        }
+
+    def _absolute_image_url(self, path):
+        if not path:
+            return ""
+        if str(path).startswith(("http://", "https://")):
+            return path
+
+        public_base_url = (
+            os.getenv("BACKEND_PUBLIC_URL")
+            or os.getenv("VITE_API_URL")
+            or "http://localhost:8000"
+        ).rstrip("/")
+        return f"{public_base_url}/{str(path).lstrip('/')}"
+
+    def _public_image_url(self, path):
+        static_marker = "/static/"
+        if not path:
+            return ""
+
+        normalized = str(path).replace("\\", "/")
+        if normalized.startswith("/static/"):
+            return normalized
+
+        marker_index = normalized.find(static_marker)
+        if marker_index >= 0:
+            return normalized[marker_index:]
+
+        return ""
+
+    def _keyword_values(self, keywords):
+        if isinstance(keywords, dict):
+            values = keywords.get("ko") or keywords.get("en") or []
+            return values if isinstance(values, list) else []
+        if isinstance(keywords, list):
+            return keywords
+        return []
+
+    def _notes_pyramid_for(self, detail_data):
+        notes_parsed = detail_data.get("notes_parsed")
+        if isinstance(notes_parsed, dict):
+            pyramid = {
+                "top": self._note_values(notes_parsed.get("top")),
+                "middle": self._note_values(notes_parsed.get("middle")),
+                "base": self._note_values(notes_parsed.get("base")),
+            }
+            if any(pyramid.values()):
+                return pyramid
+
+        notes = self._note_values(
+            detail_data.get("representative_notes")
+            or detail_data.get("standardized_notes")
+            or detail_data.get("notes")
+        )
+        if not notes:
+            return {"top": [], "middle": [], "base": []}
+
+        top_end = max(1, min(2, len(notes)))
+        remaining = notes[top_end:]
+        middle_count = (len(remaining) + 1) // 2
+        middle_end = top_end + middle_count
+
+        return {
+            "top": notes[:top_end],
+            "middle": notes[top_end:middle_end],
+            "base": notes[middle_end:],
+        }
+
+    def _note_values(self, value):
+        if isinstance(value, dict):
+            values = []
+            for key in ("top", "middle", "base"):
+                values.extend(self._note_values(value.get(key)))
+            return values
+        if isinstance(value, list):
+            return [item for item in value if isinstance(item, str) and item]
+        return []
+
     def _generate_reason(self, matches, main_family):
         """사용자에게 보여줄 매칭 사유 문구를 생성합니다."""
         if matches:
             match_str = ", ".join(list(matches)[:2])
             return f"선택하신 #{match_str} 성분이 포함되어 있으며, 당신의 #{main_family} 아우라와 완벽하게 조화됩니다."
         return f"당신의 분위기를 결정짓는 #{main_family} 계열의 베스트 추천 향수입니다."
-
 
 # EOF: recommendation_service.py

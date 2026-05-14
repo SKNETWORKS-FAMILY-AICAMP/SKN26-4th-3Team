@@ -28,8 +28,7 @@ export default function ConcentrationList({ concentrations, description }: Conce
         </h3>
         {description && (
           <p className="text-[14px] md:text-[15px] text-wood/60 leading-relaxed break-keep min-h-[3rem] md:min-h-[4.5rem]">
-            부향률은 향수 원액이 차지하는 비율로, 향의 지속성과 확산성을 결정합니다. <br className="hidden sm:inline" />
-            당신의 라이프스타일에 맞는 완벽한 농도를 선택해 보세요.
+            {description}
           </p>
         )}
       </div>

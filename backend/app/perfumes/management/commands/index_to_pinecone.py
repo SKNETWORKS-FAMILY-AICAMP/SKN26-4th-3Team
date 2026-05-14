@@ -44,7 +44,7 @@ class Command(BaseCommand):
         index = pc.Index(PINECONE_INDEX_NAME)
 
         # 4. Batch Processing
-        perfumes = Perfume.objects.all()
+        perfumes = Perfume.objects.select_related("brand", "detail").all()
         batch_size = options['batch_size']
         total = perfumes.count()
         
@@ -55,7 +55,10 @@ class Command(BaseCommand):
             vectors = []
             
             # A. Prepare batch documents
-            docs = [p.data.get("embedding_doc", "") for p in batch]
+            docs = [
+                (getattr(getattr(p, "detail", None), "data", {}) or {}).get("embedding_doc", "")
+                for p in batch
+            ]
             ids = [str(p.id) for p in batch]
             
             # B. Generate Embeddings via OpenAI

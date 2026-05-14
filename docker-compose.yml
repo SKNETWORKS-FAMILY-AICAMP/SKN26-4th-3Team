@@ -70,12 +70,7 @@ services:
       SQL_TEST_DB_NAME: ${SQL_TEST_DB_NAME:-test_olfit_db}
       SQL_DB_USER: ${SQL_DB_USER:-olfit_admin}
       SQL_DB_PASSWORD: ${SQL_DB_PASSWORD:-olfit_password}
-    command: >
-      sh -c "python app/manage.py makemigrations perfumes &&
-             python app/manage.py migrate --noinput &&
-             sleep 5 &&
-             python app/manage.py load_perfumes &&
-             python app/manage.py runserver 0.0.0.0:8000"
+    command: sh /backend/docker-entrypoint.sh
     depends_on:
       database:
         condition: service_healthy

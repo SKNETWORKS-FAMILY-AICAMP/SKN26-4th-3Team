@@ -3,7 +3,7 @@
  * @description 사용자의 스타일(OOTD) 이미지를 분석하여 맞춤형 향기를 추천하기 위한 인터뷰 섹션입니다.
  */
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import { Sparkles, CheckCircle2 } from "lucide-react";
 import ImageUploader from "@/components/common/ImageUploader";
@@ -25,8 +25,12 @@ export default function AIInterviewSection({ onComplete, selectedNotes = [] }: A
   const [analysisStatus, setAnalysisStatus] = useState("");
   const [progress, setProgress] = useState(0);
   const [lastProcessedBase64, setLastProcessedBase64] = useState<string | null>(null);
-  const base64Ref = useRef<string | null>(null);
-  const hasCalledAPIRef = useRef(false);
+  
+  /**
+   * 🛡️ SYNC LOCK: React의 비동기적 상태 업데이트 시차(Latency)를 극복하기 위한 동기식 잠금 레퍼런스입니다.
+   * StrictMode 등에서 발생하는 컴포넌트 이중 호출이나, 매우 짧은 간격의 중복 클릭을 물리적으로 차단합니다.
+   */
+  const processingRef = useRef(false);
   
   const getSteps = () => [
     { threshold: 10, text: "이미지 픽셀 데이터 추출 중..." },
@@ -36,55 +40,64 @@ export default function AIInterviewSection({ onComplete, selectedNotes = [] }: A
     { threshold: 90, text: "최적의 향기 아우라 생성 완료" },
   ];
 
-  useEffect(() => {
-    if (progress < 100) return;
-    if (isComplete) return;
-    if (!base64Ref.current) return;
-    if (hasCalledAPIRef.current) return;
-
-    hasCalledAPIRef.current = true;
-
-    requestAuraAnalysis(base64Ref.current, selectedNotes)
-      .then((realResults) => {
-        setLoading(false);
-        setIsComplete(true);
-        if (onComplete) onComplete(realResults);
-      })
-      .catch((err) => {
-        setLoading(false);
-        hasCalledAPIRef.current = false;
-        setError(err.message || "분석 중 오류가 발생했습니다.");
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [progress]);
-
   const handleImageProcessed = (base64: string) => {
-    if (isLoading) return; // 🚨 FIX: POST 중복 요청 방지
+    /** 
+     * [STEP 1] Entry Gate - 물리적 잠금 확인 
+     * 이미 프로세스가 진행 중(processingRef)이거나 완료(isComplete)된 경우, 
+     * React 상태(isLoading) 반영 여부와 관계없이 즉시 모든 추가 실행을 취소합니다.
+     */
+    if (processingRef.current || isComplete) return; 
     
-    base64Ref.current = base64;
-    hasCalledAPIRef.current = false;
+    // 즉시 잠금 활성화
+    processingRef.current = true;
     setLastProcessedBase64(base64);
     setLoading(true);
     setError(null);
     setProgress(0);
     
     const analysisSteps = getSteps();
-    const duration = 5000; // 시뮬레이션 5초
-    const interval = 100;
-    const step = (interval / duration) * 100;
+    const duration = 5000; // 분석 시뮬레이션 총 소요 시간 (5초)
+    const interval = 100;  // 업데이트 주기 (0.1초)
+    const stepSize = (interval / duration) * 100;
+    
+    /**
+     * 🛠️ REFACTOR: React 상태와 독립된 로컬 변수로 진행률을 관리합니다.
+     * setState 콜백 내부의 사이드 이펙트(API 호출 등)를 외부로 끌어내어 이중 호출을 방지합니다.
+     */
+    let internalProgress = 0;
 
-    const timer = setInterval(async () => {
-      setProgress((prev) => {
-        const next = prev + step;
-        const currentStep = analysisSteps.find(s => next <= s.threshold) || analysisSteps[analysisSteps.length - 1];
-        setAnalysisStatus(currentStep.text);
+    const timer = setInterval(() => {
+      internalProgress += stepSize;
+      
+      // UI 표시를 위한 진행률 및 문구 업데이트
+      const currentStep = analysisSteps.find(s => internalProgress <= s.threshold) || analysisSteps[analysisSteps.length - 1];
+      setAnalysisStatus(currentStep.text);
+      setProgress(Math.min(internalProgress, 100));
 
-        if (next >= 100) {
-          clearInterval(timer);
-          return 100;
-        }
-        return next;
-      });
+      // [STEP 2] Exit Condition - 분석 시뮬레이션 종료 시점에만 1회 호출
+      if (internalProgress >= 100) {
+        clearInterval(timer);
+        
+        /**
+         * 🚀 [CRITICAL FIX]: API 요청은 반드시 setState 콜백 외부에서 실행되어야 합니다.
+         * React의 상태 일괄 업데이트(Batching)나 Concurrent 렌더링에 의한 중복 호출을 원천 봉쇄합니다.
+         */
+        requestAuraAnalysis(base64, selectedNotes)
+          .then((realResults) => {
+            setLoading(false);
+            setIsComplete(true);
+            // 성공 시 락 유지 (중복 전송 방지)
+            if (onComplete) {
+              onComplete(realResults);
+            }
+          })
+          .catch((err) => {
+            // 에러 발생 시에만 재시도를 위해 락 해제
+            setLoading(false);
+            processingRef.current = false; 
+            setError(err.message || "분석 중 오류가 발생했습니다.");
+          });
+      }
     }, interval);
   };
 

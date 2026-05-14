@@ -63,24 +63,27 @@ export default function ScentNoteCarousel({ onNotesChange }: ScentNoteCarouselPr
   const toggleNote = (note: ScentNote) => {
     setSlots(prev => {
       const isAlreadySelected = prev[note.category]?.id === note.id;
-      return {
+      const newSlots = {
         ...prev,
         [note.category]: isAlreadySelected ? null : note
       };
+
+      if (onNotesChange) {
+        const selectedNames = Object.values(newSlots)
+          .filter((n): n is ScentNote => n !== null)
+          .map(n => n.name);
+        onNotesChange(selectedNames);
+      }
+      
+      return newSlots;
     });
   };
 
   const resetNotes = () => {
-    setSlots({ Top: null, Middle: null, Base: null });
+    const emptySlots: ScentSlots = { Top: null, Middle: null, Base: null };
+    setSlots(emptySlots);
+    if (onNotesChange) onNotesChange([]);
   };
-
-  useEffect(() => {
-    if (!onNotesChange) return;
-    const selectedNames = Object.values(slots)
-      .filter((n): n is ScentNote => n !== null)
-      .map(n => n.name);
-    onNotesChange(selectedNames);
-  }, [slots, onNotesChange]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -120,17 +123,15 @@ export default function ScentNoteCarousel({ onNotesChange }: ScentNoteCarouselPr
                 <span className="text-[10px] font-bold text-wood uppercase tracking-widest">{activeNoteInfo?.title}</span>
                 <span className="text-[9px] text-wood/40">— {activeNoteInfo?.subtitle}</span>
               </div>
-              <p 
-                className="text-[13px] text-wood/70 leading-relaxed break-keep font-light"
-                dangerouslySetInnerHTML={{ __html: activeNoteInfo?.description || "" }}
-              />
+              <p className="text-[13px] text-wood/70 leading-relaxed break-keep font-light">
+                {activeNoteInfo?.description}
+              </p>
             </div>
 
             <p className="text-[13px] md:text-[14px] text-wood leading-relaxed break-keep mb-8 font-light text-center lg:text-left">
               {isAllSelected 
-                ? <span dangerouslySetInnerHTML={{ __html: "완벽한 향의 삼각형이 완성되었습니다. <br className=\"hidden sm:inline\" /> 당신의 감각이 조화롭게 정렬되었습니다. <br className=\"hidden sm:inline\" /> 이제 아래 분석 버튼을 눌러 당신만의 향수를 찾아보세요." }} />
-                : <span dangerouslySetInnerHTML={{ __html: "탑, 미들, 베이스 노트에서 각각 하나씩 <br className=\"hidden sm:inline\" /> 마음에 드는 원료를 골라 조화를 완성하세요. <br className=\"hidden sm:inline\" /> 완성된 피라미드는 당신의 페르소나와 결합됩니다." }} />
-              }
+                ? "완벽한 향의 삼각형이 완성되었습니다. 당신의 감각이 조화롭게 정렬되었습니다. 이제 아래 분석 버튼을 눌러 당신만의 향수를 찾아보세요." 
+                : "탑, 미들, 베이스 노트에서 각각 가장 마음에 드는 원료를 하나씩 골라 조화를 완성하세요. 완성된 피라미드는 당신의 페르소나와 결합됩니다."}
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6">
@@ -211,10 +212,9 @@ export default function ScentNoteCarousel({ onNotesChange }: ScentNoteCarouselPr
                 </div>
                 
                 <div className="max-w-md mx-auto space-y-10">
-                  <p 
-                    className="text-[15px] md:text-[17px] leading-relaxed text-wood/90 break-keep font-light transition-all group-hover/card:font-medium italic"
-                    dangerouslySetInnerHTML={{ __html: `"${currentNote?.description}"` }}
-                  />
+                  <p className="text-[15px] md:text-[17px] leading-relaxed text-wood/90 break-keep font-light transition-all group-hover/card:font-medium italic">
+                    "{currentNote?.description}"
+                  </p>
                   
                   <div className="grid grid-cols-2 gap-8 pt-6 border-t border-wood/10">
                     <div className="flex flex-col items-center gap-2">
