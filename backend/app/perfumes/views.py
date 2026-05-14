@@ -57,16 +57,16 @@ class AnalyzeView(APIView):
         # 3. [Scoring Stage] 5축 아우라 계산 및 대칭 쿼리 생성
         # 이미지 키워드 + 사용자 선택 노트를 통합하여 5차원 벡터 산출
         print("[STEP 3] 📊 Calculating Aura Scores & Generating Query...")
-        radar_scores, fragrance_mapping, query_text, readable_query = (
+        radar_scores, fragrance_mapping, query_text, readable_query, aura_vectors = (
             aura_service.calculate_combined_aura(vl_result, selected_notes)
         )
-        print(f"       > Primary Family: {max(radar_scores, key=radar_scores.get)}")
+        print(f"       > Primary Family: {max(aura_vectors, key=aura_vectors.get)}")
 
         # 4. [Recommendation Stage] 하이브리드 재랭킹 추천 (Top 5)
         # 5축 유사도(70%) + 성분 가산점(30%)을 적용하여 DB에서 제품 추출
         print("[STEP 4] 🎯 Fetching Recommendations from DB...")
         recommendations = recommend_service.recommend(
-            radar_scores, query_text, selected_notes
+            aura_vectors, query_text, selected_notes
         )
 
         rec_names = [r["name"] for r in recommendations]
