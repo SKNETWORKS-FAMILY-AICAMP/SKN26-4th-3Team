@@ -13,26 +13,46 @@
 
 ## Test Environment
 
-- Production build: `npm run build`
-- Browser automation: Python Playwright
-- Static serving: Python `ThreadingHTTPServer`
+- Unit test runner: Vitest
+- Unit test DOM environment: jsdom
+- Browser automation: Playwright
+- E2E browser: Chromium
+- Static serving: Node HTTP server inside `frontend/e2e/image-upload.spec.ts`
 - API call interception: Playwright route interception for `**/api/analyze/`
 
 테스트 중 실제 백엔드는 호출하지 않고 `/api/analyze/` 요청만 계측했다.
 
 ## Commands
 
-빌드 검증:
+의존성 설치:
 
 ```bash
 cd frontend
-npm run build
+corepack yarn install
 ```
 
-확인된 빌드 결과:
+단위 테스트:
+
+```bash
+cd frontend
+corepack yarn test:run
+```
+
+E2E 테스트:
+
+```bash
+cd frontend
+corepack yarn test:e2e
+```
+
+`test:e2e`는 내부적으로 `yarn build && playwright test`를 실행한다.
+
+현재 확인된 결과:
 
 - TypeScript build 통과
 - Vite production build 통과
+- Vitest `uploadService` 테스트 통과
+- Playwright image upload E2E 2개 통과
 - Tailwind ambiguous class 경고와 chunk size 경고는 기존 경고이며 이미지 업로드 중복 이슈와 직접 관련 없음
 
 ## Test Cases
@@ -82,7 +102,7 @@ changes: 1
 
 ### 3. Actual app single file selection
 
-빌드된 실제 앱에서 file chooser를 통해 이미지 1개를 선택했다. `uploadToCloudStorage` console log와 `/api/analyze/` 요청 수를 계측했다.
+`frontend/e2e/image-upload.spec.ts`에서 빌드된 실제 앱을 띄우고 file chooser를 통해 이미지 1개를 선택한다. `uploadToCloudStorage` console log와 `/api/analyze/` 요청 수를 계측한다.
 
 측정 결과:
 
@@ -99,7 +119,7 @@ apiRequests: 1
 
 ### 4. Actual app rapid double drop
 
-실제 앱의 drop 영역에 `drop` 이벤트를 거의 동시에 2번 dispatch했다.
+`frontend/e2e/image-upload.spec.ts`에서 실제 앱의 drop 영역에 `drop` 이벤트를 거의 동시에 2번 dispatch한다.
 
 측정 결과:
 
@@ -137,3 +157,5 @@ apiRequests: 2
 - 빠른 double drop: 업로드 1회, 분석 API 1회
 - 분석 중 재선택 또는 drop: 기존 분석이 끝나기 전 새 분석 요청이 시작되지 않음
 - retry: 의도적으로 재시도할 때만 분석 API 1회 호출
+
+현재 double drop E2E는 현 상태를 문서화하기 위해 `apiRequests.length === 2`를 기대한다. 중복 방지 수정 후에는 해당 기대값을 `1`로 바꿔 회귀 테스트로 전환한다.

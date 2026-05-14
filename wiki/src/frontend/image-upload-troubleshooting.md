@@ -179,4 +179,12 @@ rapid double drop:
   apiRequests: 1
 ```
 
-또한 `npm run build`가 통과해야 한다.
+또한 다음 명령이 모두 통과해야 한다.
+
+```bash
+cd frontend
+corepack yarn test:run
+corepack yarn test:e2e
+```
+
+`test:e2e`는 production build를 포함한다. 중복 방지 수정 후에는 `frontend/e2e/image-upload.spec.ts`의 rapid double drop 기대값을 현재 동작 기록용 `2`에서 회귀 검증용 `1`로 변경한다.

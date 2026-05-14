@@ -233,6 +233,8 @@ frontend/dist/
 frontend/dist-ssr/
 frontend/*.local
 frontend/coverage/
+frontend/playwright-report/
+frontend/test-results/
 frontend/.vite/
 frontend/npm-debug.log*
 frontend/yarn-debug.log*

@@ -6,11 +6,13 @@
 
 주요 디렉터리는 다음 역할을 가진다.
 
+- `e2e`: Playwright 기반 브라우저 E2E 테스트
 - `src/components/sections`: 페이지 단위 섹션
 - `src/components/report`: 분석 리포트와 추천 리스트 UI
 - `src/components/curated`: 향수 상세 모달
 - `src/components/common`: 공통 UI 컴포넌트
 - `src/services`: 백엔드 통신, 추천 정규화, 리포트 캡처
+- `src/test`: Vitest 공통 테스트 setup
 - `src/store`: Zustand 기반 전역 상태
 - `src/data`: 로컬 fallback 상품/노트 데이터
 - `src/types`: 분석 결과 등 공유 타입
@@ -54,16 +56,28 @@ details: {
 
 ## Verification
 
-프론트엔드 변경 후에는 다음 명령으로 TypeScript와 Vite build를 확인한다.
+프론트엔드 변경 후에는 Corepack Yarn 기준으로 검증한다.
 
 ```bash
 cd frontend
-npm run build
+corepack yarn build
 ```
 
-의존성 실행 파일이 누락되어 `tsc`를 찾지 못하면, lockfile 기준으로 의존성을 복구한다.
+단위 테스트는 Vitest를 사용한다.
 
 ```bash
 cd frontend
-corepack yarn install --frozen-lockfile
+corepack yarn test:run
 ```
+
+브라우저 이벤트와 업로드 흐름은 Playwright E2E로 확인한다. `test:e2e`는 production build 후 `dist`를 테스트 내부 HTTP 서버로 띄워 실행한다.
+
+```bash
+cd frontend
+corepack yarn test:e2e
+```
+
+테스트 결과물은 Git에 포함하지 않는다.
+
+- `frontend/test-results/`
+- `frontend/playwright-report/`
