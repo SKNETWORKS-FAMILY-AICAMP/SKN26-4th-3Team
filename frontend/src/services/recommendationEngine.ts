@@ -111,6 +111,9 @@ function normalizeBackendRecommendation(rec: any, idx: number): Product & { simi
   const accords = arrayValue(perfume.accords);
   const keywords = keywordValues(perfume.keywords);
   const fallbackDetails = rec.details || {};
+  const topNotes = stringValue(fallbackDetails.topNotes);
+  const middleNotes = stringValue(fallbackDetails.middleNotes);
+  const baseNotes = stringValue(fallbackDetails.baseNotes);
 
   return {
     ...rec,
@@ -128,9 +131,9 @@ function normalizeBackendRecommendation(rec: any, idx: number): Product & { simi
     matchReason: rec.matchReason || "AI가 선정한 당신의 스타일 매칭 향수입니다.",
     details: {
       story: perfume.description || fallbackDetails.story || "",
-      topNotes: notes.join(", ") || fallbackDetails.topNotes || "",
-      middleNotes: fallbackDetails.middleNotes || "",
-      baseNotes: fallbackDetails.baseNotes || "",
+      topNotes: topNotes || notes.join(", "),
+      middleNotes,
+      baseNotes,
       bestFor: keywords.slice(0, 3).join(", ") || fallbackDetails.bestFor || "",
     },
   };
@@ -151,6 +154,10 @@ function resolveRecommendationImage(rec: any): string {
 
 function arrayValue(value: unknown): string[] {
   return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
+}
+
+function stringValue(value: unknown): string {
+  return typeof value === "string" ? value : "";
 }
 
 function keywordValues(value: unknown): string[] {

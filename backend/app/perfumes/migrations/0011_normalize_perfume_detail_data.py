@@ -15,6 +15,7 @@ DETAIL_DATA_KEYS = {
     "aura_profile",
     "standardized_notes",
     "representative_notes",
+    "notes_parsed",
     "embedding_doc",
 }
 

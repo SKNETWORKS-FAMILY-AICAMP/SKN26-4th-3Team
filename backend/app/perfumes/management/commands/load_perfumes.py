@@ -58,7 +58,9 @@ class Command(BaseCommand):
                     # 2. Booster Scoring (Keywords/Notes)
                     perfume_metadata = set(item.get("keywords", []))
                     notes = item.get("notes", [])
-                    if isinstance(notes, dict): notes = [n for sub in notes.values() for n in sub]
+                    if isinstance(notes, dict):
+                        item["notes_parsed"] = translate_notes_pyramid(notes, master_map)
+                        notes = [n for sub in notes.values() for n in sub]
                     perfume_metadata.update(notes)
 
                     for kw in perfume_metadata:
@@ -143,6 +145,7 @@ DETAIL_DATA_KEYS = {
     "aura_profile",
     "standardized_notes",
     "representative_notes",
+    "notes_parsed",
     "embedding_doc",
 }
 
@@ -159,3 +162,15 @@ def build_detail_data(item):
         if not meta:
             detail_data.pop("meta", None)
     return detail_data
+
+
+def translate_notes_pyramid(notes, master_map):
+    return {
+        key: [
+            master_map["note_translations"].get(note, note)
+            for note in value
+            if isinstance(note, str)
+        ]
+        for key, value in notes.items()
+        if key in {"top", "middle", "base"} and isinstance(value, list)
+    }

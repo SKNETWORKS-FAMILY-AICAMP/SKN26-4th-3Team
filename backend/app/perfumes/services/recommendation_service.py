@@ -155,6 +155,122 @@ class RecommendationService:
             return {a: 0.2 for a in self.axes}
         return {k: round(v / max_s, 2) for k, v in scores.items()}
 
+    def _image_asset_for(self, perfume):
+        detail = getattr(perfume, "detail", None)
+        if detail is None:
+            return {}
+
+        image = next(iter(detail.images.all()), None)
+        if image is None:
+            return {}
+
+        return {
+            "original_url": image.original_url,
+            "backend_path": image.processed_path,
+            "base64": image.base64_data,
+        }
+
+    def _detail_payload_for(self, perfume, detail_data):
+        notes = detail_data.get("notes", [])
+        representative_notes = detail_data.get("representative_notes") or notes[:5]
+
+        return {
+            "id": perfume.id,
+            "brand": perfume.brand.name,
+            "koreanName": perfume.korean_name,
+            "englishName": perfume.english_name,
+            "productType": perfume.product_type,
+            "family": perfume.family,
+            "releaseYear": perfume.release_year,
+            "price": detail_data.get("price") or {},
+            "description": detail_data.get("description", ""),
+            "ingredientsRaw": detail_data.get("ingredients_raw", ""),
+            "notes": notes,
+            "representativeNotes": representative_notes,
+            "notesPyramid": self._notes_pyramid_for(detail_data),
+            "accords": detail_data.get("accords", []),
+            "keywords": detail_data.get("keywords", {}),
+            "auraProfile": detail_data.get("aura_profile", {}),
+            "volume": detail_data.get("volume", ""),
+            "meta": detail_data.get("meta", {}),
+        }
+
+    def _image_payload_for(self, image_asset):
+        if not image_asset:
+            return {}
+
+        backend_path = image_asset.get("backend_path", "")
+        original_url = image_asset.get("original_url", "")
+        return {
+            "url": self._public_image_url(backend_path) or original_url,
+            "originalUrl": original_url,
+            "backendPath": backend_path,
+            "base64": image_asset.get("base64", ""),
+        }
+
+    def _public_image_url(self, path):
+        static_marker = "/static/"
+        if not path:
+            return ""
+
+        normalized = str(path).replace("\\", "/")
+        if normalized.startswith("/static/"):
+            return normalized
+
+        marker_index = normalized.find(static_marker)
+        if marker_index >= 0:
+            return normalized[marker_index:]
+
+        return ""
+
+    def _keyword_values(self, keywords):
+        if isinstance(keywords, dict):
+            values = keywords.get("ko") or keywords.get("en") or []
+            return values if isinstance(values, list) else []
+        if isinstance(keywords, list):
+            return keywords
+        return []
+
+    def _notes_pyramid_for(self, detail_data):
+        notes_parsed = detail_data.get("notes_parsed")
+        if isinstance(notes_parsed, dict):
+            pyramid = {
+                "top": self._note_values(notes_parsed.get("top")),
+                "middle": self._note_values(notes_parsed.get("middle")),
+                "base": self._note_values(notes_parsed.get("base")),
+            }
+            if any(pyramid.values()):
+                return pyramid
+
+        notes = self._note_values(
+            detail_data.get("representative_notes")
+            or detail_data.get("standardized_notes")
+            or detail_data.get("notes")
+        )
+        if not notes:
+            return {"top": [], "middle": [], "base": []}
+
+        top_end = max(1, min(2, len(notes)))
+        remaining = notes[top_end:]
+        middle_count = (len(remaining) + 1) // 2
+        middle_end = top_end + middle_count
+
+        return {
+            "top": notes[:top_end],
+            "middle": notes[top_end:middle_end],
+            "base": notes[middle_end:],
+        }
+
+    def _note_values(self, value):
+        if isinstance(value, dict):
+            values = []
+            for key in ("top", "middle", "base"):
+                values.extend(self._note_values(value.get(key)))
+            return values
+        if isinstance(value, list):
+            return [item for item in value if isinstance(item, str) and item]
+        return []
+
     def _generate_reason(self, matches, main_family):
         """사용자에게 보여줄 매칭 사유 문구를 생성합니다."""
         if matches:

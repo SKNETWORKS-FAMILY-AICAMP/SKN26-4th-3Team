@@ -481,6 +481,11 @@ class RecommendationServiceTest(TestCase):
                 "description": "옴니아 크리스탈린 설명",
                 "notes": ["대나무", "서양배", "연꽃"],
                 "representative_notes": ["대나무", "서양배"],
+                "notes_parsed": {
+                    "top": ["대나무"],
+                    "middle": ["서양배"],
+                    "base": ["연꽃"],
+                },
                 "accords": ["우디", "플로럴"],
                 "keywords": {"ko": ["상쾌한", "우아한"], "en": ["Refreshing"]},
                 "aura_profile": {
@@ -516,9 +521,49 @@ class RecommendationServiceTest(TestCase):
         self.assertEqual(recommendation["perfume"]["notes"], ["대나무", "서양배", "연꽃"])
         self.assertEqual(recommendation["perfume"]["accords"], ["우디", "플로럴"])
         self.assertEqual(recommendation["perfume"]["keywords"]["ko"], ["상쾌한", "우아한"])
+        self.assertEqual(recommendation["details"]["topNotes"], "대나무")
+        self.assertEqual(recommendation["details"]["middleNotes"], "서양배")
+        self.assertEqual(recommendation["details"]["baseNotes"], "연꽃")
         self.assertEqual(
             recommendation["imageDetail"]["url"],
             "/static/perfumes/images/bvlgari/omnia.jpg",
         )
         self.assertEqual(recommendation["imageDetail"]["base64"], "base64-image")
         self.assertEqual(recommendation["image"], "/static/perfumes/images/bvlgari/omnia.jpg")
+
+    def test_recommendations_split_flat_notes_when_parsed_notes_are_missing(self):
+        brand = Brand.objects.create(name="LE LABO")
+        perfume = Perfume.objects.create(
+            brand=brand,
+            korean_name="네롤리 36",
+            english_name="neroli 36",
+            product_type="perfume",
+            family="프레시",
+        )
+        PerfumeDetail.objects.create(
+            perfume=perfume,
+            data={
+                "description": "네롤리 36 설명",
+                "notes": ["네롤리", "베르가못", "오렌지 블라썸", "시더우드", "나르가모타"],
+                "representative_notes": ["네롤리", "베르가못", "오렌지 블라썸", "시더우드", "나르가모타"],
+                "aura_profile": {
+                    "플로럴": 0.1,
+                    "우디": 0.1,
+                    "오리엔탈": 0.1,
+                    "프레시": 0.6,
+                    "구르망": 0.1,
+                },
+            },
+        )
+
+        service = RecommendationService()
+        result = service.recommend(
+            {"플로럴": 0.1, "우디": 0.1, "오리엔탈": 0.1, "프레시": 0.6, "구르망": 0.1},
+            "",
+            ["네롤리"],
+        )
+
+        recommendation = result[0]
+        self.assertEqual(recommendation["details"]["topNotes"], "네롤리, 베르가못")
+        self.assertEqual(recommendation["details"]["middleNotes"], "오렌지 블라썸, 시더우드")
+        self.assertEqual(recommendation["details"]["baseNotes"], "나르가모타")
