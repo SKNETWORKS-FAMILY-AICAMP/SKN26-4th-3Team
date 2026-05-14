@@ -13,6 +13,7 @@ from typing import Any, Final, Literal, Protocol, TypedDict
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
 
+# LLM 응답의 style 값은 아래 7개 카테고리 중 하나로만 제한한다.
 StyleCategory = Literal[
     "fresh_clean",
     "floral_romantic",
@@ -44,6 +45,8 @@ class FewShotExample(TypedDict):
     output: str
 
 
+# 프롬프트에 함께 제공할 스타일 카테고리 설명이다.
+# 모델이 임의의 style 값을 만들지 않도록 카테고리별 의미를 명시한다.
 STYLE_CATEGORIES: Final[dict[str, str]] = {
     "fresh_clean": "산뜻함, 깨끗함, 시트러스/화이트 머스크 계열",
     "floral_romantic": "플로럴, 부드러움, 로맨틱 계열",
@@ -54,6 +57,8 @@ STYLE_CATEGORIES: Final[dict[str, str]] = {
     "aquatic_marine": "물, 바다, 투명하고 시원한 계열",
 }
 
+# VLM 분석 결과에서 스타일 분류 입력으로 허용하는 필드만 정의한다.
+# 예상하지 못한 키가 들어오면 프롬프트 오염을 막기 위해 검증 단계에서 차단한다.
 ALLOWED_VLM_KEYS: Final[tuple[str, ...]] = (
     "visual_summary",
     "colors",
@@ -65,6 +70,8 @@ ALLOWED_VLM_KEYS: Final[tuple[str, ...]] = (
     "raw_keywords",
 )
 
+# 7개 스타일 카테고리별 few-shot 예시다.
+# 각 예시는 최종 출력 스키마인 {style, mood, color} 형태를 그대로 보여준다.
 FEW_SHOT_EXAMPLES: Final[list[FewShotExample]] = [
     {
         "input": "Sparkling bergamot, clean white musk, crisp cotton, and a transparent citrus trail.",
@@ -127,6 +134,7 @@ def _json_dumps(data: VLMStyleInput) -> str:
 
 def normalize_profile_input(profile_input: str | VLMStyleInput) -> str:
     """Normalize raw text or structured VLM output into prompt input text."""
+    # 기존 텍스트 설명 입력은 공백만 정리해서 그대로 분류 프롬프트에 사용한다.
     if isinstance(profile_input, str):
         description = " ".join(profile_input.strip().split())
         if not description:
@@ -136,10 +144,14 @@ def normalize_profile_input(profile_input: str | VLMStyleInput) -> str:
     if not isinstance(profile_input, dict):
         raise TypeError("profile_input must be a string description or VLM output dict")
 
+    # VLM dict 입력은 허용된 필드만 받아 LLM 프롬프트에 넣는다.
+    # 신규 필드가 필요하면 ALLOWED_VLM_KEYS에 먼저 추가해 의도를 명확히 해야 한다.
     unknown_keys = set(profile_input) - set(ALLOWED_VLM_KEYS)
     if unknown_keys:
         raise ValueError(f"VLM output contains unsupported keys: {sorted(unknown_keys)}")
 
+    # 각 VLM 필드를 사람이 읽을 수 있는 한 줄 설명으로 합쳐
+    # few-shot 분류 입력과 동일한 텍스트 형태로 정규화한다.
     parts: list[str] = []
     visual_summary = profile_input.get("visual_summary")
     if visual_summary:
@@ -163,6 +175,8 @@ def normalize_profile_input(profile_input: str | VLMStyleInput) -> str:
 def build_style_prompt(profile_input: str | VLMStyleInput) -> list[dict[str, str]]:
     """Build few-shot prompt messages for JSON mode classification."""
     description = normalize_profile_input(profile_input)
+    # 시스템 메시지에는 허용 style 목록과 JSON-only 제약을 넣고,
+    # 사용자 메시지에는 few-shot 예시와 실제 입력을 함께 전달한다.
     categories = "\n".join(f"- {key}: {desc}" for key, desc in STYLE_CATEGORIES.items())
     shots = "\n".join(
         f"Input: {example['input']}\nOutput: {example['output']}"
@@ -199,6 +213,7 @@ def _extract_message_content(response: Any) -> str:
 
 def _parse_and_validate(raw_content: str) -> StyleProfile:
     """Parse raw JSON content and validate it with Pydantic."""
+    # JSON mode 응답이라도 스키마가 틀릴 수 있으므로 Pydantic으로 한 번 더 검증한다.
     parsed = json.loads(raw_content)
     return StyleProfile.model_validate(parsed)
 
@@ -224,6 +239,8 @@ class KeywordStructureService:
         last_error: Exception | None = None
 
         for attempt in range(1, self.max_retries + 1):
+            # OpenAI-compatible Chat Completions JSON mode 호출 지점이다.
+            # client는 외부에서 주입해 실제 OpenAI client와 테스트 fake client를 모두 지원한다.
             response = self.client.chat.completions.create(
                 model=self.model,
                 messages=messages,
@@ -234,6 +251,8 @@ class KeywordStructureService:
             try:
                 return _parse_and_validate(raw_content)
             except (json.JSONDecodeError, TypeError, ValidationError) as exc:
+                # 파싱 또는 스키마 검증 실패 시 이전 응답과 재시도 지시를 대화에 추가한다.
+                # 네트워크/API 예외는 호출자가 처리하도록 여기서 잡지 않는다.
                 last_error = exc
                 messages.append({"role": "assistant", "content": raw_content})
                 messages.append(
