@@ -1,9 +1,7 @@
-"""LLM JSON mode fragrance style profiler.
+"""LLM JSON mode style profile service.
 
-This model-layer service classifies product, fragrance, or VLM image keyword
-input into the strict `{style, mood, color}` schema using OpenAI-compatible
-Chat Completions JSON mode, seven style-category few-shot examples, retry
-logic, and Pydantic validation.
+This model-layer file classifies fragrance, product, or VLM keyword input
+into a structured style profile for downstream recommendation logic.
 """
 
 from __future__ import annotations
@@ -13,7 +11,7 @@ from typing import Any, Final, Literal, Protocol, TypedDict
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
 
-# LLM 응답의 style 값은 아래 7개 카테고리 중 하나로만 제한한다.
+# Restrict LLM style output to the seven supported style categories.
 StyleCategory = Literal[
     "fresh_clean",
     "floral_romantic",
@@ -28,25 +26,34 @@ StyleCategory = Literal[
 class VLMStyleInput(TypedDict, total=False):
     """Structured VLM keyword payload accepted by the style profiler."""
 
+    # Korean sentence summarizing the overall visual atmosphere.
     visual_summary: str
+    # Fashion-item colors extracted from the image.
     colors: list[str]
+    # Object or material keywords detected in the image.
     objects: list[str]
+    # Scene or location keywords for the image context.
     scene: list[str]
+    # Mood keywords describing the image impression.
     mood: list[str]
+    # Seasonal keyword when the image has a clear seasonal signal.
     season: list[str]
+    # Time-of-day keyword when the image has a clear time signal.
     time: list[str]
+    # Auxiliary raw keywords produced by the VLM.
     raw_keywords: list[str]
 
 
 class FewShotExample(TypedDict):
     """Few-shot prompt example for one style category."""
 
+    # Example input shown to the LLM.
     input: str
+    # JSON output shape the LLM should follow.
     output: str
 
 
-# 프롬프트에 함께 제공할 스타일 카테고리 설명이다.
-# 모델이 임의의 style 값을 만들지 않도록 카테고리별 의미를 명시한다.
+# Category descriptions injected into the prompt to prevent arbitrary style values.
 STYLE_CATEGORIES: Final[dict[str, str]] = {
     "fresh_clean": "산뜻함, 깨끗함, 시트러스/화이트 머스크 계열",
     "floral_romantic": "플로럴, 부드러움, 로맨틱 계열",
@@ -57,8 +64,8 @@ STYLE_CATEGORIES: Final[dict[str, str]] = {
     "aquatic_marine": "물, 바다, 투명하고 시원한 계열",
 }
 
-# VLM 분석 결과에서 스타일 분류 입력으로 허용하는 필드만 정의한다.
-# 예상하지 못한 키가 들어오면 프롬프트 오염을 막기 위해 검증 단계에서 차단한다.
+# Only these VLM fields are allowed to enter the style-classification prompt.
+# Unknown keys are rejected to avoid prompt pollution from unexpected payloads.
 ALLOWED_VLM_KEYS: Final[tuple[str, ...]] = (
     "visual_summary",
     "colors",
@@ -70,8 +77,8 @@ ALLOWED_VLM_KEYS: Final[tuple[str, ...]] = (
     "raw_keywords",
 )
 
-# 7개 스타일 카테고리별 few-shot 예시다.
-# 각 예시는 최종 출력 스키마인 {style, mood, color} 형태를 그대로 보여준다.
+# Seven few-shot examples, one for each supported style category.
+# Each example demonstrates the required {style, mood, color} JSON schema.
 FEW_SHOT_EXAMPLES: Final[list[FewShotExample]] = [
     {
         "input": "Sparkling bergamot, clean white musk, crisp cotton, and a transparent citrus trail.",
@@ -107,15 +114,20 @@ FEW_SHOT_EXAMPLES: Final[list[FewShotExample]] = [
 class StyleProfile(BaseModel):
     """Strict output schema for LLM classification."""
 
+    # Reject extra keys so the model cannot add unplanned response fields.
     model_config = ConfigDict(extra="forbid")
 
+    # Literal validation blocks style values outside the seven categories.
     style: StyleCategory = Field(description="One of the seven predefined style categories.")
+    # Keep mood as a short phrase for downstream display and ranking use.
     mood: str = Field(min_length=1, max_length=60, description="Short mood phrase.")
+    # Keep color as a compact representative color phrase.
     color: str = Field(min_length=1, max_length=40, description="Representative color phrase.")
 
     @field_validator("mood", "color")
     @classmethod
     def normalize_short_text(cls, value: str) -> str:
+        # Trim surrounding whitespace and collapse repeated spaces from LLM output.
         normalized_value = " ".join(value.strip().split())
         if not normalized_value:
             raise ValueError("value must not be empty")
@@ -125,16 +137,18 @@ class StyleProfile(BaseModel):
 class ChatCompletionsClient(Protocol):
     """Protocol for OpenAI-compatible `client.chat.completions.create`."""
 
+    # Allows both the real OpenAI SDK client and fake test clients to be injected.
     chat: Any
 
 
 def _json_dumps(data: VLMStyleInput) -> str:
+    # Keep Korean keywords unescaped and compact the JSON for prompt readability.
     return json.dumps(data, ensure_ascii=False, separators=(",", ":"))
 
 
 def normalize_profile_input(profile_input: str | VLMStyleInput) -> str:
     """Normalize raw text or structured VLM output into prompt input text."""
-    # 기존 텍스트 설명 입력은 공백만 정리해서 그대로 분류 프롬프트에 사용한다.
+    # Raw text input only needs whitespace normalization before classification.
     if isinstance(profile_input, str):
         description = " ".join(profile_input.strip().split())
         if not description:
@@ -142,32 +156,36 @@ def normalize_profile_input(profile_input: str | VLMStyleInput) -> str:
         return description
 
     if not isinstance(profile_input, dict):
+        # Reject unsupported input types before an LLM call is attempted.
         raise TypeError("profile_input must be a string description or VLM output dict")
 
-    # VLM dict 입력은 허용된 필드만 받아 LLM 프롬프트에 넣는다.
-    # 신규 필드가 필요하면 ALLOWED_VLM_KEYS에 먼저 추가해 의도를 명확히 해야 한다.
+    # Accept only known VLM fields. Add new fields to ALLOWED_VLM_KEYS first.
     unknown_keys = set(profile_input) - set(ALLOWED_VLM_KEYS)
     if unknown_keys:
         raise ValueError(f"VLM output contains unsupported keys: {sorted(unknown_keys)}")
 
-    # 각 VLM 필드를 사람이 읽을 수 있는 한 줄 설명으로 합쳐
-    # few-shot 분류 입력과 동일한 텍스트 형태로 정규화한다.
+    # Convert VLM fields into a readable one-line prompt input.
     parts: list[str] = []
     visual_summary = profile_input.get("visual_summary")
     if visual_summary:
+        # Put the overall visual summary first because it carries the broad context.
         parts.append(f"visual_summary: {visual_summary}")
 
     for key in ALLOWED_VLM_KEYS[1:]:
         value = profile_input.get(key)
         if not value:
+            # Skip empty fields to reduce prompt noise.
             continue
         if isinstance(value, list):
+            # Join keyword lists into a readable comma-separated phrase.
             parts.append(f"{key}: {', '.join(str(item) for item in value)}")
         else:
+            # Preserve single string values in the same key-value format.
             parts.append(f"{key}: {value}")
 
     description = " | ".join(parts).strip()
     if not description:
+        # A dict without usable values cannot produce a meaningful classification.
         raise ValueError("VLM output must contain at least one non-empty field")
     return description
 
@@ -175,10 +193,11 @@ def normalize_profile_input(profile_input: str | VLMStyleInput) -> str:
 def build_style_prompt(profile_input: str | VLMStyleInput) -> list[dict[str, str]]:
     """Build few-shot prompt messages for JSON mode classification."""
     description = normalize_profile_input(profile_input)
-    # 시스템 메시지에는 허용 style 목록과 JSON-only 제약을 넣고,
-    # 사용자 메시지에는 few-shot 예시와 실제 입력을 함께 전달한다.
+    # The system message defines allowed styles and JSON-only constraints.
+    # The user message supplies the few-shot examples plus the current input.
     categories = "\n".join(f"- {key}: {desc}" for key, desc in STYLE_CATEGORIES.items())
     shots = "\n".join(
+        # Repeating Input/Output pairs makes the target JSON shape explicit.
         f"Input: {example['input']}\nOutput: {example['output']}"
         for example in FEW_SHOT_EXAMPLES
     )
@@ -207,13 +226,15 @@ def build_style_prompt(profile_input: str | VLMStyleInput) -> list[dict[str, str
 def _extract_message_content(response: Any) -> str:
     """Extract assistant content from OpenAI SDK object or dict response."""
     if isinstance(response, dict):
+        # Fake clients in tests return dict responses.
         return response["choices"][0]["message"]["content"]
+    # Real OpenAI SDK responses expose content through the object path.
     return response.choices[0].message.content
 
 
 def _parse_and_validate(raw_content: str) -> StyleProfile:
     """Parse raw JSON content and validate it with Pydantic."""
-    # JSON mode 응답이라도 스키마가 틀릴 수 있으므로 Pydantic으로 한 번 더 검증한다.
+    # JSON mode can still return schema-invalid JSON, so validate with Pydantic.
     parsed = json.loads(raw_content)
     return StyleProfile.model_validate(parsed)
 
@@ -228,7 +249,9 @@ class KeywordStructureService:
         max_retries: int = 3,
     ) -> None:
         if max_retries < 1:
+            # At least one attempt is required for a meaningful classification call.
             raise ValueError("max_retries must be at least 1")
+        # Injecting client and model keeps the service testable and environment-agnostic.
         self.client = client
         self.model = model
         self.max_retries = max_retries
@@ -239,8 +262,8 @@ class KeywordStructureService:
         last_error: Exception | None = None
 
         for attempt in range(1, self.max_retries + 1):
-            # OpenAI-compatible Chat Completions JSON mode 호출 지점이다.
-            # client는 외부에서 주입해 실제 OpenAI client와 테스트 fake client를 모두 지원한다.
+            # OpenAI-compatible Chat Completions JSON mode call site.
+            # The injected client may be a real OpenAI client or a fake test client.
             response = self.client.chat.completions.create(
                 model=self.model,
                 messages=messages,
@@ -249,11 +272,12 @@ class KeywordStructureService:
             )
             raw_content = _extract_message_content(response)
             try:
+                # Valid JSON and valid schema return immediately.
                 return _parse_and_validate(raw_content)
             except (json.JSONDecodeError, TypeError, ValidationError) as exc:
-                # 파싱 또는 스키마 검증 실패 시 이전 응답과 재시도 지시를 대화에 추가한다.
-                # 네트워크/API 예외는 호출자가 처리하도록 여기서 잡지 않는다.
+                # Retry only parse/schema failures. Network/API exceptions bubble up.
                 last_error = exc
+                # Keep the failed response in context so the next attempt can correct it.
                 messages.append({"role": "assistant", "content": raw_content})
                 messages.append(
                     {
@@ -267,6 +291,7 @@ class KeywordStructureService:
                     }
                 )
 
+        # Preserve the final parse/validation exception as the failure cause.
         raise ValueError(f"Failed to parse and validate style profile after {self.max_retries} attempts") from last_error
 
     def generate(self, profile_input: str | VLMStyleInput) -> StyleProfile:
@@ -281,6 +306,7 @@ def classify_style_profile(
     max_retries: int = 3,
 ) -> StyleProfile:
     """Classify input into `{style, mood, color}` with up to 3 validation retries."""
+    # Provide a function-style wrapper for callers that do not need a service instance.
     return KeywordStructureService(client=client, model=model, max_retries=max_retries).classify(profile_input)
 
 
@@ -298,4 +324,4 @@ __all__ = [
 ]
 
 # File History
-# 2026-05-14: Added LLM JSON mode style profiling service for S4P-55.
+# 2026-05-14: Created LLM JSON mode style profile service. (S4P-55)
