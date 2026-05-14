@@ -9,6 +9,7 @@
   - [Python Style](./conventions/python-style.md)
 - [Backend](./backend.md)
   - [MySQL Document Store Roadmap](./backend/mysql-document-store-roadmap.md)
+  - [Recommendation API Contract](./backend/recommendation-api-contract.md)
   - [Vector RAG](./backend/vector-rag.md)
 - [Frontend](./frontend/info.md)
   - [JavaScript vs TypeScript](./frontend/presentation/01_JS_vs_TS.md)
