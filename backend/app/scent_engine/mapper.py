@@ -8,7 +8,7 @@ image_to_fragrance_mapper.py
 2. 시각 키워드를 향수 family / sub / component / descriptor로 점수화
 3. 패션/봄/오후/여성적 이미지에서는 Fresh/Floral 쪽을 보정
 4. black 단독으로 Leather/Oud/Incense가 과하게 올라가지 않도록 보정
-5. 최종 query_text를 생성해 RAG 검색 질의로 사용
+5. 하위 속성(Sub, Component, Descriptor)을 기반으로 Gourmand(그루망) 축 스코어를 동적 계산하여 5축 보정
 
 중요:
 - query_text는 RAG 검색용이며 prefix를 붙인다.
@@ -24,6 +24,15 @@ from typing import Any
 
 from .aliases import normalize_note_keyword, to_korean_note
 from .rules import VISUAL_TO_FRAGRANCE_RULES, KOREAN_VISUAL_TRIGGERS
+
+# -----------------------------------------------------
+# 그루망(Gourmand) 트리거 정의
+# -----------------------------------------------------
+GOURMAND_TRIGGERS = {
+    "components": ["Vanilla", "Berry, Apple, Peach", "Tropical Fruit"],
+    "subs": ["Fruity", "Soft Amber"],
+    "descriptors": ["달콤한", "포근한", "감미로운"],
+}
 
 
 def _collect_source_keywords(image_keywords: dict[str, Any]) -> list[str]:
@@ -92,6 +101,32 @@ def _build_component_ko_scores(component_scores: dict[str, float]) -> dict[str, 
         result[kor] = result.get(kor, 0.0) + score
 
     return result
+
+
+def _calculate_gourmand_score(
+    component_scores: defaultdict[str, float],
+    sub_scores: defaultdict[str, float],
+    descriptor_scores: defaultdict[str, float],
+) -> float:
+    gourmand_score = 0.0
+
+    # 1. Components (원료 가중치 x 1.0)
+    for comp in GOURMAND_TRIGGERS["components"]:
+        norm_comp = normalize_note_keyword(comp)
+        if norm_comp and norm_comp in component_scores:
+            gourmand_score += component_scores[norm_comp] * 1.0
+
+    # 2. Subs (서브 계열 가중치 x 0.7)
+    for sub in GOURMAND_TRIGGERS["subs"]:
+        if sub in sub_scores:
+            gourmand_score += sub_scores[sub] * 0.7
+
+    # 3. Descriptors (분위기 묘사 가중치 x 0.5)
+    for desc in GOURMAND_TRIGGERS["descriptors"]:
+        if desc in descriptor_scores:
+            gourmand_score += descriptor_scores[desc] * 0.5
+
+    return gourmand_score
 
 
 def _rank_scores(
@@ -235,6 +270,31 @@ def _apply_context_adjustments(
 
 
 def map_image_to_fragrance_keywords(image_keywords: dict[str, Any]) -> dict[str, Any]:
+    """
+    VLM에서 추출된 시각적 키워드 딕셔너리를 향수 도메인의 키워드 및 점수로 변환합니다.
+
+    이 함수는 다음과 같은 과정을 거칩니다:
+    1. 시각 키워드(색상, 사물, 장면 등) 수집 및 정규화.
+    2. VISUAL_TO_FRAGRANCE_RULES에 따라 향수 계열(Family), 서브(Sub), 성분(Component), 묘사(Descriptor) 점수 계산.
+    3. 중복 매칭에 따른 가중치(Multiplier) 적용.
+    4. 이미지 전체 문맥(패션, 시간대, 어두움 등)에 따른 추가 보정 작업 수행.
+    5. 최종 하위 속성 데이터를 기반으로 구르망(Gourmand) 점수 산출 및 병합.
+    6. 각 카테고리별 상위 N개의 결과를 추출하여 최종 딕셔너리 구성.
+
+    Args:
+        image_keywords (dict[str, Any]): VLM 분석 결과물.
+            필수 키: 'colors', 'objects', 'scene', 'mood', 'season', 'time', 'raw_keywords' 등.
+
+    Returns:
+        dict[str, Any]: 향수 매칭 결과물.
+            - matched_triggers: 매칭된 원본 시각 트리거 목록
+            - scores: 각 카테고리별 상세 점수 (name, score 쌍)
+            - fragrance_families: 상위 향수 계열 명칭 목록
+            - fragrance_subs: 상위 서브 계열 명칭 목록
+            - components: 상위 성분 영문 명칭 목록
+            - components_ko: 상위 성분 한국어 명칭 목록
+            - descriptors: 상위 묘사 키워드 목록
+    """
     source_keywords = _collect_source_keywords(image_keywords)
     matched_triggers = _detect_triggers(source_keywords)
 
@@ -262,6 +322,7 @@ def map_image_to_fragrance_keywords(image_keywords: dict[str, Any]) -> dict[str,
         )
         _add_scores(descriptor_scores, mapping.get("descriptors", {}), multiplier)
 
+    # 1. 기존 문맥 보정 적용
     _apply_context_adjustments(
         source_keywords=source_keywords,
         matched_triggers=matched_triggers,
@@ -271,8 +332,18 @@ def map_image_to_fragrance_keywords(image_keywords: dict[str, Any]) -> dict[str,
         descriptor_scores=descriptor_scores,
     )
 
+    # 2. 보정이 끝난 최종 하위 데이터를 바탕으로 그루망(Gourmand) 스코어 계산 및 병합
+    gourmand_score = _calculate_gourmand_score(
+        component_scores=component_scores,
+        sub_scores=sub_scores,
+        descriptor_scores=descriptor_scores,
+    )
+    if gourmand_score > 0:
+        family_scores["GOURMAND"] += gourmand_score
+
     component_ko_scores = _build_component_ko_scores(component_scores)
 
+    # 3. 최종 정렬
     ranked_families = _rank_scores(family_scores, top_n=3)
     ranked_subs = _rank_scores(sub_scores, top_n=6)
     ranked_components = _rank_scores(component_scores, top_n=10)
@@ -281,7 +352,6 @@ def map_image_to_fragrance_keywords(image_keywords: dict[str, Any]) -> dict[str,
 
     result: dict[str, Any] = {
         "matched_triggers": list(dict.fromkeys(matched_triggers)),
-
         "scores": {
             "families": ranked_families,
             "subs": ranked_subs,
@@ -289,7 +359,6 @@ def map_image_to_fragrance_keywords(image_keywords: dict[str, Any]) -> dict[str,
             "components_ko": ranked_components_ko,
             "descriptors": ranked_descriptors,
         },
-
         "fragrance_families": _names_only(ranked_families),
         "fragrance_subs": _names_only(ranked_subs),
         "components": _names_only(ranked_components),
@@ -311,7 +380,15 @@ if __name__ == "__main__":
         "mood": ["soft", "romantic"],
         "season": ["spring"],
         "time": ["afternoon"],
-        "raw_keywords": ["체크무늬", "드레스", "여성", "실내", "포즈", "손가방", "목걸이"],
+        "raw_keywords": [
+            "체크무늬",
+            "드레스",
+            "여성",
+            "실내",
+            "포즈",
+            "손가방",
+            "목걸이",
+        ],
     }
 
     result = map_image_to_fragrance_keywords(sample)
