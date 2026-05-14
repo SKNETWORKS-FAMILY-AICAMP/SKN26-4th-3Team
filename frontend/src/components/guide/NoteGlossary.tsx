@@ -26,13 +26,8 @@ export default function NoteGlossary({ onNotesChange }: NoteGlossaryProps) {
   const toggleNote = (note: ScentNote) => {
     let newNotes;
     // 이미 선택된 경우 제거
-<<<<<<< HEAD
     if (selectedNotes.find((n) => n.id === note.id)) {
       newNotes = selectedNotes.filter((n) => n.id !== note.id);
-=======
-    if (selectedNotes.find((n) => n.enName === note.enName)) {
-      newNotes = selectedNotes.filter((n) => n.enName !== note.enName);
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     } 
     // 선택되지 않았고 3개 미만인 경우 추가
     else if (selectedNotes.length < 3) {
@@ -61,28 +56,17 @@ export default function NoteGlossary({ onNotesChange }: NoteGlossaryProps) {
    * 개별 노트 카드를 렌더링합니다.
    */
   const renderNoteCard = (note: ScentNote) => {
-<<<<<<< HEAD
     const isSelected = selectedNotes.find((n) => n.id === note.id);
     return (
       <div
         key={note.id}
-=======
-    const isSelected = selectedNotes.find((n) => n.enName === note.enName);
-    return (
-      <div
-        key={note.enName}
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
         className={`group relative h-40 md:h-44 border rounded-sm p-4 cursor-pointer transition-all duration-500 overflow-hidden ${
           isSelected 
             ? 'bg-wood border-wood shadow-lg' 
             : 'bg-white/40 border-wood/5 hover:border-wood/20'
         }`}
         onClick={() => toggleNote(note)}
-<<<<<<< HEAD
         onMouseEnter={() => setHoveredNote(note.id)}
-=======
-        onMouseEnter={() => setHoveredNote(note.enName)}
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
         onMouseLeave={() => setHoveredNote(null)}
       >
         {/* 선택 완료 체크 아이콘 */}
@@ -93,11 +77,7 @@ export default function NoteGlossary({ onNotesChange }: NoteGlossaryProps) {
         )}
 
         {/* 기본 정보 레이어 */}
-<<<<<<< HEAD
         <div className={`flex flex-col justify-between h-full transition-all duration-300 ${hoveredNote === note.id && !isSelected ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
-=======
-        <div className={`flex flex-col justify-between h-full transition-all duration-300 ${hoveredNote === note.enName && !isSelected ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
           <span className={`text-[9px] uppercase tracking-widest ${isSelected ? 'text-cream/40' : 'text-wood/40'}`}>
             {note.category} Note
           </span>
@@ -106,29 +86,17 @@ export default function NoteGlossary({ onNotesChange }: NoteGlossaryProps) {
               {note.name}
             </h4>
             <p className={`text-[9px] uppercase tracking-tighter ${isSelected ? 'text-cream/30' : 'text-wood/20'}`}>
-<<<<<<< HEAD
               {note.family}
-=======
-              {note.enName}
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
             </p>
           </div>
         </div>
 
         {/* 호버 정보 레이어 (설명 및 원산지) */}
         {!isSelected && (
-<<<<<<< HEAD
           <div className={`absolute inset-0 p-4 flex flex-col justify-center transition-all duration-500 ${hoveredNote === note.id ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}>
-            <p 
-              className="text-[11px] leading-relaxed text-wood/80 break-keep mb-3"
-              dangerouslySetInnerHTML={{ __html: note.description }}
-            />
-=======
-          <div className={`absolute inset-0 p-4 flex flex-col justify-center transition-all duration-500 ${hoveredNote === note.enName ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}>
             <p className="text-[11px] leading-relaxed text-wood/80 break-keep mb-3">
               {note.description}
             </p>
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
             <div className="pt-2 border-t border-wood/10">
               <p className="text-[8px] uppercase tracking-widest text-wood/30 mb-0.5">Origin</p>
               <p className="text-[9px] text-wood/50 line-clamp-1">{note.origin}</p>
@@ -149,12 +117,7 @@ export default function NoteGlossary({ onNotesChange }: NoteGlossaryProps) {
             03. Perfumery Notes (향기 원료 사전)
           </h3>
           <p className="text-sm text-wood/60 break-keep">
-<<<<<<< HEAD
-            마음에 드는 <span className="text-wood font-medium">원료를 최대 3개</span>까지 선택해 보세요. <br className="hidden sm:inline" />
-            당신의 스타일 사진과 함께 분석하여 가장 닮은 향수를 찾아드립니다.
-=======
             마음에 드는 <span className="text-wood font-medium">원료를 최대 3개</span>까지 선택해 보세요. 당신의 스타일 사진과 함께 분석하여 가장 닮은 향수를 찾아드립니다.
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
           </p>
           {selectedNotes.length === 0 && (
             <p className="text-[10px] text-wood/30 mt-2 italic">

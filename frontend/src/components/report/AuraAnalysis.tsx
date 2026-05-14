@@ -1,6 +1,5 @@
 import RadarChart from "@/components/common/RadarChart";
 
-<<<<<<< HEAD
 interface RadarDataPoint {
   axis: string;
   value: number;
@@ -11,12 +10,6 @@ interface AuraAnalysisProps {
   isRadarVisible: boolean;
   isStepsVisible: boolean;
   radarData: RadarDataPoint[];
-=======
-interface AuraAnalysisProps {
-  isRadarVisible: boolean;
-  isStepsVisible: boolean;
-  radarData: any[];
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
   logicSteps: string[];
   borderClass: string;
 }

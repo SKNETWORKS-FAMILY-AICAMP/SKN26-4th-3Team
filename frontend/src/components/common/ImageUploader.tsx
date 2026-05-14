@@ -5,11 +5,7 @@
  */
 
 import { useState, useRef, type ChangeEvent, type DragEvent } from "react";
-<<<<<<< HEAD
-import { Upload, X, ImageIcon, AlertCircle } from "lucide-react";
-=======
 import { Upload, X, ImageIcon, Loader2, AlertCircle } from "lucide-react";
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
 import { uploadToCloudStorage } from "@/services/uploadService";
 
 interface ImageUploaderProps {
@@ -27,7 +23,6 @@ export default function ImageUploader({ onImageProcessed, isAnalyzing }: ImageUp
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   /**
-<<<<<<< HEAD
    * 🛠️ REFACTOR (보안 강화): 파일의 바이너리 헤더(Magic Number)를 확인하여 
    * 위조된 확장자를 가진 악성 파일(Web Shell 등)의 업로드를 차단합니다.
    */
@@ -84,13 +79,6 @@ export default function ImageUploader({ onImageProcessed, isAnalyzing }: ImageUp
     const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
     if (file.size > MAX_FILE_SIZE) {
       setError("파일 크기는 10MB 이하만 가능합니다.");
-=======
-   * 이미지 리사이징 및 클라우드 업로드 시뮬레이션
-   */
-  const processImage = async (file: File) => {
-    if (!file.type.startsWith("image/")) {
-      setError("이미지 파일만 업로드 가능합니다.");
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
       return;
     }
 
@@ -101,7 +89,6 @@ export default function ImageUploader({ onImageProcessed, isAnalyzing }: ImageUp
       const img = new Image();
       img.onload = async () => {
         try {
-<<<<<<< HEAD
           // 🛡️ SECURITY FIX: 캔버스 크기 상한선 강제 적용 (비정상적으로 큰 이미지의 픽셀 공격 방어)
           const MAX_CANVAS_SIZE = 4096;
           if (img.width > MAX_CANVAS_SIZE || img.height > MAX_CANVAS_SIZE) {
@@ -109,8 +96,6 @@ export default function ImageUploader({ onImageProcessed, isAnalyzing }: ImageUp
             return;
           }
 
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
           const canvas = document.createElement("canvas");
           const MAX_WIDTH = 1200; 
           const MAX_HEIGHT = 1200;
@@ -141,22 +126,14 @@ export default function ImageUploader({ onImageProcessed, isAnalyzing }: ImageUp
           // 클라우드 업로드 시뮬레이션 시작
           setIsUploading(true);
           const remoteUrl = await uploadToCloudStorage(base64);
-<<<<<<< HEAD
           
           await onImageProcessed(base64, remoteUrl); // 🚨 FIX: POST 중복 요청 방지
           setIsUploading(false); // 🚨 FIX: POST 중복 요청 방지
         } catch {
-=======
-          setIsUploading(false);
-          
-          onImageProcessed(base64, remoteUrl);
-        } catch (err) {
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
           setError("이미지 처리 중 오류가 발생했습니다.");
           setIsUploading(false);
         }
       };
-<<<<<<< HEAD
       
       // 🛡️ SECURITY FIX: onerror 핸들러 추가하여 이미지 로딩 실패 시 자원 해제
       img.onerror = () => {
@@ -172,18 +149,11 @@ export default function ImageUploader({ onImageProcessed, isAnalyzing }: ImageUp
       setError("파일을 읽는 중 오류가 발생했습니다.");
     };
 
-=======
-      img.src = event.target?.result as string;
-    };
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     reader.readAsDataURL(file);
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-<<<<<<< HEAD
     e.preventDefault(); // 🚨 FIX: POST 중복 요청 방지
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     if (e.target.files && e.target.files[0]) {
       processImage(e.target.files[0]);
     }
@@ -191,7 +161,6 @@ export default function ImageUploader({ onImageProcessed, isAnalyzing }: ImageUp
 
   const handleDragOver = (e: DragEvent) => {
     e.preventDefault();
-<<<<<<< HEAD
     e.stopPropagation(); // 🚨 FIX: POST 중복 요청 방지
     setIsDragging(true);
   };
@@ -199,34 +168,21 @@ export default function ImageUploader({ onImageProcessed, isAnalyzing }: ImageUp
   const handleDragLeave = (e: DragEvent) => {
     e.preventDefault(); // 🚨 FIX: POST 중복 요청 방지
     e.stopPropagation(); // 🚨 FIX: POST 중복 요청 방지
-=======
-    setIsDragging(true);
-  };
-
-  const handleDragLeave = () => {
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     setIsDragging(false);
   };
 
   const handleDrop = (e: DragEvent) => {
     e.preventDefault();
-<<<<<<< HEAD
     e.stopPropagation(); // 🚨 FIX: POST 중복 요청 방지
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     setIsDragging(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       processImage(e.dataTransfer.files[0]);
     }
   };
 
-<<<<<<< HEAD
   const removeImage = (e: React.MouseEvent) => {
     e.preventDefault(); // 🚨 FIX: POST 중복 요청 방지
     e.stopPropagation(); // 🚨 FIX: POST 중복 요청 방지
-=======
-  const removeImage = () => {
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     setPreview(null);
     setError(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
@@ -246,11 +202,7 @@ export default function ImageUploader({ onImageProcessed, isAnalyzing }: ImageUp
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-<<<<<<< HEAD
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); fileInputRef.current?.click(); }} // 🚨 FIX: POST 중복 요청 방지
-=======
-          onClick={() => fileInputRef.current?.click()}
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
           className={`relative aspect-video flex flex-col items-center justify-center border-2 border-dashed transition-all duration-300 cursor-pointer rounded-sm ${
             isDragging ? "border-wood bg-cream/20" : "border-cream/20 bg-white/10 hover:bg-white/20"
           }`}
@@ -284,10 +236,7 @@ export default function ImageUploader({ onImageProcessed, isAnalyzing }: ImageUp
           {!isAnalyzing && (
             <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
               <button
-<<<<<<< HEAD
                 type="button" // 🚨 FIX: POST 중복 요청 방지
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
                 onClick={removeImage}
                 className="p-3 bg-cream text-wood rounded-full hover:scale-110 shadow-lg transition-transform"
                 title="이미지 제거"
@@ -300,15 +249,11 @@ export default function ImageUploader({ onImageProcessed, isAnalyzing }: ImageUp
           {/* 업로드 중 상태 표시 */}
           {isUploading && (
             <div className="absolute inset-0 bg-gold/40 backdrop-blur-sm flex flex-col items-center justify-center text-wood">
-<<<<<<< HEAD
               <div className="flex items-center gap-1.5 mb-6">
                 <div className="w-1.5 h-1.5 rounded-full bg-current animate-pulse [animation-delay:-0.3s]" />
                 <div className="w-1.5 h-1.5 rounded-full bg-current animate-pulse [animation-delay:-0.15s]" />
                 <div className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
               </div>
-=======
-              <Loader2 className="w-8 h-8 animate-spin mb-4" />
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
               <p className="text-[13px] font-bold tracking-widest uppercase">Uploading to S3...</p>
               <p className="text-[11px] opacity-70 mt-2">안전한 서버로 이미지를 전송 중입니다</p>
             </div>
@@ -317,15 +262,11 @@ export default function ImageUploader({ onImageProcessed, isAnalyzing }: ImageUp
           {/* 분석 중 상태 표시 */}
           {isAnalyzing && (
             <div className="absolute inset-0 bg-wood/60 backdrop-blur-sm flex flex-col items-center justify-center text-cream">
-<<<<<<< HEAD
               <div className="flex items-center gap-1.5 mb-6">
                 <div className="w-1.5 h-1.5 rounded-full bg-current animate-pulse [animation-delay:-0.3s]" />
                 <div className="w-1.5 h-1.5 rounded-full bg-current animate-pulse [animation-delay:-0.15s]" />
                 <div className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
               </div>
-=======
-              <Loader2 className="w-8 h-8 animate-spin mb-4" />
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
               <p className="text-[13px] font-medium tracking-widest uppercase">Analyzing your style...</p>
               <p className="text-[11px] text-cream/60 mt-2">AI가 당신의 무드를 해석하고 있습니다</p>
             </div>

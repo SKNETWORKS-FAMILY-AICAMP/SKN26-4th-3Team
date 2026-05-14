@@ -17,7 +17,6 @@ export default function ReportHeader({ isVisible, isSaving, feedback, onShare }:
       
       <div className="flex justify-center">
         <button 
-<<<<<<< HEAD
           type="button"
           onClick={(e) => {
             e.preventDefault();
@@ -26,10 +25,6 @@ export default function ReportHeader({ isVisible, isSaving, feedback, onShare }:
           }}
           onDoubleClick={(e) => e.preventDefault()}
           disabled={isSaving || !!feedback}
-=======
-          onClick={onShare}
-          disabled={isSaving}
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
           className={`group flex items-center gap-3 px-8 py-3.5 border rounded-full text-[11px] sm:text-[12px] uppercase tracking-[0.2em] transition-all duration-300 ${
             isSaving 
               ? "bg-wood/5 text-wood/30 border-wood/10 cursor-not-allowed" 

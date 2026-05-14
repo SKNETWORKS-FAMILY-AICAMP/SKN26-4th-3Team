@@ -8,11 +8,6 @@ import type { AnalysisResults } from "@/types";
 import { personalProducts } from "@/data/personalData";
 import type { Product } from "@/data/productData";
 
-<<<<<<< HEAD
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
-
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
 /**
  * 인터뷰 결과에 따른 최적의 추천 제품 리스트를 반환합니다.
  * 시각적 무드 가중치와 후각적 노트 매칭 가중치를 결합하여 상위 5개를 추출합니다.
@@ -23,24 +18,12 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 export function getRecommendedProducts(results: AnalysisResults | null): (Product & { similarity: number, matchReason: string })[] {
   if (!results) return [];
 
-<<<<<<< HEAD
   // 분석 메타데이터에서 사용자 선택 정보 추출
   const selectedNotes = (results.analysisMetadata?.selectedNotes || []).filter(Boolean);
   const perfumeKeywords = (results.perfumeKeywords || []).filter(Boolean);
   const mood = results.personalMood || "";
   
   // 전체 제품군에 대하여 개별 유사도 점수 산출
-
-=======
-  // 1. 백엔드에서 전달된 추천 결과가 있으면 최우선 사용 및 데이터 정규화
-  if (results.recommendations && Array.isArray(results.recommendations)) {
-    return results.recommendations.map((rec, idx) => normalizeBackendRecommendation(rec, idx)) as any;
-  }
-
-  // 2. 백엔드 결과가 없는 경우 로컬 데이터 fallback
-  const meta = results.analysisMetadata;
-  if (!meta) return [];
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
   const scoredProducts = personalProducts.map((product) => {
     let score = 0;
     const matchedNotes: string[] = [];
@@ -98,7 +81,6 @@ export function getRecommendedProducts(results: AnalysisResults | null): (Produc
     }
 
     // 정량적 점수를 백분율(0-100%) 유사도로 변환 및 보정
-<<<<<<< HEAD
     const maxPossibleScore = (selectedNotes.length * 2) + (perfumeKeywords.length * 2) || 4;
     const rawSimilarity = (score / maxPossibleScore) * 100;
     
@@ -108,14 +90,6 @@ export function getRecommendedProducts(results: AnalysisResults | null): (Produc
     
     // 변별력을 위해 기본 점수를 60으로 낮추고, 가중치를 0.35로 조정하여 수치가 더 들쭉날쭉하게 나오도록 함
     const similarity = Math.min(Math.round(rawSimilarity * 0.35 + 60 + stableRandom), 99);
-=======
-    const maxPossibleScore = (selectedNotes.length * 2) + (perfumeKeywords.length * 2) || 1.5;
-    const rawSimilarity = (score / maxPossibleScore) * 100;
-    
-    // 데이터 쏠림 방지를 위한 안정적인 난수 보정값 추가 (시각적 다양성 확보)
-    const stableRandom = (product.id % 10) / 10;
-    const similarity = Math.min(Math.round(rawSimilarity * 0.3 + 65 + stableRandom), 98);
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     
     return { ...product, similarity, matchReason };
   });
@@ -126,73 +100,4 @@ export function getRecommendedProducts(results: AnalysisResults | null): (Produc
     .slice(0, 5);
 }
 
-<<<<<<< HEAD
-function normalizeBackendRecommendation(rec: any, idx: number): Product & { similarity: number; matchReason: string } {
-  const perfume = rec.perfume || {};
-  const notes = arrayValue(perfume.representativeNotes).length > 0
-    ? arrayValue(perfume.representativeNotes)
-    : arrayValue(perfume.notes);
-  const accords = arrayValue(perfume.accords);
-  const keywords = keywordValues(perfume.keywords);
-  const fallbackDetails = rec.details || {};
-  const topNotes = stringValue(fallbackDetails.topNotes);
-  const middleNotes = stringValue(fallbackDetails.middleNotes);
-  const baseNotes = stringValue(fallbackDetails.baseNotes);
-
-  return {
-    ...rec,
-    id: typeof rec.id === "number" ? rec.id : (idx + 1000),
-    brand: perfume.brand || rec.brand || "Unknown",
-    name: perfume.koreanName || rec.name || perfume.englishName || "Unknown",
-    price: perfume.price?.raw || rec.price || "정보 없음",
-    size: perfume.volume || rec.size || "N/A",
-    image: resolveRecommendationImage(rec),
-    tags: accords.length > 0 ? accords.slice(0, 3) : Array.isArray(rec.tags) ? rec.tags : [],
-    notes: notes.length > 0 ? notes.join(", ") : rec.notes || "",
-    family: perfume.family || rec.family || "프레시",
-    category: "Personal",
-    similarity: rec.similarity ?? 90,
-    matchReason: rec.matchReason || "AI가 선정한 당신의 스타일 매칭 향수입니다.",
-    details: {
-      story: perfume.description || fallbackDetails.story || "",
-      topNotes: topNotes || notes.join(", "),
-      middleNotes,
-      baseNotes,
-      bestFor: keywords.slice(0, 3).join(", ") || fallbackDetails.bestFor || "",
-    },
-  };
-}
-
-function resolveRecommendationImage(rec: any): string {
-  const base64 = rec.imageDetail?.base64 || rec.imageAsset?.base64;
-  if (base64) {
-    return base64.startsWith("data:image/") ? base64 : `data:image/jpeg;base64,${base64}`;
-  }
-
-  const imageUrl = rec.imageDetail?.url || rec.image || rec.imageDetail?.originalUrl || rec.imageAsset?.original_url || "";
-  if (imageUrl.startsWith("/static/")) {
-    return `${API_BASE_URL}${imageUrl}`;
-  }
-  return imageUrl;
-}
-
-function arrayValue(value: unknown): string[] {
-  return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
-}
-
-function stringValue(value: unknown): string {
-  return typeof value === "string" ? value : "";
-}
-
-function keywordValues(value: unknown): string[] {
-  if (Array.isArray(value)) return arrayValue(value);
-  if (value && typeof value === "object") {
-    const keywords = value as Record<string, unknown>;
-    return arrayValue(keywords.ko).length > 0 ? arrayValue(keywords.ko) : arrayValue(keywords.en);
-  }
-  return [];
-}
-
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
 // EOF: recommendationEngine.ts

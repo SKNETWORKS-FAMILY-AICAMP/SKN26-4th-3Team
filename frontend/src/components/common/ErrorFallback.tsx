@@ -20,12 +20,8 @@ export default function ErrorFallback({ message, onRetry, className = "" }: Erro
       </div>
       {onRetry && (
         <button
-<<<<<<< HEAD
           type="button" // 🚨 FIX: POST 중복 요청 방지
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); onRetry(); }} // 🚨 FIX: POST 중복 요청 방지
-=======
-          onClick={onRetry}
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
           className="flex items-center gap-2 px-6 py-2.5 bg-red-600 text-white rounded-full text-[11px] uppercase tracking-widest hover:bg-red-700 transition-colors shadow-lg shadow-red-200"
         >
           <RefreshCw size={14} />

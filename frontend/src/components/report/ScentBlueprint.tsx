@@ -1,8 +1,5 @@
 import ScentPyramid from "@/components/common/ScentPyramid";
-<<<<<<< HEAD
 import { ArrowRight } from "lucide-react";
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
 import type { ScentNote } from "@/data/noteData";
 
 interface ScentBlueprintProps {
@@ -49,7 +46,7 @@ export default function ScentBlueprint({ isVisible, slots, matchPercent, accentC
                   [slots.Top?.name, slots.Middle?.name, slots.Base?.name]
                     .filter(Boolean)
                     .join(", ")
-                } 노트를 바탕으로 <br /> 당신의 시각적 아우라와 가장 조화로운 향기 밸런스를 찾았습니다.
+                } 노트를 바탕으로 당신의 시각적 아우라와 가장 조화로운 향기 밸런스를 찾았습니다.
               </>
             )}
           </p>

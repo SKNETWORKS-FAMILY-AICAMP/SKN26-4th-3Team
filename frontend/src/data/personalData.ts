@@ -1,4 +1,4 @@
-import type { Product } from './productData';
+import type { Product } from '@/types';
 
 export const personalProducts: Product[] = [
   {
@@ -11,12 +11,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Vegan"],
     notes: "희귀한 화이트 비올렛의 맑고 투명한 그린 플로랄 향기",
     family: "플로랄",
-<<<<<<< HEAD
     mainAccords: ["플로랄"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "비올렛 30은 하나의 꽃 안에 공존하는 이 모순된 아름다움에 대한 오마주입니다. 그 중심에는 드물게 발견되는, 그늘에서 자라는 희귀한 화이트 비올렛이 있죠. 맑고 투명하면서도 자유로운 이 꽃처럼 푸르른 그린 플로랄에 화이트 티, 시더우드, 가이악우드가 부드럽게 어우러집니다.",
@@ -36,12 +33,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Vegan"],
     notes: "중독성 강한 암브록스 베이스의 유니크한 머스크 노트",
     family: "머스크",
-<<<<<<< HEAD
     mainAccords: ["머스크"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "어나더 13은 뇌쇄적이면서도 유니크한 암브록스 베이스 머스크 노트의 중독성 강한 묘약에 자스민, 모스 등 세심하게 선정된 성분들로 강렬함과 매혹을 더해 구성됩니다.",
@@ -61,12 +55,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Vegan"],
     notes: "미 서부의 평원에서 영감을 받은 아이코닉한 샌달우드 향",
     family: "우디",
-<<<<<<< HEAD
     mainAccords: ["우디"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "상탈 33은 미 서부의 와일드한 평원에서 영감을 받아 탄생한 센슈얼한 향수입니다. 카다멈, 아이리스, 바이올렛, 암브록스에 스모키한 우드 향이 어우러져 스파이시하고 가죽 향이 맴도는 노트를 완성합니다.",
@@ -86,12 +77,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Vegan"],
     notes: "블랙 티 잎의 우아함과 베르가못의 밝음이 어우러진 깊은 향",
     family: "우디",
-<<<<<<< HEAD
     mainAccords: ["우디"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "떼 누아 29는 블랙 티 잎의 우아하고 아름다운 향에 바치는 찬가와도 같은 향수입니다. 베르가못, 무화과, 월계수잎의 밝은 느낌과, 시더우드, 베티버, 머스크의 다크함이 어우러져 깊이 있습니다.",
@@ -111,12 +99,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Vegan"],
     notes: "마차 티 어코드와 크리미한 무화과가 전하는 평온한 순간",
     family: "우디",
-<<<<<<< HEAD
     mainAccords: ["우디"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "떼 마차 26은 조용한 자아의 순간을 위한 향입니다. 크리미한 무화과 노트가 스며든 마차 티 어코드는 부드러운 베티버와 시더우드를 베이스로 하며 매혹적인 비터 오렌지와 조화를 이룹니다.",
@@ -136,12 +121,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Vegan"],
     notes: "신선함과 달콤함이 공존하는 생동감 넘치는 시트러스",
     family: "시트러스",
-<<<<<<< HEAD
     mainAccords: ["시트러스"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "베르가못 22는 신선함, 달콤함, 그리고 센슈얼한 느낌을 모두 담은 시트러스 프레쉬 계열의 향수입니다. 자몽의 쌉싸래한 향과 앰버, 머스크의 풍성함이 독특한 개성을 완성합니다.",
@@ -161,12 +143,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Vegan"],
     notes: "비 내린 뒤의 상쾌하고 촉촉한 흙내음, 페트리코의 향기",
     family: "우디",
-<<<<<<< HEAD
     mainAccords: ["우디"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "베이 19는 비가 내린 뒤 물이 땅에 선사하는 상쾌하고 촉촉한 느낌인 '페트리코'를 담아냈습니다. 비에 젖은 주니퍼베리, 패출리, 초록 잎사귀들의 향이 맑고 매력적입니다.",
@@ -186,12 +165,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Vegan"],
     notes: "풍성한 화이트 플라워와 바닐라의 관능적인 조화",
     family: "플로랄",
-<<<<<<< HEAD
     mainAccords: ["플로랄"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "리스 41은 릴리, 튜베로즈, 자스민 등 풍성한 화이트 플라워들이 어우러진 중독적인 플로럴 향입니다. 우아한 우드 향과 바닐라가 더해져 깊은 매력을 선사합니다.",
@@ -211,12 +187,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Vegan"],
     notes: "아기처럼 부드럽고 순수한 머스크와 프루티한 시트러스",
     family: "머스크",
-<<<<<<< HEAD
     mainAccords: ["머스크"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "암브레트 9은 희귀한 머스크 원료인 암브레트 씨드에 사과와 배의 시트러스, 프루티한 향이 더해져 아기처럼 부드럽고 순수한 향을 완성합니다.",
@@ -236,12 +209,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Vegan"],
     notes: "상쾌한 유칼립투스와 따뜻한 가죽 향의 잔잔한 변주",
     family: "우디",
-<<<<<<< HEAD
     mainAccords: ["우디"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "유칼립투스 20은 유칼립투스와 시더우드의 상쾌함이 라다넘의 따뜻한 레더리함, 머스크와 유향의 잔잔한 깊이감이 부드럽게 조화를 이루는 향입니다.",
@@ -261,12 +231,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Vegan"],
     notes: "관능적인 그라스 장미에 스파이시한 우디함을 더한 반전의 향",
     family: "플로랄",
-<<<<<<< HEAD
     mainAccords: ["플로랄"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "로즈 31은 그라스 장미의 관능미에 커민, 올리바넘, 시더우드와 앰버가 더해져 따뜻하면서도 스파이시한 우디 향을 선사하는 신비로운 장미 향입니다.",
@@ -286,12 +253,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Vegan"],
     notes: "상쾌한 네롤리와 깨끗하고 유혹적인 새로운 차원의 라벤더",
     family: "플로랄",
-<<<<<<< HEAD
     mainAccords: ["플로랄"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "라방드 31은 베르가못과 네롤리에 라벤더 꽃봉오리를 더해 상쾌함을 주고, 앰버와 머스크 베이스로 깨끗하면서도 유혹적인 유니크한 라벤더 향을 완성합니다.",
@@ -309,16 +273,11 @@ export const personalProducts: Product[] = [
     size: "100ML",
     image: "https://lelabokorea-java.s3.amazonaws.com/images/skus/100PN36100__PRODUCT_01--IMG_360--NEROLI36--721709652.jpg",
     tags: ["Personal", "Vegan"],
-<<<<<<< HEAD
     notes: "싱그러운 오렌지 블로썸 and 따뜻한 바닐라의 편안한 만남",
     family: "플로랄",
     mainAccords: ["플로랄"],
     moods: [],
     occasions: [],
-=======
-    notes: "싱그러운 오렌지 블로썸과 따뜻한 바닐라의 편안한 만남",
-    family: "플로랄",
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "네롤리 36은 오렌지 블로썸의 따뜻하고 싱그러운 플로럴 향에 로즈, 머스크, 만다린 오렌지, 자스민, 바닐라가 어우러져 편안하면서도 열정적입니다.",
@@ -338,12 +297,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Vegan"],
     notes: "천연 오렌지 블로썸의 우아함과 레몬의 화창한 조화",
     family: "플로랄",
-<<<<<<< HEAD
     mainAccords: ["플로랄"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "플레르 도란줴 27은 천연 오렌지 블로썸 원료에 프레쉬 플로럴, 레몬 향을 더해 우아함을 살렸으며, 머스크와 베르가못이 따뜻한 느낌을 더해줍니다.",
@@ -363,12 +319,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Vegan"],
     notes: "모던하게 재해석된 장엄하고 풍성한 센슈얼 자스민",
     family: "플로랄",
-<<<<<<< HEAD
     mainAccords: ["플로랄"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "자스민 17은 모던하게 재해석된 독창적인 자스민 향으로, 머스크, 샌달우드, 바닐라를 더해 더욱 장엄하고 풍성한 센슈얼함을 선사합니다.",
@@ -388,23 +341,16 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Vegan"],
     notes: "강렬한 앰버와 사향의 동물적 매력을 담은 수수께끼 같은 향",
     family: "앰버",
-<<<<<<< HEAD
     mainAccords: ["앰버"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "라다넘 18은 강렬한 앰버 노트에 사향과 카스토럼의 동물적인 향이 더해져 폭발적인 잠재력을 가진 수수께끼 같은 매력의 향수입니다.",
       topNotes: "라다넘",
       middleNotes: "시벳, 카스토럼",
       baseNotes: "바닐라, 레진",
-<<<<<<< HEAD
       bestFor: "강렬하고 수수께끼 같은 앰버 분위기를 원하는 분"
-=======
-      bestFor: "강렬하고 수수께끼 같은 오리엔탈 분위기를 원하는 분"
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     }
   },
   {
@@ -417,12 +363,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Vegan"],
     notes: "스모키한 가죽 향과 달콤한 바닐라가 감싸는 야성적인 매력",
     family: "우디",
-<<<<<<< HEAD
     mainAccords: ["우디"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "패출리 24는 자작나무의 스모키한 가죽 향이 지배적이며, 곧이어 다가오는 바닐라 향이 야성적인 향을 부드럽고 센슈얼하게 감싸주는 위험한 매력의 향수입니다.",
@@ -442,12 +385,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Vegan"],
     notes: "시프레 플로럴과 일랑일랑의 관능적이고 묵직한 정취",
     family: "플로랄",
-<<<<<<< HEAD
     mainAccords: ["플로랄"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "일랑 49는 시프레 플로럴 계열의 향수로, 일랑일랑에 타히티 가드니아, 패출리, 오크모스 등이 어우러져 더욱 관능적이고 센슈얼한 플로럴을 완성합니다.",
@@ -467,18 +407,12 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Vegan"],
     notes: "젖은 나무 덤불과 머스크, 바닐라의 따뜻한 살결 향기",
     family: "우디",
-<<<<<<< HEAD
     mainAccords: ["우디"],
     moods: [],
     occasions: [],
     category: "Personal",
     details: {
       story: "통카 25는 어두우면서도 따스한 살결을 떠올리게 하는 향으로, 젖은 나무 덤불과 머스크, 바닐라의 희미한 달콤함이 아름답게 조화를 이루릅니다.",
-=======
-    category: "Personal",
-    details: {
-      story: "통카 25는 어두우면서도 따스한 살결을 떠올리게 하는 향으로, 젖은 나무 덤불과 머스크, 바닐라의 희미한 달콤함이 아름답게 조화를 이룹니다.",
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
       topNotes: "통카 빈",
       middleNotes: "아틀라스 시더",
       baseNotes: "머스크, 바닐라",
@@ -495,12 +429,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Vegan"],
     notes: "최상급 베티버와 46가지 원료가 만든 남성적 매력의 정점",
     family: "우디",
-<<<<<<< HEAD
     mainAccords: ["우디"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "베티버 46은 최상급 베티버를 원료로 한 가장 남성적인 매력의 향수입니다. 페퍼, 가이악, 시더우드 등 46가지 원료와 유향이 더해져 유혹적인 잔향을 남깁니다.",
@@ -520,12 +451,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Eco"],
     notes: "전통 먹과 인센스에서 영감을 받은 현대적인 우디 향",
     family: "우디",
-<<<<<<< HEAD
     mainAccords: ["우디"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "M/Mink는 바이레도와 크리에이티브 하우스 M/M (Paris)와 협업한 향입니다. 아시아에서 구입한 먹, 서예 연습하는 일본 장인의 사진 등에서 영감을 얻었습니다.",
@@ -545,12 +473,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Eco"],
     notes: "기존 장미향에 강렬하고 스모키한 깊이를 더한 응축된 포뮬러",
     family: "플로랄",
-<<<<<<< HEAD
     mainAccords: ["플로랄"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "로즈 오브 노 맨즈 랜드 앱솔뤼 드 퍼퓸은 기존 장미향을 재해석하여 더욱 화려하고 스모키한 강렬함을 더했습니다. 헌신적인 사랑에 대한 찬사를 담았습니다.",
@@ -570,12 +495,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Eco"],
     notes: "지중해 팔레르모의 역사와 문화를 담은 매력적인 시트러스",
     family: "시트러스",
-<<<<<<< HEAD
     mainAccords: ["시트러스"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "오랜 기간 지중해의 역사와 문화를 담은 팔레르모 오 드 퍼퓸. 오랜 시간 쌓여온 매력적인 도시의 향을 시트러스하게 담아냈습니다.",
@@ -595,12 +517,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Eco"],
     notes: "코코넛 워터와 와일드 머스크가 만드는 벨벳 같은 황홀경",
     family: "머스크",
-<<<<<<< HEAD
     mainAccords: ["머스크"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "꿈 속 낙원에 압도되어 모든 감각을 깨우는 벨벳 헤이즈. 코코넛 워터의 달콤함과 파출리의 열정이 부드러운 머스크와 만나 흙내음으로 풍부해집니다.",
@@ -620,12 +539,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Eco"],
     notes: "자유로운 삶의 우디함에 블랙 페퍼의 스파이시를 더한 앱솔루트",
     family: "우디",
-<<<<<<< HEAD
     mainAccords: ["우디"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "집시 워터 압솔뤼 드 퍼퓸은 따뜻하고 우디한 시그니처 향에 블랙 페퍼의 스파이시함과 베르가못의 상쾌함을 더해 더욱 깊은 앰버-우디 잔향을 선사합니다.",
@@ -645,12 +561,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Eco"],
     notes: "아프리카 문화를 향한 찬사를 생동감 넘치는 가벼움으로 증폭시킨 향",
     family: "프레쉬",
-<<<<<<< HEAD
     mainAccords: ["프레쉬"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "기존 발 다프리크를 재해석한 앱솔뤼 드 퍼퓸은 생동감 넘치는 가벼움과 중독성 있는 깊이의 대비를 강조하며 더욱 풍부한 경험을 선사합니다.",
@@ -670,12 +583,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Eco"],
     notes: "복합적인 인간미를 담은 달콤한 다마스쿠스 로즈의 현대적 해석",
     family: "플로랄",
-<<<<<<< HEAD
     mainAccords: ["플로랄"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "릴 플뢰르에는 모두가 느끼는 복잡한 인간성을 담으려고 했습니다. 달콤한 다마스쿠스 로즈를 중심으로 샤프란과 블론드 우드가 정교함을 더합니다.",
@@ -695,12 +605,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Eco"],
     notes: "격동의 현대 사회 속 마음의 상태를 후각적으로 표현한 중성적 우디",
     family: "우디",
-<<<<<<< HEAD
     mainAccords: ["우디"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "격동의 현대사회를 향기로 풀어낸 믹스드 이모션스. 마테의 포근함과 블랙티의 안정감이 우디한 프레임에 자리 잡고 있습니다.",
@@ -720,12 +627,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Eco"],
     notes: "뭄바이 거리의 대조적인 활기와 따뜻한 나무의 불협화음",
     family: "우디",
-<<<<<<< HEAD
     mainAccords: ["우디"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "따뜻한 나무와 화사한 앰버, 진한 커피와 달콤한 통카 빈이 어우러져 뭄바이 쳄부르 거리의 풍경을 매혹적으로 그려냅니다.",
@@ -745,12 +649,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Eco"],
     notes: "브라질의 긍정적인 에너지를 담은 팔로 산토와 밀키 머스크의 조화",
     family: "우디",
-<<<<<<< HEAD
     mainAccords: ["우디"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "즐거움과 낙관을 의미하는 알토 아스트랄은 강렬한 알데하이드로 시작해 자스민, 캐시미어 우드로 마무리되며 긍정적인 에너지를 남깁니다.",
@@ -770,12 +671,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Eco"],
     notes: "한여름 햇살 아래 솜사탕처럼 달콤한 엔돌핀의 시트러스",
     family: "시트러스",
-<<<<<<< HEAD
     mainAccords: ["시트러스"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "여름의 축복인 태양에 취하는 상태를 표현합니다. 쨍한 만다린과 네롤리가 솜사탕 같은 화이트 머스크와 만나 자유로운 여름의 따뜻함을 전달합니다.",
@@ -795,12 +693,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Eco"],
     notes: "희귀한 오드(oud)를 베이스로 한 영적이고 진귀한 감각의 향",
     family: "우디",
-<<<<<<< HEAD
     mainAccords: ["우디"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "침향나무에서 추출한 진귀한 오드를 베이스로 합니다. 세계에서 가장 오래된 문헌 베다의 기록처럼 감각적이고도 영적인 의미를 담아냈습니다.",
@@ -818,16 +713,11 @@ export const personalProducts: Product[] = [
     size: "50ML",
     image: "https://www.byredo.com/cdn-cgi/image/width=auto,height=1200,fit=scale-down,gravity=auto,format=webp,quality=70/https://www.byredo.com/media/catalog/product/cache/74c1057f7991b4edb2bc7bdaa94de933/1/0/10000040_1_full_no.jpg",
     tags: ["Personal", "Eco"],
-<<<<<<< HEAD
     notes: "상서로운 샤프란 and 레더, 라즈베리가 만드는 이국적인 정취",
     family: "앰버",
     mainAccords: ["앰버"],
     moods: [],
     occasions: [],
-=======
-    notes: "상서로운 샤프란과 레더, 라즈베리가 만드는 이국적인 정취",
-    family: "앰버",
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "인도 문화에서 깊은 영감을 받은 향입니다. 샤프란의 상징성과 레더, 블랙 바이올렛의 조화로 독보적이고 이국적인 분위기를 완성합니다.",
@@ -847,12 +737,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Eco"],
     notes: "블랙베리와 럼의 달콤함 뒤에 이어지는 묵직한 오드와 가죽 향",
     family: "우디",
-<<<<<<< HEAD
     mainAccords: ["우디"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "희귀한 오드를 현대적으로 풀어낸 향입니다. 블랙베리와 럼의 탑 노트가 부드러운 가죽 향과 어우러져 세련된 깊이감을 선사합니다.",
@@ -872,12 +759,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Eco"],
     notes: "우리의 원초적인 본능과 야생적인 분위기를 표현한 앰버 향",
     family: "앰버",
-<<<<<<< HEAD
     mainAccords: ["앰버"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "인류의 공통적 요소인 원초적인 본능을 표현합니다. 레몬과 베르가못이 미모사와 만나 스웨이드, 앰버의 야생적인 분위기로 마무리됩니다.",
@@ -897,12 +781,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Eco"],
     notes: "헌신의 장미를 퇴폐적이고 뇌쇄적인 향기로 풀어낸 블랙 로즈",
     family: "플로랄",
-<<<<<<< HEAD
     mainAccords: ["플로랄"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "다마스크 장미는 자칫 뻔할 수 있는 장미 향조를 더욱 특별하게 만들며, 깊고 진해지는 향의 변주를 통해 퇴폐적인 매력을 완성합니다.",
@@ -922,12 +803,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Eco"],
     notes: "새로운 세대의 관점으로 평범함을 타파한 스모키한 장미 향",
     family: "플로랄",
-<<<<<<< HEAD
     mainAccords: ["플로랄"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "젊음의 대담함과 진심에 대한 해석입니다. 다마스커스 장미 위 스모키한 사천 페퍼가 고전적인 장미 향을 타파하며 새롭게 다가옵니다.",
@@ -945,16 +823,11 @@ export const personalProducts: Product[] = [
     size: "50ML",
     image: "https://www.byredo.com/cdn-cgi/image/width=auto,height=1200,fit=scale-down,gravity=auto,format=webp,quality=70/https://www.byredo.com/media/catalog/product/cache/74c1057f7991b4edb2bc7bdaa94de933/1/0/10000192_1_full_no.jpg",
     tags: ["Personal", "Eco"],
-<<<<<<< HEAD
     notes: "삶과 죽음의 오마주, 세이지 and 팔로 산토가 만드는 신성한 우디",
     family: "우디",
     mainAccords: ["우디"],
     moods: [],
     occasions: [],
-=======
-    notes: "삶과 죽음의 오마주, 세이지와 팔로 산토가 만드는 신성한 우디",
-    family: "우디",
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "남겨진 자들의 기억을 표현한 이 향은 세이지의 선명함과 향긋한 머스크, 그리고 팔로 산토의 신성함이 어우러진 깊이 있는 향입니다.",
@@ -974,12 +847,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Eco"],
     notes: "오래된 도서관의 나무 선반과 가죽 제본의 추억을 담은 향",
     family: "우디",
-<<<<<<< HEAD
     mainAccords: ["우디"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "단 한번의 분사만으로 멈춰진 시간 속 세계에 도착합니다. 어두운 나무 선반과 가죽 제본의 오래된 책들이 가득한 도서관을 떠올리게 합니다.",
@@ -999,12 +869,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Eco"],
     notes: "아프리카의 예술과 음악, 상상 속의 이벤트를 기리는 시트러스 프레쉬",
     family: "프레쉬",
-<<<<<<< HEAD
     mainAccords: ["프레쉬"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "창립자 벤 고햄의 아프리카를 향한 러브레터입니다. 베르가못과 네롤리가 바이올렛, 베티버와 만나 생동감 넘치는 환상적인 향을 완성합니다.",
@@ -1024,12 +891,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Eco"],
     notes: "인도 전통 결혼식의 화려한 꽃들과 기쁨의 공기를 담은 플로랄",
     family: "플로랄",
-<<<<<<< HEAD
     mainAccords: ["플로랄"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "식장을 가득 채운 다채로운 꽃들의 압도적이고 화려한 향기. 야생 자스민 삼박과 장미 꽃잎이 축하의 공기를 모두 담아냅니다.",
@@ -1049,12 +913,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Eco"],
     notes: "사막의 강인한 생명력을 지닌 고스트 플라워의 영혼을 담은 우디",
     family: "우디",
-<<<<<<< HEAD
     mainAccords: ["우디"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "황량한 모하비 사막에서 피어나는 강인한 생명력의 표현입니다. 샌달우드와 바이올렛이 샹틸리 머스크와 만나 상쾌한 앰버의 잔향으로 남습니다.",
@@ -1074,12 +935,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Eco"],
     notes: "갓 세탁한 린넨과 뽀송한 이불의 느낌을 담은 깨끗한 살결 향",
     family: "플로랄",
-<<<<<<< HEAD
     mainAccords: ["플로랄"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "바이레도의 아이콘 블랑쉬. 알데하이드와 부드러운 장미 향, 샌달우드가 연인들의 친밀하고 매력적인 살결의 향기를 담아냅니다.",
@@ -1099,12 +957,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Eco"],
     notes: "헌신적인 사랑을 기리는 세련되고 우아한 장미의 정수",
     family: "플로랄",
-<<<<<<< HEAD
     mainAccords: ["플로랄"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "전쟁터의 간호사들을 기리는 향입니다. 핑크 페퍼와 터키 장미가 어우러져 이타적이고 헌신적인 사랑에 대한 찬사를 담아냅니다.",
@@ -1124,12 +979,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Eco"],
     notes: "자유로운 집시 라이프와 숲 속 밤의 공기를 담은 앰버 우디",
     family: "우디",
-<<<<<<< HEAD
     mainAccords: ["우디"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "유목 생활의 다채로운 삶에 대한 찬사입니다. 솔잎과 샌달우드, 상쾌한 시트러스가 어우러져 숲 속에서 보낸 열광적인 밤을 떠올리게 합니다.",
@@ -1149,12 +1001,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Eco"],
     notes: "귀한 샤프란의 따스함을 증폭시킨 더욱 풍부한 스파이시 앰버",
     family: "앰버",
-<<<<<<< HEAD
     mainAccords: ["앰버"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "샤프란의 신성한 상징성을 기리며 더욱 풍부한 스파이시함과 레더의 면모를 드러냅니다. 문화적 유산과 현대적 정체성 사이의 진화를 상징합니다.",
@@ -1174,12 +1023,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Eco"],
     notes: "기존 블랑쉬의 순수함을 유지하며 따스한 대조를 극대화한 포뮬러",
     family: "플로랄",
-<<<<<<< HEAD
     mainAccords: ["플로랄"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "시그니처 노트를 증폭시킨 앱솔뤼 드 퍼퓸은 순수함과 따스함의 대조를 더욱 선명하게 보여줍니다. 살결의 향기가 녹아드는 새로운 차원의 강렬함입니다.",
@@ -1199,12 +1045,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Eco"],
     notes: "소년과 소녀의 성장을 담은 달콤 씁쓸한 교류의 풍부한 향기",
     family: "앰버",
-<<<<<<< HEAD
     mainAccords: ["앰버"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "통과 의례인 슬로우 댄스의 설렘과 성숙함이 충돌하는 시간을 담았습니다. 여성적이면서도 남성적이며, 달콤하고도 씁쓸한 도취적인 향기입니다.",
@@ -1224,12 +1067,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Eco"],
     notes: "지구상 마지막 시간을 향해가는 여정을 담은 스파이시 우디",
     family: "우디",
-<<<<<<< HEAD
     mainAccords: ["우디"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "시간의 끝을 향해가는 여정이자 조화로의 회귀를 표현했습니다. 베르가못과 사천 페퍼가 와일드 피그와 만나 독특한 긴장감을 선사합니다.",
@@ -1249,12 +1089,9 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Eco"],
     notes: "사진 작품에서 영감을 받은 레더와 파출리의 예술적인 앰버",
     family: "앰버",
-<<<<<<< HEAD
     mainAccords: ["앰버"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "작품 'Kirsten 1996'에서 영감을 받았습니다. 일과 삶의 기초가 되는 이중성을 블랙 페퍼와 레더, 파출리의 따뜻한 조화로 풀어냈습니다.",
@@ -1274,29 +1111,18 @@ export const personalProducts: Product[] = [
     tags: ["Personal", "Eco"],
     notes: "무한한 사랑과 친밀함을 시나몬과 파출리로 풀어낸 스파이시 앰버",
     family: "앰버",
-<<<<<<< HEAD
     mainAccords: ["앰버"],
     moods: [],
     occasions: [],
-=======
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     category: "Personal",
     details: {
       story: "서로에게 빠져드는 순간을 표현합니다. 파출리와 파피루스의 독특한 조합이 오리스 버터와 만나 영원할 것 같은 부드러움과 따뜻함을 불러일으킵니다.",
       topNotes: "시나몬, 카다멈",
       middleNotes: "당근, 오리스 버터, 생강",
       baseNotes: "파출리, 파피루스",
-<<<<<<< HEAD
       bestFor: "따스하고 위로와 무한한 사랑의 감정을 담고 싶을 때"
-=======
-      bestFor: "따스한 위로와 무한한 사랑의 감정을 담고 싶을 때"
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
     }
   },
 ];
 
-<<<<<<< HEAD
 // EOF: personalData.ts
-=======
-// EOF: personalData.ts
->>>>>>> c5c5017 (feat(frontend): migrate react fragrance experienceAdds the Vite React application, Tailwind styling, Zustand state, API services, report capture flow, reusable UI components, and static imagery for the Olfit fragrance matching experience.)
