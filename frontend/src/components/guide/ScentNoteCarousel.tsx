@@ -94,7 +94,7 @@ export default function ScentNoteCarousel({ onNotesChange }: ScentNoteCarouselPr
   const isAllSelected = slots.Top && slots.Middle && slots.Base;
 
   return (
-    <div className="w-full bg-cream/30 rounded-sm border border-wood/5 p-8 md:p-12 lg:p-16 mt-12 relative overflow-hidden">
+    <div id="scent-pyramid" className="w-full scroll-mt-24 bg-cream/30 rounded-sm border border-wood/5 p-8 md:p-12 lg:p-16 mt-12 relative overflow-hidden">
       <div className="relative z-10 w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
         
         {/* LEFT COLUMN: Visual Pyramid & Guide */}

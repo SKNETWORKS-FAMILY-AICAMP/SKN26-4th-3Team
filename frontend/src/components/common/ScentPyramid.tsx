@@ -20,7 +20,7 @@ export default function ScentPyramid({
   isStatic = false 
 }: ScentPyramidProps) {
   const slotTextClass = (isSelected: boolean) =>
-    `text-[11px] md:text-[12px] tracking-tight text-center px-2 transition-all duration-300 ${
+    `inline-block max-w-[120px] overflow-visible whitespace-normal break-keep text-[11px] md:text-[12px] leading-relaxed tracking-tight text-center px-2 py-0.5 transition-all duration-300 ${
       isSelected
         ? "text-wood font-medium group-hover/slot:font-semibold"
         : "text-wood/60 italic font-normal group-hover/slot:text-wood group-hover/slot:font-semibold"
@@ -43,7 +43,7 @@ export default function ScentPyramid({
           } text-wood ${!isStatic && activeTab === 'Top' ? 'scale-105' : 'hover:scale-102'}`}
         >
           <span className="text-[7px] uppercase tracking-[0.3em] mb-1.5 font-bold">Top</span>
-          <span className={`${slotTextClass(!!slots.Top)} truncate max-w-[80px]`}>
+          <span className={slotTextClass(!!slots.Top)}>
             {slots.Top ? slots.Top.name : "Select"}
           </span>
         </div>
