@@ -34,6 +34,8 @@ Accepted. 최근 추천 관련 작업은 다음 커밋 기준으로 문서화한
   "price_krw": 207000,
   "size": "65ml",
   "image": "/static/perfumes/images/bvlgari/omnia.jpg",
+  "imageUrl": "http://localhost:8000/static/perfumes/images/bvlgari/omnia.jpg",
+  "imageBase64": "base64-image",
   "perfume": {
     "id": 1,
     "brand": "BVLGARI",
@@ -84,6 +86,13 @@ Accepted. 최근 추천 관련 작업은 다음 커밋 기준으로 문서화한
 - `base64_data`: 다운로드된 이미지 Base64
 
 추천 응답은 `imageDetail.url`에 브라우저가 접근 가능한 `/static/...` 경로를 우선 담는다. Base64가 있으면 프론트엔드는 `data:image/jpeg;base64,...` 형태로 정규화해서 표시할 수 있다.
+
+프론트엔드 카드와 모달 렌더링을 위해 같은 이미지 값을 최상위 필드에도 중복 제공한다.
+
+- `image`: 기존 호환성을 위한 `/static/...` 경로 또는 원본 URL
+- `imageUrl`: 백엔드 static 서버까지 포함한 절대 URL
+- `imageBase64`: `PerfumeImage.base64_data` 값
+- `imageDetail`: URL, 원본 URL, backend path, base64를 포함한 상세 이미지 payload
 
 ## Scent Pyramid Rules
 

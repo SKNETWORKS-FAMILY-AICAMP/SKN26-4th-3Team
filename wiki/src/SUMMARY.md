@@ -8,6 +8,7 @@
   - [Naming](./conventions/naming.md)
   - [Python Style](./conventions/python-style.md)
 - [Backend](./backend.md)
+  - [Backend Tests](./backend/tests.md)
   - [MySQL Document Store Roadmap](./backend/mysql-document-store-roadmap.md)
   - [Recommendation API Contract](./backend/recommendation-api-contract.md)
   - [Vector RAG](./backend/vector-rag.md)

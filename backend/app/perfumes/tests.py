@@ -64,6 +64,86 @@ class AnalyzeViewTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('error', response.data)
 
+    @patch("perfumes.views.RecommendationService.recommend")
+    @patch("perfumes.views.AuraService.calculate_combined_aura")
+    @patch("scent_engine.VLEngine.analyze_image")
+    def test_analyze_response_preserves_recommendation_image_payload(
+        self,
+        mock_analyze,
+        mock_calculate_aura,
+        mock_recommend,
+    ):
+        mock_analyze.return_value = {
+            "visual_summary": "검은색 슈트를 입은 세련된 남성",
+            "colors": ["black"],
+            "objects": ["suit"],
+            "scene": ["indoor"],
+            "mood": ["urban", "modern"],
+            "season": ["autumn"],
+            "time": ["night"],
+            "raw_keywords": ["chic", "sharp"],
+        }
+        mock_calculate_aura.return_value = (
+            {"플로럴": 0.1, "우디": 0.1, "오리엔탈": 0.6, "프레시": 0.1, "구르망": 0.1},
+            {"descriptors": ["세련된"], "components_ko": ["앰버"]},
+            "오리엔탈 향수",
+            "오리엔탈 계열 향수",
+            {"플로럴": 0.1, "우디": 0.1, "오리엔탈": 0.6, "프레시": 0.1, "구르망": 0.1},
+        )
+        mock_recommend.return_value = [
+            {
+                "id": 1,
+                "name": "불가리 블랙",
+                "brand": "BVLGARI",
+                "price": "$150",
+                "price_krw": 223500,
+                "size": "75ml",
+                "image": "/static/perfumes/images/bvlgari/black.jpg",
+                "imageUrl": "http://localhost:8000/static/perfumes/images/bvlgari/black.jpg",
+                "imageBase64": "base64-image",
+                "imageDetail": {
+                    "url": "/static/perfumes/images/bvlgari/black.jpg",
+                    "originalUrl": "https://img.example.com/black.jpg",
+                    "backendPath": "/backend/app/static/perfumes/images/bvlgari/black.jpg",
+                    "base64": "base64-image",
+                },
+                "imageAsset": {
+                    "original_url": "https://img.example.com/black.jpg",
+                    "backend_path": "/backend/app/static/perfumes/images/bvlgari/black.jpg",
+                    "base64": "base64-image",
+                },
+                "tags": ["앰버"],
+                "notes": "홍차, 장미",
+                "family": "오리엔탈",
+                "category": "Personal",
+                "similarity": 91,
+                "matchReason": "테스트 추천 사유",
+                "details": {
+                    "story": "테스트 스토리",
+                    "topNotes": "홍차",
+                    "middleNotes": "장미",
+                    "baseNotes": "머스크",
+                    "bestFor": "밤",
+                },
+            }
+        ]
+
+        response = self.client.post(
+            self.url,
+            {"image": "base64-input", "selectedNotes": ["앰버"]},
+            format="json",
+            HTTP_X_SESSION_ID=self.session_id,
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        recommendation = response.data["recommendations"][0]
+        self.assertEqual(
+            recommendation["imageUrl"],
+            "http://localhost:8000/static/perfumes/images/bvlgari/black.jpg",
+        )
+        self.assertEqual(recommendation["imageBase64"], "base64-image")
+        self.assertEqual(recommendation["imageDetail"]["base64"], "base64-image")
+
 
 class PerfumeImageExtractorTest(TestCase):
     def test_extracts_images_from_raw_json_into_brand_directories(self):
