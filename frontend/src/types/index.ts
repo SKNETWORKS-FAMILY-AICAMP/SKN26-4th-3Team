@@ -18,6 +18,14 @@ export interface Product {
   price: string;
   size: string;
   image: string;
+  imageUrl?: string;
+  imageBase64?: string;
+  imageDetail?: {
+    url?: string;
+    originalUrl?: string;
+    backendPath?: string;
+    base64?: string;
+  };
   tags: string[];
   notes: string; // 간략한 노트 요약 (호버용)
   family: string;

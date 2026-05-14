@@ -14,6 +14,15 @@ interface ProductModalProps {
   onClose: () => void;
 }
 
+const imageSourceFor = (product: Product) => {
+  const base64 = product.imageBase64 || product.imageDetail?.base64;
+  if (base64) {
+    return base64.startsWith("data:") ? base64 : `data:image/jpeg;base64,${base64}`;
+  }
+
+  return product.imageUrl || product.imageDetail?.url || product.image;
+};
+
 export default function ProductModal({ product, onClose }: ProductModalProps) {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 md:p-10">
@@ -38,7 +47,7 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
         <div className="md:w-1/2 bg-stone-100 flex items-center justify-center p-8 md:p-12">
           <div className="aspect-[3/4] w-full max-w-[360px] shadow-editorial overflow-hidden">
             <img 
-              src={product.image} 
+              src={imageSourceFor(product)} 
               alt={product.name} 
               className="w-full h-full object-cover mix-blend-multiply opacity-90"
             />

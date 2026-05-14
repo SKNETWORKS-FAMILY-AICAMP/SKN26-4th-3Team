@@ -27,6 +27,15 @@ interface ProductCarouselProps {
 
 type Feedback = "like" | "dislike" | null;
 
+const imageSourceFor = (product: Product) => {
+  const base64 = product.imageBase64 || product.imageDetail?.base64;
+  if (base64) {
+    return base64.startsWith("data:") ? base64 : `data:image/jpeg;base64,${base64}`;
+  }
+
+  return product.imageUrl || product.imageDetail?.url || product.image;
+};
+
 // 🛠️ REFACTOR (성능 최적화): 개별 상품 카드 컴포넌트 분리 및 메모이제이션
 const ProductCard = memo(({ 
   item, 
@@ -52,7 +61,7 @@ const ProductCard = memo(({
       {/* 제품 이미지 및 유사도 배지 */}
       <div className="w-full md:w-1/2 aspect-square overflow-hidden bg-cream/50 rounded-sm relative">
         <img 
-          src={item.image} 
+          src={imageSourceFor(item)} 
           alt={item.name} 
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" 
           loading="lazy"

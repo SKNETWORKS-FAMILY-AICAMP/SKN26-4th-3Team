@@ -5,7 +5,7 @@
  */
 
 import { useState, useRef, type ChangeEvent, type DragEvent } from "react";
-import { Upload, X, ImageIcon, Loader2, AlertCircle } from "lucide-react";
+import { Upload, X, ImageIcon, AlertCircle } from "lucide-react";
 import { uploadToCloudStorage } from "@/services/uploadService";
 
 interface ImageUploaderProps {
