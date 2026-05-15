@@ -18,7 +18,7 @@ export default function PhilosophySection() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
           
           {/* 텍스트 콘텐츠 영역 */}
-          <div className="lg:col-span-7 order-2 lg:order-1">
+          <div className="lg:col-span-7 order-2 lg:order-1 text-center lg:text-left">
             <div ref={ref1} className={`transition-all duration-800 delay-100 ${vis1 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               <p className="label-upper text-wood/40 mb-6 md:mb-8">Our Philosophy</p>
               <h2 className="text-2xl sm:text-4xl md:text-5xl font-light leading-[1.4] md:leading-[1.15] tracking-tight mb-6 md:mb-8 break-keep text-wood" style={{ fontFamily: "'Playfair Display', serif" }}>
@@ -28,27 +28,27 @@ export default function PhilosophySection() {
             </div>
             
             <div ref={ref2} className={`transition-all duration-800 delay-200 ${vis2 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-              <p className="text-sm md:text-[15px] leading-[1.8] text-wood/60 mb-8 md:mb-12 max-w-xl break-keep">
-                단순 상품 검색을 넘어, 사용자가 추구하는 패션 스타일을 분석하여
-                최적의 향기를 논리적으로 연결해 주는 토탈 향기 컨설팅 경험을 제공합니다.<br className="hidden md:block" />
+              <p className="text-sm md:text-[15px] leading-[1.8] text-wood/60 mb-8 md:mb-12 max-w-xl mx-auto lg:mx-0 break-keep">
+                단순 상품 검색을 넘어, 사용자가 추구하는 패션 스타일을 분석하여 <br className="hidden sm:inline" />
+                최적의 향기를 논리적으로 연결해 주는 토탈 향기 컨설팅 경험을 제공합니다. <br className="hidden sm:inline" />
                 AI는 전문 조향 지식과 심리학을 결합하여 당신만의 완벽한 향기 세계관을 완성합니다.
               </p>
               
               {/* 핵심 지표 (Stats) 리스트 */}
-              <div className="flex flex-wrap items-center gap-6 md:gap-12 pt-4">
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 md:gap-12 pt-4">
                 <div>
-                  <p className="text-xl md:text-2xl font-light tracking-tight text-wood">50,000+</p>
-                  <p className="text-[9px] md:text-[11px] uppercase tracking-widest text-wood/40 mt-1">향기 데이터</p>
+                  <p className="text-xl md:text-2xl font-light tracking-tight text-wood">55,717+</p>
+                  <p className="text-[9px] md:text-[11px] uppercase tracking-widest text-wood/40 mt-1">분석 데이터</p>
                 </div>
                 <div className="hidden sm:block w-px h-8 bg-wood/10" />
                 <div>
-                  <p className="text-xl md:text-2xl font-light tracking-tight text-wood">320+</p>
-                  <p className="text-[9px] md:text-[11px] uppercase tracking-widest text-wood/40 mt-1">스타일 아우라</p>
+                  <p className="text-xl md:text-2xl font-light tracking-tight text-wood">13+</p>
+                  <p className="text-[9px] md:text-[11px] uppercase tracking-widest text-wood/40 mt-1">프리미엄 브랜드</p>
                 </div>
                 <div className="hidden sm:block w-px h-8 bg-wood/10" />
                 <div>
-                  <p className="text-xl md:text-2xl font-light tracking-tight text-wood">98.7%</p>
-                  <p className="text-[9px] md:text-[11px] uppercase tracking-widest text-wood/40 mt-1">만족도</p>
+                  <p className="text-xl md:text-2xl font-light tracking-tight text-wood">1,240+</p>
+                  <p className="text-[9px] md:text-[11px] uppercase tracking-widest text-wood/40 mt-1">향수 아카이브</p>
                 </div>
               </div>
             </div>

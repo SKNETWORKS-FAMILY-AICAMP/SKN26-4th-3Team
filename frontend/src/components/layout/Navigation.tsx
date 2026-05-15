@@ -8,10 +8,12 @@ import { useState, useEffect } from "react";
 import { useIsScrolled } from "@/hooks/useIntersectionObserver";
 import OlfitLogo from "@/components/common/OlfitLogo";
 import { Menu, X } from "lucide-react";
+import { useOlfitStore } from "@/store/useStore";
 
 export default function Navigation() {
   /** 일정 거리(80px) 이상 스크롤 여부 */
   const isScrolled = useIsScrolled(80);
+  const selectedNotes = useOlfitStore((state) => state.selectedNotes);
   /** 모바일 메뉴 오픈 상태 */
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -30,7 +32,7 @@ export default function Navigation() {
   const navLinks = [
     { label: "컨셉", href: "#philosophy" },
     { label: "향기 가이드", href: "#guide" },
-    { label: "AI 인터뷰", href: "#interview" },
+    { label: "AI 인터뷰", href: selectedNotes.length >= 3 ? "#interview" : "#scent-pyramid" },
     { label: "분석 리포트", href: "#report" },
     { label: "안전성", href: "#safety" },
   ];
@@ -65,7 +67,7 @@ export default function Navigation() {
           <nav className="hidden md:flex items-center gap-8 lg:gap-12">
             {navLinks.map((link) => (
               <a
-                key={link.href}
+                key={link.label}
                 href={link.href}
                 className={`text-[10px] lg:text-[11px] font-medium uppercase tracking-[0.2em] transition-all duration-300 hover:opacity-100 ${
                   isScrolled ? "text-wood/60 hover:text-wood" : "text-cream/60 hover:text-cream"
@@ -103,7 +105,7 @@ export default function Navigation() {
         <div className="flex flex-col items-center justify-center h-full gap-10 px-6">
           {navLinks.map((link, i) => (
             <a
-              key={link.href}
+              key={link.label}
               href={link.href}
               onClick={closeMenu}
               className={`text-2xl font-light uppercase tracking-[0.3em] text-wood transition-all duration-500 delay-${i * 100} ${

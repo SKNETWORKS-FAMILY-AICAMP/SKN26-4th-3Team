@@ -31,7 +31,8 @@ export default function PrivacyConsentModal({ onAgree }: PrivacyConsentModalProp
           
           <div className="text-left space-y-4 mb-10">
             <p className="text-[13px] leading-relaxed text-wood/70 break-keep">
-              Olfit은 더욱 정교한 향기 스타일링을 위해 **AI 이미지 분석 시스템**을 활용합니다. 원활한 서비스 이용을 위해 아래 사항에 대한 동의가 필요합니다.
+              Olfit은 정교한 향기 스타일링을 위해 이미지 분석 시스템을 활용합니다. <br className="hidden sm:inline" />
+              원활한 서비스 이용을 위해 아래 사항에 대한 동의가 필요합니다.
             </p>
             
             {/* 동의 항목 리스트 */}

@@ -120,11 +120,14 @@ class AuraService:
 
         # 어코드 및 성분 기반 미세 보정
         for item in raw_scores.get("subs", []):
-            cat = self.master_map["accord_to_category"].get(item["name"])
+            # 영문 어코드명을 한글로 변환 (예: 'Floral' -> '플로럴')
+            ko_accord = self.master_map["accord_translations"].get(item["name"], item["name"])
+            cat = self.master_map["accord_to_category"].get(ko_accord)
             if cat in scores:
                 scores[cat] += item["score"] * 0.7
 
         for item in raw_scores.get("components_ko", []):
+            # 이미 한글로 변환된 성분명이므로 직접 어코드 매핑 확인
             sub_accord = self.master_map["note_to_accord"].get(item["name"], "아로마틱")
             cat = self.master_map["accord_to_category"].get(sub_accord)
             if cat in scores:

@@ -13,6 +13,29 @@ import type { AnalysisResults } from "@/types";
 
 const fallbackRadarAdjustments = [0.06, 0.03, 0.08, 0.05, 0.02];
 
+const waitForNextPaint = () =>
+  new Promise<void>((resolve) => {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => resolve());
+    });
+  });
+
+export const getSortablePriceKrw = (priceKrw?: number) =>
+  typeof priceKrw === "number" && Number.isFinite(priceKrw) && priceKrw > 0
+    ? priceKrw
+    : Number.POSITIVE_INFINITY;
+
+export const compareByPriceKrw = <T extends { price_krw?: number }>(a: T, b: T) => {
+  const priceA = getSortablePriceKrw(a.price_krw);
+  const priceB = getSortablePriceKrw(b.price_krw);
+
+  if (priceA === priceB) return 0;
+  return priceA < priceB ? -1 : 1;
+};
+
+export const sortByPriceKrw = <T extends { price_krw?: number }>(items: readonly T[]) =>
+  [...items].sort(compareByPriceKrw);
+
 export function useInsightReport(results: AnalysisResults | null) {
   // 🛠️ REFACTOR (유지보수성): 교차 관찰자 상태 분리
   const { ref: refHeader, isVisible: visHeader } = useIntersectionObserver();
@@ -47,15 +70,10 @@ export function useInsightReport(results: AnalysisResults | null) {
   const matchPercent = baseRecommendations.length > 0 ? baseRecommendations[0].similarity : 0;
 
   const recommendations = useMemo(() => {
-    const sorted = [...baseRecommendations];
     if (sortBy === "price") {
-      return sorted.sort((a, b) => {
-        const priceA = parseInt(a.price.replace(/[^0-9]/g, "")) || 0;
-        const priceB = parseInt(b.price.replace(/[^0-9]/g, "")) || 0;
-        return priceA - priceB;
-      });
+      return sortByPriceKrw(baseRecommendations);
     }
-    return sorted;
+    return [...baseRecommendations];
   }, [baseRecommendations, sortBy]);
 
   const dynamicLogicSteps = useMemo(() => [
@@ -97,14 +115,13 @@ export function useInsightReport(results: AnalysisResults | null) {
     setFeedback(null);
 
     try {
+      await waitForNextPaint();
+
       const blob = await captureReportBlob(reportRef.current);
       if (!blob) throw new Error("Blob creation failed");
 
       const result = await shareOrDownloadImage(blob);
-      if (result === "copied") {
-        setFeedback("이미지 복사 완료!");
-        setTimeout(() => setFeedback(null), 2000);
-      } else if (result === "downloaded") {
+      if (result === "downloaded") {
         setFeedback("이미지 저장 완료!");
         setTimeout(() => setFeedback(null), 2000);
       }

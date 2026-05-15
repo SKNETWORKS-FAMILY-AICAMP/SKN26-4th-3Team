@@ -16,6 +16,7 @@ export interface Product {
   name: string;
   brand: string;
   price: string;
+  price_krw?: number;
   size: string;
   image: string;
   imageUrl?: string;

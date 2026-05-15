@@ -15,6 +15,8 @@ interface OlfitState {
   isLoading: boolean;
   /** 에러 메시지 */
   error: string | null;
+  /** 재분석 시작 시 인터뷰 섹션을 초기화하기 위한 키 */
+  restartToken: number;
 
   // Actions
   setAnalysisResults: (results: AnalysisResults | null) => void;
@@ -38,6 +40,7 @@ export const useOlfitStore = create<OlfitState>((set) => ({
   selectedProduct: null,
   isLoading: false,
   error: null,
+  restartToken: 0,
 
   setAnalysisResults: (results) => set({ analysisResults: results }),
   setSelectedNotes: (notes) => set({ selectedNotes: notes }),
@@ -45,10 +48,12 @@ export const useOlfitStore = create<OlfitState>((set) => ({
   setSelectedProduct: (product) => set({ selectedProduct: product }),
   setLoading: (loading) => set({ isLoading: loading }),
   setError: (error) => set({ error: error }),
-  resetAll: () => set({
+  resetAll: () => set((state) => ({
     analysisResults: null,
     selectedNotes: [],
     selectedProduct: null,
-    error: null
-  }),
+    isLoading: false,
+    error: null,
+    restartToken: state.restartToken + 1
+  })),
 }));

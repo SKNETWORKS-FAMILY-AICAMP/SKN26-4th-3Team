@@ -11,6 +11,17 @@ const CAPTURE_WIDTH = 1000;
 const CAPTURE_VIEWPORT_WIDTH = 1200;
 const CAPTURE_TIMEOUT = 45000;
 const IMAGE_LOAD_TIMEOUT = 15000;
+const WOOD = "#3D2B1F";
+const CREAM = "#FCF9F5";
+const PRODUCT_IMAGE_PLACEHOLDER =
+  "data:image/svg+xml;charset=utf-8," +
+  encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+      <rect width="600" height="600" fill="#FCF9F5"/>
+      <rect x="1" y="1" width="598" height="598" fill="none" stroke="rgba(61,43,31,0.06)" stroke-width="2"/>
+      <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" fill="rgba(61,43,31,0.18)" font-family="serif" font-size="34" letter-spacing="8">OLFIT</text>
+    </svg>
+  `);
 
 const wait = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
@@ -71,6 +82,30 @@ const waitForImages = async (root: ParentNode, timeout = IMAGE_LOAD_TIMEOUT) => 
   await Promise.all(images.map((img) => waitForImage(img, timeout)));
 };
 
+const isBlockedExternalImage = (src: string) => {
+  if (!src || src.startsWith("data:") || src.startsWith("blob:")) return false;
+
+  try {
+    return new URL(src, window.location.href).origin !== window.location.origin;
+  } catch {
+    return false;
+  }
+};
+
+const replaceExternalImagesForCapture = (root: ParentNode) => {
+  root.querySelectorAll<HTMLImageElement>("img").forEach((img) => {
+    const source = img.currentSrc || img.src;
+    if (!isBlockedExternalImage(source)) return;
+
+    img.removeAttribute("srcset");
+    img.removeAttribute("sizes");
+    img.src = PRODUCT_IMAGE_PLACEHOLDER;
+    img.loading = "eager";
+    img.decoding = "sync";
+    img.style.objectFit = "cover";
+  });
+};
+
 const injectCaptureStyles = (clonedDoc: Document) => {
   const style = clonedDoc.createElement("style");
   style.textContent = `
@@ -101,15 +136,18 @@ const injectCaptureStyles = (clonedDoc: Document) => {
 const normalizeCapturePills = (root: ParentNode) => {
   root.querySelectorAll<HTMLElement>("[data-capture-pill]").forEach((pill) => {
     const type = pill.dataset.capturePill;
+    const isSortPill = type === "sort";
 
-    pill.style.display = "inline-flex";
+    pill.style.display = isSortPill ? "grid" : "inline-flex";
     pill.style.alignItems = "center";
     pill.style.justifyContent = "center";
+    pill.style.placeItems = isSortPill ? "center" : "";
     pill.style.boxSizing = "border-box";
-    pill.style.lineHeight = "1";
+    pill.style.lineHeight = isSortPill ? "32px" : "1";
     pill.style.paddingTop = "0";
     pill.style.paddingBottom = "0";
     pill.style.whiteSpace = "nowrap";
+    pill.style.verticalAlign = "middle";
 
     if (type === "sort") {
       pill.style.height = "32px";
@@ -126,18 +164,187 @@ const normalizeCapturePills = (root: ParentNode) => {
 
     const label = pill.firstElementChild;
     if (label instanceof HTMLElement) {
-      label.style.display = "inline-flex";
+      label.style.display = isSortPill ? "block" : "inline-flex";
       label.style.alignItems = "center";
       label.style.justifyContent = "center";
-      label.style.height = "100%";
-      label.style.lineHeight = "1";
+      label.style.height = isSortPill ? "auto" : "100%";
+      label.style.lineHeight = isSortPill ? "normal" : "1";
       label.style.position = "relative";
       label.style.top = "0";
-      label.style.transform = type === "best" ? "translateY(1px)" : "translateY(1.5px)";
+      label.style.transform = type === "best" ? "translateY(1px)" : "none";
+      label.style.margin = "0";
+      label.style.padding = "0";
       if (type !== "match") {
         label.style.textIndent = "0.15em";
       }
     }
+  });
+};
+
+const removeCaptureExcludedElements = (root: ParentNode) => {
+  root.querySelectorAll("[data-capture-exclude]").forEach((el) => el.remove());
+};
+
+const drawRoundedRect = (
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  radius: number
+) => {
+  const r = Math.min(radius, width / 2, height / 2);
+
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + width - r, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + r);
+  ctx.lineTo(x + width, y + height - r);
+  ctx.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+  ctx.lineTo(x + r, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+};
+
+const drawTrackedText = (
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  centerX: number,
+  centerY: number,
+  tracking: number
+) => {
+  const chars = Array.from(text);
+  const widths = chars.map((char) => ctx.measureText(char).width);
+  const textWidth = widths.reduce((sum, width) => sum + width, 0) + tracking * Math.max(chars.length - 1, 0);
+  let x = centerX - textWidth / 2;
+
+  chars.forEach((char, index) => {
+    ctx.fillText(char, x, centerY);
+    x += widths[index] + tracking;
+  });
+};
+
+const replaceCaptureSortGroups = (root: ParentNode) => {
+  root.querySelectorAll<HTMLElement>("[data-capture-sort-group]").forEach((group) => {
+    const selectedSort = group.dataset.captureSortGroup === "price" ? "price" : "recommended";
+    const rect = group.getBoundingClientRect();
+    const width = Math.round(rect.width || 156);
+    const height = Math.round(rect.height || 40);
+    const canvasScale = 3;
+    const doc = group.ownerDocument;
+    const canvas = doc.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    if (!ctx) return;
+
+    canvas.width = width * canvasScale;
+    canvas.height = height * canvasScale;
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+    canvas.style.display = "block";
+
+    ctx.scale(canvasScale, canvasScale);
+    ctx.clearRect(0, 0, width, height);
+
+    drawRoundedRect(ctx, 0.5, 0.5, width - 1, height - 1, height / 2);
+    ctx.fillStyle = "rgba(61, 43, 31, 0.05)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(61, 43, 31, 0.10)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    const padding = 4;
+    const gap = 4;
+    const buttonWidth = (width - padding * 2 - gap) / 2;
+    const buttonHeight = height - padding * 2;
+    const selectedX = selectedSort === "recommended" ? padding : padding + buttonWidth + gap;
+
+    drawRoundedRect(ctx, selectedX, padding, buttonWidth, buttonHeight, buttonHeight / 2);
+    ctx.fillStyle = WOOD;
+    ctx.fill();
+
+    ctx.font = "700 10px system-ui, -apple-system, BlinkMacSystemFont, 'Noto Sans KR', sans-serif";
+    ctx.textBaseline = "middle";
+    ctx.textAlign = "left";
+
+    const centerY = height / 2 - 0.5;
+    ctx.fillStyle = selectedSort === "recommended" ? CREAM : WOOD;
+    drawTrackedText(ctx, "추천순", padding + buttonWidth / 2, centerY, 1.5);
+
+    ctx.fillStyle = selectedSort === "price" ? CREAM : WOOD;
+    drawTrackedText(ctx, "가격순", padding + buttonWidth + gap + buttonWidth / 2, centerY, 1.5);
+
+    group.replaceWith(canvas);
+  });
+};
+
+const replaceCaptureBadges = (root: ParentNode) => {
+  root.querySelectorAll<HTMLElement>('[data-capture-pill="match"], [data-capture-pill="best"]').forEach((badge) => {
+    const type = badge.dataset.capturePill;
+    const rect = badge.getBoundingClientRect();
+    const width = Math.round(rect.width || (type === "match" ? 74 : 78));
+    const height = Math.round(rect.height || (type === "match" ? 28 : 24));
+    const canvasScale = 3;
+    const doc = badge.ownerDocument;
+    const canvas = doc.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    if (!ctx) return;
+
+    const computed = doc.defaultView?.getComputedStyle(badge);
+    const marginBottom = computed?.marginBottom || "0px";
+    const marginTop = computed?.marginTop || "0px";
+    const marginLeft = computed?.marginLeft || "0px";
+    const marginRight = computed?.marginRight || "0px";
+
+    canvas.width = width * canvasScale;
+    canvas.height = height * canvasScale;
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+    canvas.style.display = type === "best" ? "block" : "inline-block";
+    canvas.style.margin = `${marginTop} ${marginRight} ${marginBottom} ${marginLeft}`;
+    canvas.style.verticalAlign = "middle";
+
+    if (computed) {
+      canvas.style.position = computed.position;
+      canvas.style.top = computed.top;
+      canvas.style.right = computed.right;
+      canvas.style.bottom = computed.bottom;
+      canvas.style.left = computed.left;
+      canvas.style.zIndex = computed.zIndex;
+      canvas.style.boxSizing = "border-box";
+    }
+
+    ctx.scale(canvasScale, canvasScale);
+    ctx.clearRect(0, 0, width, height);
+
+    if (type === "match") {
+      drawRoundedRect(ctx, 0, 0, width, height, height / 2);
+      ctx.fillStyle = "rgba(61, 43, 31, 0.80)";
+      ctx.fill();
+
+      ctx.font = "700 10px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
+      ctx.textBaseline = "middle";
+      ctx.fillStyle = CREAM;
+      drawTrackedText(ctx, badge.textContent?.trim() || "Match", width / 2, height / 2, 0);
+      badge.replaceWith(canvas);
+      return;
+    }
+
+    drawRoundedRect(ctx, 0.5, 0.5, width - 1, height - 1, 2);
+    ctx.fillStyle = "rgba(61, 43, 31, 0.10)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(61, 43, 31, 0.20)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.font = "700 9px system-ui, -apple-system, BlinkMacSystemFont, 'Noto Sans KR', sans-serif";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = WOOD;
+    drawTrackedText(ctx, badge.textContent?.trim() || "Best Pick", width / 2, height / 2, 1.35);
+    badge.replaceWith(canvas);
   });
 };
 
@@ -216,7 +423,10 @@ export const captureReportBlob = async (reportElement: HTMLElement | null): Prom
           }
         });
 
-        // 원본 상품 이미지를 유지해야 선명하게 저장됩니다. 로딩만 eager/sync로 고정합니다.
+        // CORS 헤더가 없는 외부 상품 이미지는 html2canvas에서 차단되므로 캡처 전용 placeholder로 대체합니다.
+        replaceExternalImagesForCapture(el);
+
+        // 캡처 가능한 이미지는 로딩만 eager/sync로 고정합니다.
         const clonedImages = el.querySelectorAll("img");
         clonedImages.forEach((img) => {
           img.loading = "eager";
@@ -231,6 +441,9 @@ export const captureReportBlob = async (reportElement: HTMLElement | null): Prom
         el.style.opacity = "1";
 
         prependCaptureHeader(clonedDoc, el);
+        removeCaptureExcludedElements(el);
+        replaceCaptureSortGroups(el);
+        replaceCaptureBadges(el);
         normalizeCapturePills(el);
         await waitForImages(el);
         await waitForNextPaint();
@@ -249,44 +462,15 @@ export const captureReportBlob = async (reportElement: HTMLElement | null): Prom
 let _isSharing = false;
 
 /**
- * 생성된 이미지를 네이티브 공유, 클립보드 복사 또는 다운로드 방식으로 사용자에게 제공합니다.
+ * 생성된 이미지를 다운로드 방식으로 사용자에게 제공합니다.
  * 
  * @param blob 이미지 Blob
  */
-export const shareOrDownloadImage = async (blob: Blob): Promise<"shared" | "copied" | "downloaded" | "failed"> => {
+export const shareOrDownloadImage = async (blob: Blob): Promise<"downloaded" | "failed"> => {
   if (_isSharing) return "failed";
   _isSharing = true;
 
   try {
-    const file = new File([blob], `Olfit_Analysis_${Date.now()}.png`, { type: "image/png" });
-
-    // 1. 네이티브 공유 API (모바일 등)
-    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-      try {
-        await navigator.share({
-          files: [file],
-          title: "Olfit Scent Analysis Report",
-          text: "나만의 고유한 향기 아우라 분석 결과를 확인해보세요.",
-        });
-        return "shared";
-      } catch (shareErr) {
-        if ((shareErr as Error).name === "AbortError") return "failed";
-        console.warn("Share failed", shareErr);
-      }
-    }
-
-    // 2. 클립보드 복사
-    try {
-      if (navigator.clipboard && window.ClipboardItem) {
-        const item = new ClipboardItem({ "image/png": blob });
-        await navigator.clipboard.write([item]);
-        return "copied";
-      }
-    } catch (clipboardErr) {
-      console.warn("Clipboard failed", clipboardErr);
-    }
-
-    // 3. 강제 다운로드
     try {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");

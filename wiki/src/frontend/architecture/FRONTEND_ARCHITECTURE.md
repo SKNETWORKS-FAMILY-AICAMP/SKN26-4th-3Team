@@ -20,7 +20,7 @@
   - **`InsightReportSection`**: 분석 결과(`AnalysisResults`)를 바탕으로 리포트 렌더링.
   - **`SafetyValuesSection`**: 제품 안전성 및 품질 보증 가치 소개.
 - **`components/common/` (Shared UI & Utils)**
-  - 재사용 가능한 범용 UI 컴포넌트 모음 (`RadarChart`, `ImageUploader`, `PrivacyConsentModal`, `LoadingSpinner`, `Skeleton` 등).
+  - 재사용 가능한 범용 UI 컴포넌트 모음 (`RadarChart`, `ImageUploader`, `PrivacyConsentModal`, `LoadingSpinner`, `ErrorFallback` 등).
 - **`components/report/` & `components/guide/`**
   - 특정 도메인(리포트 분석, 향기 가이드)에 특화된 하위 컴포넌트들. (`AuraAnalysis`, `ProductCarousel`, `ScentNoteCarousel` 등)
 
@@ -56,7 +56,7 @@
 - **UI Primitives**: `@radix-ui/react-*` 패키지들을 활용하여 접근성이 보장된 모달, 팝오버, 아코디언 등의 기본 UI 뼈대를 구성합니다 (shadcn/ui 패턴과 유사).
 - **Animations & Interactivity**:
   - CSS Transition(`transition-all duration-700` 등)과 커스텀 훅 `useIntersectionObserver`를 사용하여 스크롤 시 화면에 컴포넌트가 나타날 때 애니메이션(Fade-in, Translate)을 적용합니다.
-  - 데이터 시각화를 위해 SVG 기반의 `RadarChart`를 직접 구현하거나 `recharts`를 활용합니다.
+  - 데이터 시각화를 위해 SVG 기반의 `RadarChart`를 직접 구현합니다. `recharts`는 의존성에 남아 있지만 현재 핵심 레이더 차트 경로에서는 직접 구현 컴포넌트를 사용합니다.
 - **Icons**: `lucide-react`를 표준 아이콘 라이브러리로 사용합니다.
 
 ---

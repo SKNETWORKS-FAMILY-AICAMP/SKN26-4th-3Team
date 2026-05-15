@@ -7,7 +7,6 @@ import { useState, useRef } from "react";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import { Sparkles, CheckCircle2 } from "lucide-react";
 import ImageUploader from "@/components/common/ImageUploader";
-import LoadingSpinner from "@/components/common/LoadingSpinner";
 import ErrorFallback from "@/components/common/ErrorFallback";
 import { useOlfitStore } from "@/store/useStore";
 import { requestAuraAnalysis } from "@/services/api";
@@ -38,6 +37,13 @@ export default function AIInterviewSection({ onComplete, selectedNotes = [] }: A
     { threshold: 50, text: "색채 심리학 기반 무드 매칭..." },
     { threshold: 70, text: "선택된 노트와 스타일 결합 중..." },
     { threshold: 90, text: "최적의 향기 아우라 생성 완료" },
+  ];
+
+  const getFinalizingSteps = () => [
+    "아우라 분석 결과를 정리하는 중...",
+    "추천 향수 데이터를 불러오는 중...",
+    "제품 이미지와 상세 정보를 준비하는 중...",
+    "리포트 화면을 구성하는 중...",
   ];
 
   const handleImageProcessed = (base64: string) => {
@@ -77,6 +83,15 @@ export default function AIInterviewSection({ onComplete, selectedNotes = [] }: A
       // [STEP 2] Exit Condition - 분석 시뮬레이션 종료 시점에만 1회 호출
       if (internalProgress >= 100) {
         clearInterval(timer);
+        setProgress(100);
+
+        const finalizingSteps = getFinalizingSteps();
+        let finalizingIndex = 0;
+        setAnalysisStatus(finalizingSteps[finalizingIndex]);
+        const finalizingTimer = window.setInterval(() => {
+          finalizingIndex = (finalizingIndex + 1) % finalizingSteps.length;
+          setAnalysisStatus(finalizingSteps[finalizingIndex]);
+        }, 1600);
         
         /**
          * 🚀 [CRITICAL FIX]: API 요청은 반드시 setState 콜백 외부에서 실행되어야 합니다.
@@ -84,6 +99,7 @@ export default function AIInterviewSection({ onComplete, selectedNotes = [] }: A
          */
         requestAuraAnalysis(base64, selectedNotes)
           .then((realResults) => {
+            clearInterval(finalizingTimer);
             setLoading(false);
             setIsComplete(true);
             // 성공 시 락 유지 (중복 전송 방지)
@@ -92,6 +108,7 @@ export default function AIInterviewSection({ onComplete, selectedNotes = [] }: A
             }
           })
           .catch((err) => {
+            clearInterval(finalizingTimer);
             // 에러 발생 시에만 재시도를 위해 락 해제
             setLoading(false);
             processingRef.current = false; 
@@ -136,7 +153,6 @@ export default function AIInterviewSection({ onComplete, selectedNotes = [] }: A
                 <ImageUploader onImageProcessed={handleImageProcessed} isAnalyzing={isLoading} />
                 {isLoading && (
                   <div className="mt-12 space-y-10 animate-in fade-in duration-700">
-                    {/* 🛠️ REFACTOR (UX 안정성): 투박한 프로그레스 바 대신 우아한 스켈레톤 UI와 진행 상태 결합 */}
                     <div className="space-y-4">
                       <div className="flex justify-between items-end mb-2">
                         <span className="text-[11px] uppercase tracking-[0.3em] text-cream/30 font-bold">Analysis in progress</span>
@@ -150,17 +166,10 @@ export default function AIInterviewSection({ onComplete, selectedNotes = [] }: A
                       </div>
                     </div>
                     
-                    <div className="grid grid-cols-1 gap-6">
-                      <div className="p-8 border border-cream/5 bg-white/[0.02] rounded-sm backdrop-blur-sm relative overflow-hidden">
-                        <div className="flex items-center gap-4">
-                          <LoadingSpinner className="p-0 gap-3 flex-row" message={analysisStatus} />
-                        </div>
-                        {/* 🛠️ REFACTOR (UX 안정성): 로딩 중 컨텐츠의 뼈대를 보여주는 스켈레톤 펄스 효과 */}
-                        <div className="mt-8 space-y-3 opacity-20">
-                          <div className="h-3 bg-cream/40 rounded-full w-3/4 animate-pulse" />
-                          <div className="h-3 bg-cream/40 rounded-full w-1/2 animate-pulse" />
-                        </div>
-                      </div>
+                    <div className="text-cream/70">
+                      <p className="text-[11px] uppercase tracking-[0.2em] font-medium">
+                        {analysisStatus}
+                      </p>
                     </div>
                   </div>
                 )}

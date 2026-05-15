@@ -25,7 +25,7 @@ export default function RadarChart({ data, forceDraw }: RadarChartProps) {
   const [drawn, setDrawn] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
-  // 데이터가 제공되지 않은 경우 기본 스켈레톤/더미 데이터 사용
+  // 데이터가 제공되지 않은 경우 기본 더미 데이터 사용
   const chartData = data || radarData;
 
   /**

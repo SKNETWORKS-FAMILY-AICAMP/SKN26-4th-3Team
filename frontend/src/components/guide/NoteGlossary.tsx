@@ -94,9 +94,10 @@ export default function NoteGlossary({ onNotesChange }: NoteGlossaryProps) {
         {/* 호버 정보 레이어 (설명 및 원산지) */}
         {!isSelected && (
           <div className={`absolute inset-0 p-4 flex flex-col justify-center transition-all duration-500 ${hoveredNote === note.id ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}>
-            <p className="text-[11px] leading-relaxed text-wood/80 break-keep mb-3">
-              {note.description}
-            </p>
+            <p 
+              className="text-[11px] leading-relaxed text-wood/80 break-keep mb-3"
+              dangerouslySetInnerHTML={{ __html: note.description }}
+            />
             <div className="pt-2 border-t border-wood/10">
               <p className="text-[8px] uppercase tracking-widest text-wood/30 mb-0.5">Origin</p>
               <p className="text-[9px] text-wood/50 line-clamp-1">{note.origin}</p>

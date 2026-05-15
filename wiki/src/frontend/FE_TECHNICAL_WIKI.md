@@ -13,7 +13,7 @@
 // App.tsx 구현 예시
 const AIInterviewSection = lazy(() => import("@/components/sections/AIInterviewSection"));
 
-<Suspense fallback={<SectionSkeleton />}>
+<Suspense fallback={null}>
   <ErrorBoundary fallbackMessage="인터뷰 섹션 오류">
     <AIInterviewSection />
   </ErrorBoundary>
@@ -53,8 +53,8 @@ const AIInterviewSection = lazy(() => import("@/components/sections/AIInterviewS
     *   `InsightReportSection.tsx`: 결과 데이터 시각화 및 추천 리스트 렌더링.
 *   **`report/`**: 결과 리포트 전용 UI 컴포넌트군.
     *   `ScentBlueprint.tsx`: 사용자 맞춤형 향기 설계도 구현.
-    *   `AuraAnalysis.tsx`: Recharts를 이용한 취향 레이더 차트.
-*   **`common/`**: 디자인 시스템 기반의 공통 요소 (Skeleton, Loading, Error).
+    *   `AuraAnalysis.tsx`: 분석 단계와 아우라 설명 UI.
+*   **`common/`**: 디자인 시스템 기반의 공통 요소 (RadarChart, LoadingSpinner, ErrorFallback 등).
 
 ### `src/services/`
 *   `api.ts`: Axios 인스턴스 설정 및 백엔드 엔드포인트 통신 정의.
@@ -68,8 +68,8 @@ const AIInterviewSection = lazy(() => import("@/components/sections/AIInterviewS
 ## 🎨 4. UI/UX Implementation Details
 
 *   **유동적인 레이아웃**: Tailwind CSS의 `transition`과 `blur` 유틸리티를 활용하여 개인정보 미동의 시 화면을 흐리게 처리하고 상호작용을 차단하는 인터랙티브 가드 구현.
-*   **시각화 라이브러리 (Recharts)**: 사용자의 향기 스펙트럼을 다각형 차트로 표현하여 정성적인 취향을 정량적으로 시각화.
+*   **SVG 기반 시각화**: `RadarChart`에서 사용자의 향기 스펙트럼을 다각형 차트로 표현하여 정성적인 취향을 정량적으로 시각화.
 *   **에셋 최적화**: `public/` 디렉토리의 이미지들을 활용한 일관된 톤앤매너 유지.
 
 ---
-*Last Updated: 2026-05-11*
+*Last Updated: 2026-05-15*

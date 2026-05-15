@@ -6,6 +6,7 @@
 
 import { X, MapPin, Sparkles, Wind } from "lucide-react";
 import type { Product } from "@/data/productData";
+import { normalizeSubjectParticle } from "@/utils/koreanText";
 
 interface ProductModalProps {
   /** 표시할 제품의 상세 데이터 객체 */
@@ -24,6 +25,8 @@ const imageSourceFor = (product: Product) => {
 };
 
 export default function ProductModal({ product, onClose }: ProductModalProps) {
+  const story = normalizeSubjectParticle(product.details.story, product.name);
+
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 md:p-10">
       {/* 백드롭 레이어: 클릭 시 모달 닫힘 */}
@@ -74,7 +77,7 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
               <Sparkles size={12} /> The Story
             </h4>
             <p className="text-[15px] leading-relaxed break-keep font-light italic text-wood/80">
-              "{product.details.story}"
+              "{story}"
             </p>
           </div>
 

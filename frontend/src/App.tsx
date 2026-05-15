@@ -7,7 +7,6 @@
 import { useOlfitStore } from "@/store/useStore";
 import { lazy, Suspense } from "react";
 import Navigation from "@/components/layout/Navigation";
-import { SectionSkeleton } from "@/components/common/Skeleton";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
 import FooterSection from "@/components/layout/FooterSection";
 import FloatingNavButton from "@/components/common/FloatingNavButton";
@@ -30,6 +29,7 @@ export default function App() {
     selectedNotes, 
     hasConsented, 
     selectedProduct,
+    restartToken,
     setAnalysisResults,
     setSelectedNotes,
     setHasConsented,
@@ -69,34 +69,35 @@ export default function App() {
       <div className={`transition-all duration-700 ${!hasConsented ? "blur-xl scale-[1.02] pointer-events-none select-none" : "blur-0"}`}>
         <main>
           {/* 섹션별 독립적 Suspense/ErrorBoundary 배치로 인지 성능 및 안정성 극대화 */}
-          <Suspense fallback={<SectionSkeleton />}>
+          <Suspense fallback={null}>
             <ErrorBoundary fallbackMessage="Hero 섹션을 불러오지 못했습니다.">
               <HeroSection />
             </ErrorBoundary>
           </Suspense>
 
-          <Suspense fallback={<SectionSkeleton />}>
+          <Suspense fallback={null}>
             <ErrorBoundary fallbackMessage="철학 섹션을 불러오지 못했습니다.">
               <PhilosophySection />
             </ErrorBoundary>
           </Suspense>
 
-          <Suspense fallback={<SectionSkeleton />}>
+          <Suspense fallback={null}>
             <ErrorBoundary fallbackMessage="가이드 섹션을 불러오지 못했습니다.">
-              <ScentGuideSection onNotesChange={setSelectedNotes} />
+              <ScentGuideSection key={restartToken} onNotesChange={setSelectedNotes} />
             </ErrorBoundary>
           </Suspense>
           
-          <Suspense fallback={<SectionSkeleton />}>
+          <Suspense fallback={null}>
             <ErrorBoundary fallbackMessage="인터뷰 섹션을 불러오지 못했습니다.">
               <AIInterviewSection 
+                key={restartToken}
                 onComplete={(results: AnalysisResults) => setAnalysisResults(results)} 
                 selectedNotes={selectedNotes}
               />
             </ErrorBoundary>
           </Suspense>
           
-          <Suspense fallback={<SectionSkeleton />}>
+          <Suspense fallback={null}>
             <ErrorBoundary fallbackMessage="리포트 섹션을 불러오지 못했습니다.">
               <InsightReportSection 
                 results={analysisResults} 
@@ -105,7 +106,7 @@ export default function App() {
             </ErrorBoundary>
           </Suspense>
           
-          <Suspense fallback={<SectionSkeleton />}>
+          <Suspense fallback={null}>
             <ErrorBoundary fallbackMessage="안전 가치 섹션을 불러오지 못했습니다.">
               <SafetyValuesSection />
             </ErrorBoundary>

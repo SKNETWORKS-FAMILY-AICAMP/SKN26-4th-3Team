@@ -4,7 +4,9 @@
  */
 
 import RadarChart from "@/components/common/RadarChart";
+import { useCallback } from "react";
 import { useInsightReport } from "@/hooks/useInsightReport"; // 🛠️ REFACTOR (유지보수성): 커스텀 훅 도입
+import { useOlfitStore } from "@/store/useStore";
 
 // 분리된 모듈 임포트
 import ReportHeader from "@/components/report/ReportHeader";
@@ -21,6 +23,7 @@ interface InsightReportSectionProps {
 }
 
 export default function InsightReportSection({ results, onProductClick }: InsightReportSectionProps) {
+  const resetAll = useOlfitStore((state) => state.resetAll);
   // 🛠️ REFACTOR (유지보수성): 모든 비즈니스 로직과 상태를 useInsightReport 훅으로 위임
   const {
     refs: { refHeader, refRadar, refSteps, refPyramid },
@@ -32,6 +35,16 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
   } = useInsightReport(results);
 
   const theme = { bg: "bg-cream", accent: "text-wood", border: "border-wood/10" };
+  const handleRestart = useCallback(() => {
+    resetAll();
+
+    window.requestAnimationFrame(() => {
+      document.getElementById("interview")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    });
+  }, [resetAll]);
 
   return (
     <section id="report" className={`${theme.bg} py-24 md:py-40 transition-colors duration-1000`}>
@@ -48,9 +61,6 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
             <div ref={refHeader}>
               <ReportHeader 
                 isVisible={visHeader || !!results} 
-                isSaving={state.isSaving} 
-                feedback={state.feedback} 
-                onShare={actions.handleShareResults} 
               />
             </div>
 
@@ -90,6 +100,10 @@ export default function InsightReportSection({ results, onProductClick }: Insigh
                   slots={derived.slots} 
                   sortBy={state.sortBy} 
                   onSortChange={actions.setSortBy} 
+                  onRestart={handleRestart}
+                  isSaving={state.isSaving}
+                  feedback={state.feedback}
+                  onShare={actions.handleShareResults}
                 />
               </div>
             </div>

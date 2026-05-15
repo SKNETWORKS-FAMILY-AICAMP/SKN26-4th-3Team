@@ -4,6 +4,8 @@
  * 벡터 포맷을 사용하여 어떠한 해상도에서도 선명하게 렌더링되며, 프로젝트 전역에서 브랜딩 요소로 사용됩니다.
  */
 
+import type { CSSProperties } from "react";
+
 interface OlfitLogoProps {
   /** 추가적인 CSS 클래스 */
   className?: string;
@@ -24,14 +26,23 @@ export default function OlfitLogo({
   color = "currentColor",
   showLine = true
 }: OlfitLogoProps) {
+  const svgWidth = width === "auto" ? undefined : width;
+  const svgHeight = height === "auto" ? undefined : height;
+  const svgStyle: CSSProperties = {
+    aspectRatio: "3 / 1",
+    ...(width === "auto" ? { width: "auto" } : {}),
+    ...(height === "auto" ? { height: "auto" } : {}),
+  };
+
   return (
     <svg 
-      width={width} 
-      height={height} 
+      width={svgWidth} 
+      height={svgHeight} 
       viewBox="0 0 120 40" 
       fill="none" 
       xmlns="http://www.w3.org/2000/svg"
       className={className}
+      style={svgStyle}
     >
       <text
         x="50%"

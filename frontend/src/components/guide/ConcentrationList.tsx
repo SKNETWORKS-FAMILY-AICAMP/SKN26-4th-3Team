@@ -27,9 +27,10 @@ export default function ConcentrationList({ concentrations, description }: Conce
           01. Concentration (부향률)
         </h3>
         {description && (
-          <p className="text-[14px] md:text-[15px] text-wood/60 leading-relaxed break-keep min-h-[3rem] md:min-h-[4.5rem]">
-            {description}
-          </p>
+          <p 
+            className="text-[14px] md:text-[15px] text-wood/60 leading-relaxed break-keep min-h-[3rem] md:min-h-[4.5rem]"
+            dangerouslySetInnerHTML={{ __html: description }}
+          />
         )}
       </div>
       
