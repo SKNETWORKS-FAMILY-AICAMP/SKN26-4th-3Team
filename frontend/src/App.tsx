@@ -24,6 +24,21 @@ const AIInterviewSection = lazy(() => import("@/components/sections/AIInterviewS
 const InsightReportSection = lazy(() => import("@/components/sections/InsightReportSection"));
 const SafetyValuesSection = lazy(() => import("@/components/sections/SafetyValuesSection"));
 
+const createSessionId = () => {
+  if (typeof globalThis.crypto?.randomUUID === "function") {
+    return globalThis.crypto.randomUUID();
+  }
+
+  const randomPart =
+    typeof globalThis.crypto?.getRandomValues === "function"
+      ? Array.from(globalThis.crypto.getRandomValues(new Uint32Array(2)), (value) =>
+          value.toString(36),
+        ).join("")
+      : Math.random().toString(36).slice(2);
+
+  return `session-${Date.now()}-${randomPart}`;
+};
+
 export default function App() {
   const {
     analysisResults,
@@ -42,7 +57,7 @@ export default function App() {
    */
   const handleAgree = () => {
     // 고유 익명 세션 ID 생성
-    const newSessionId = crypto.randomUUID();
+    const newSessionId = createSessionId();
 
     // 영속성 유지를 위한 로컬 스토리지 저장
     localStorage.setItem("olfit_consent", "true");
