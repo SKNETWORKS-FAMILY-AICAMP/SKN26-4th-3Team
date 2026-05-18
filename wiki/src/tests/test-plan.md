@@ -87,7 +87,7 @@ docker compose run --rm backend sh -c "cd /backend/app && python manage.py test 
 | FE-OPT-001 | UT | `frontend/src/services/uploadService.test.ts` | 이미지 업로드 서비스가 비동기 처리 후 원격 URL 형식 값을 반환한다 | 반환 URL이 `olfit-assets/user-uploads/aura-*.jpg` 형식과 일치 | P2 |
 | FE-OPT-002 | UT | `frontend/src/hooks/useInsightReport.test.ts` | 추천 상품 가격 정렬 로직이 원화 가격 기준으로 동작한다 | 정렬 결과가 기대 순서와 일치 | P2 |
 | FE-OPT-003 | UT | `frontend/src/metadata/favicon.test.ts` | favicon 메타데이터가 유지된다 | HTML 메타데이터와 favicon 파일이 기대값과 일치 | P3 |
-| FE-OPT-004 | E2E | `frontend/e2e/image-upload.spec.ts` | 빠른 double drop 시 현재 중복 분석 동작을 문서화한다 | 현재 기준 upload 로그와 `/api/analyze/` 요청 횟수가 문서화된 값과 일치 | P4 |
+| FE-OPT-004 | E2E | `frontend/e2e/image-upload.spec.ts` | 빠른 double drop 시 현재 중복 방지 동작을 검증한다 | 현재 기준 upload 로그 1회, `/api/analyze/` 요청 1회와 일치 | P4 |
 | FE-OPT-005 | UT | `useStore` | 저장된 동의 값과 session id가 있으면 재방문 시 동의 상태를 복원한다 | `hasConsented`가 `true`로 초기화된다 | P2 |
 | FE-OPT-006 | UT | `ErrorBoundary` | 섹션 렌더링 중 예외가 발생해도 앱 전체가 중단되지 않는다 | fallback message 표시, 나머지 UI 유지 | P2 |
 | FE-OPT-007 | E2E | `frontend/e2e/image-upload.spec.ts` | 잘못된 파일 업로드 시 분석 요청이 발생하지 않는다 | validation message 표시, `/api/analyze/` 미호출 | P2 |
@@ -155,7 +155,7 @@ docker compose run --rm backend sh -c "cd /backend/app && python manage.py test 
 | P1 | 핵심 사용자 흐름이 진행되지 않음 | 이미지 업로드 불가, 분석 API 500, 결과 화면 미표시 |
 | P2 | 주요 데이터가 누락되거나 잘못 표시됨 | 추천 상품명/노트/이미지 누락, radar score 누락 |
 | P3 | 특정 예외 상황에서만 실패함 | 일부 브라우저 API 미지원, 세션 누락 처리 오류 |
-| P4 | 문서화된 현재 동작 또는 개선 예정 항목 | rapid double drop 중복 요청처럼 별도 개선 이슈로 분리 가능한 항목 |
+| P4 | 문서화된 현재 동작 또는 개선 예정 항목 | rapid double drop 중복 방지처럼 현재 동작을 회귀 방지 목적으로 고정하는 항목 |
 
 ## 12. 산출물
 
