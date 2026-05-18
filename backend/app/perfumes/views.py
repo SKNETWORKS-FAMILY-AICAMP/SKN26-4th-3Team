@@ -1,17 +1,15 @@
 """
 @file views.py
-@module Perfumes/Views
-@description
+@role
 Olfít Connect의 핵심 비즈니스 로직을 API 엔드포인트로 노출합니다.
 사용자의 요청을 받아 VLM 분석, 아우라 스코어링, 하이브리드 추천 프로세스를 오케스트레이션합니다.
-
-@author Olfít AI Team
-@version 4.9.0
 """
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from langsmith import traceable
+from langsmith.run_helpers import get_current_run_tree
 from drf_spectacular.utils import (
     OpenApiExample,
     OpenApiParameter,
@@ -62,6 +60,7 @@ class AnalyzeView(APIView):
             ),
         },
     )
+    @traceable(name="Analyze Scent Pipeline")
     def post(self, request):
         """
         분석 요청을 처리하고 추천 결과를 반환합니다.
@@ -81,6 +80,15 @@ class AnalyzeView(APIView):
         # 요청 데이터 추출 (Base64 이미지 및 선택된 노트 목록)
         image_base64 = request.data.get("image")
         selected_notes = request.data.get("selectedNotes", [])
+
+        # [LangSmith] 입력 데이터 명시적 기록 (Base64 제외)
+        run_tree = get_current_run_tree()
+        if run_tree:
+            run_tree.inputs = {
+                "session_id": session_id,
+                "selectedNotes": selected_notes,
+                "image_provided": bool(image_base64),
+            }
 
         # --------------------------------------------------------
         # 1. 서비스 엔진 초기화
@@ -134,10 +142,14 @@ class AnalyzeView(APIView):
 
         # 개인 무드 태그 생성 및 치환
         personal_mood = f"#{' #'.join(fragrance_mapping.get('descriptors', [])[:3])}"
-        personal_mood = personal_mood.replace("오리엔탈", "앰버").replace("플로럴", "플로랄")
+        personal_mood = personal_mood.replace("오리엔탈", "앰버").replace(
+            "플로럴", "플로랄"
+        )
 
         # 최종 쿼리 문구 치환 (UI 표시용)
-        final_readable_query = query_text.replace("오리엔탈", "앰버").replace("플로럴", "플로랄")
+        final_readable_query = query_text.replace("오리엔탈", "앰버").replace(
+            "플로럴", "플로랄"
+        )
 
         # --------------------------------------------------------
         # 6. [Response] 최종 리포트 데이터 응답
@@ -153,15 +165,27 @@ class AnalyzeView(APIView):
                 "base64Image": image_base64,
                 "selectedNotes": selected_notes,
                 "radarScores": ui_radar_scores,
-                "readableQuery": final_readable_query, # RAG 쿼리와 통합된 문구 사용
+                "readableQuery": final_readable_query,  # RAG 쿼리와 통합된 문구 사용
             },
             "recommendations": recommendations,
         }
 
+        # [LangSmith] 출력 데이터 명시적 기록
+        if run_tree:
+            run_tree.outputs = {
+                "personalMood": personal_mood,
+                "recommendation_count": len(recommendations),
+                "top_recommendation": (
+                    recommendations[0]["name"] if recommendations else None
+                ),
+            }
+
         return Response(response_data)
+
 
 # ----------------------------------------------------------------
 # Update History
+# 2026-05-18: Langsmith tracking 추가. (worker: @Gloveman)
 # 2026-05-18: git diff 기준 @file/@role header와 파일 책임을 기록하는 Update History/EOF footer 추가. (worker: @nobrain711)
 # 2026-05-15: refactor(analyzeview): optimize API orchestration and documentation. (author: @Gloveman)
 # 2026-05-11: docs(wiki): move frontend notes into mdbook. (author: @nobrain711)

@@ -6,6 +6,7 @@
 """
 
 import numpy as np
+from langsmith import traceable
 from ..utils import load_master_map, load_user_preference_map
 from scent_engine import map_image_to_fragrance_keywords
 
@@ -36,9 +37,11 @@ class AuraService:
         # 각 계열의 성분 노출 빈도와 난이도를 고려한 수치입니다.
         self.ref_max = np.array([10.0, 7.0, 7.0, 10.0, 4.0])
 
+    @traceable(run_type="chain", name="Aura Scoring")
     def calculate_combined_aura(self, vl_result, selected_notes):
         """
         VLM 분석 결과와 사용자 선택 노트를 결합하여 최종 아우라 프로필을 생성합니다.
+
 
         Args:
             vl_result (dict): VLEngine에서 생성된 시각 분석 JSON 데이터
@@ -199,8 +202,10 @@ class AuraService:
 
         return readable
 
+
 # ----------------------------------------------------------------
 # Update History
+# 2026-05-18: Langsmith tracking 추가. (worker: @Gloveman)
 # 2026-05-18: git diff 기준 @file/@role header와 파일 책임을 기록하는 Update History/EOF footer 추가. (worker: @nobrain711)
 # 2026-05-15: refactor(auraservice): use only readble query as vector search query. (author: @Gloveman)
 # 2026-05-15: feat(ui): refine content layout and improve upload robustness. (author: @JJonyeok2)
