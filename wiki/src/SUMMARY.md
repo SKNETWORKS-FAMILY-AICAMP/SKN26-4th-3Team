@@ -2,6 +2,10 @@
 
 - [Overview](./overview.md)
 - [Tech Stack](./tech-stack.md)
+- [Tests](./tests/index.md)
+  - [Test Plan](./tests/test-plan.md)
+  - [RAG Test](./tests/rag-test.md)
+  - [Test Results](./tests/test-results.md)
 - [Conventions](./conventions.md)
   - [Git Flow](./conventions/git-flow.md)
   - [Commit](./conventions/commit.md)
