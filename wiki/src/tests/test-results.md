@@ -1,24 +1,5 @@
 # Olfit 테스트 결과
 
-## 테스트 결과 총괄
-
-2026-05-18 기준 자동화 테스트는 총 38개가 통과했다.
-
-| 범위 | 도구 | 테스트 수 | 결과 |
-|---|---|---:|---|
-| Backend | Django TestCase, DRF APIClient, Docker Compose | 18 | PASS |
-| Frontend UT | Vitest, Testing Library, jsdom | 16 | PASS |
-| Frontend E2E | Playwright Chromium | 4 | PASS |
-| 합계 | - | 38 | PASS |
-
-## 실행 환경 요약
-
-| 영역 | 실행 환경 | 실행 명령 |
-|---|---|---|
-| Backend | Docker Compose `backend` 서비스, 테스트 DB `test_olfit_db` | `docker compose run --rm backend sh -c "cd /backend/app && python manage.py test perfumes --noinput"` |
-| Frontend UT | Local Node/Yarn, Vitest, jsdom | `cd frontend && yarn test:run` |
-| Frontend E2E | Local Node/Yarn, Playwright Chromium, production build | `cd frontend && yarn test:e2e` |
-
 ## 2026-05-16 테스트 현황
 
 | 구분 | 명령 | 결과 | 비고 |
@@ -83,29 +64,6 @@ E2E 테스트 코드를 현재 UI와 중복 방지 동작 기준으로 갱신한
 | `rapid double drop keeps the current duplicate prevention behavior` | PASS | 빠른 double drop 상황에서 현재 중복 방지 lock 기준 upload log 1회, `/api/analyze/` 요청 1회 |
 | `invalid file upload does not request analysis` | PASS | 잘못된 파일 업로드 시 validation message 표시, `/api/analyze/` 미호출 |
 | `recommendation card opens product detail modal` | PASS | 추천 상품 카드 클릭 시 상세 모달에 상품명, 브랜드, 노트, 이미지 표시 |
-
-### Frontend UT 검증 상세
-
-2026-05-18에 `cd frontend && yarn test:run`을 재실행해 Vitest 기준 8개 테스트 파일, 16개 테스트가 모두 통과함을 확인했다.
-
-| 테스트 파일 | 테스트 케이스 | 결과 | 검증 내용 |
-|---|---|---|---|
-| `frontend/src/App.test.tsx` | `continues consent when randomUUID is unavailable in insecure browser contexts` | PASS | 보안 컨텍스트가 아니어서 `crypto.randomUUID`를 사용할 수 없어도 동의 플로우가 유지되고 동의 상태와 session id가 저장됨 |
-| `frontend/src/services/uploadService.test.ts` | `returns a simulated remote upload URL after the async delay` | PASS | 이미지 업로드 서비스가 비동기 처리 후 `olfit-assets/user-uploads/aura-*.jpg` 형식의 시뮬레이션 원격 URL을 반환함 |
-| `frontend/src/hooks/useInsightReport.test.ts` | `sorts recommendations by backend-provided KRW price instead of display price text` | PASS | 추천 상품 정렬이 화면 표시용 가격 문자열이 아니라 backend 제공 원화 가격 기준으로 동작함 |
-| `frontend/src/hooks/useInsightReport.test.ts` | `places missing or invalid KRW prices after priced recommendations` | PASS | 원화 가격이 없거나 잘못된 추천 상품은 정상 가격 상품 뒤로 정렬됨 |
-| `frontend/src/metadata/favicon.test.ts` | `registers the Olfit favicon used by browser tabs` | PASS | HTML metadata에 Olfit favicon 경로와 타입이 유지됨 |
-| `frontend/src/components/common/ImageUploader.test.tsx` | `describes image preparation without claiming an S3 upload` | PASS | 이미지 업로더 안내 문구가 실제 S3 업로드가 아니라 이미지 준비/분석 흐름으로 표현됨 |
-| `frontend/src/components/curated/ProductModal.test.tsx` | `renders fragrance concentration on its own semantic title line` | PASS | 상품 모달에서 향수 농도 표현이 상품명과 분리된 의미 있는 제목 줄로 렌더링됨 |
-| `frontend/src/components/curated/ProductModal.test.tsx` | `renders The Story with Korean word-preserving line wrapping` | PASS | `The Story` 영역의 한국어 문장이 단어 단위 줄바꿈을 유지함 |
-| `frontend/src/components/report/ProductCarousel.test.tsx` | `resets to the first slide when product order changes` | PASS | 추천 상품 순서가 바뀌면 캐러셀이 첫 번째 슬라이드로 초기화됨 |
-| `frontend/src/components/report/ProductCarousel.test.tsx` | `keeps the Best Pick badge attached to the original AI pick` | PASS | 정렬이나 이동 후에도 Best Pick 배지가 최초 AI 추천 상품에 유지됨 |
-| `frontend/src/components/report/ProductCarousel.test.tsx` | `enables carousel loop navigation` | PASS | 캐러셀 이전/다음 이동이 끝에서 다시 처음 또는 마지막으로 순환됨 |
-| `frontend/src/components/report/ProductCarousel.test.tsx` | `renders product cards with stable full-height sizing` | PASS | 상품 카드가 안정적인 전체 높이 레이아웃으로 렌더링됨 |
-| `frontend/src/components/report/ProductCarousel.test.tsx` | `does not render per-product feedback buttons` | PASS | 개별 상품 카드에 feedback 버튼이 렌더링되지 않음 |
-| `frontend/src/components/report/ProductCarousel.test.tsx` | `keeps Korean fragrance concentration words from splitting in product names` | PASS | 한국어 향수 농도 단어가 상품명에서 부자연스럽게 분리되지 않음 |
-| `frontend/src/components/report/ProductCarousel.test.tsx` | `renders fragrance concentration on its own semantic line` | PASS | 캐러셀 카드의 향수 농도 표현이 별도 의미 줄로 렌더링됨 |
-| `frontend/src/components/guide/ScentNoteCarousel.test.tsx` | `returns to the selected note when revisiting a pyramid layer` | PASS | 향 노트 피라미드 레이어를 다시 방문해도 이전 선택 노트가 유지됨 |
 
 ## 2026-05-18 Backend 테스트 상세
 

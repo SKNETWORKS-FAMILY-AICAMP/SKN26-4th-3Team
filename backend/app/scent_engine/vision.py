@@ -8,6 +8,7 @@ NVIDIA NIM API(Gemma-VLM)를 호출하여 이미지로부터 시각적 속성을
 import os
 import json
 import time
+from langsmith import traceable
 from openai import OpenAI
 from .utils import extract_json_from_text, normalize_vlm_result
 from .prompts import IMAGE_ANALYSIS_PROMPT
@@ -41,6 +42,7 @@ class VLEngine:
         else:
             print("[VLEngine] ❌ Critical: NVIDIA_API_KEY not found in environment.")
 
+    @traceable(run_type="llm", name="VLM Image Analysis")
     def analyze_image(self, image_base64):
         """
         이미지를 분석하여 구조화된 JSON 결과를 반환합니다.
@@ -128,8 +130,10 @@ class VLEngine:
             "raw_keywords": ["세련된", "미니멀", "시크한"],
         }
 
+
 # ----------------------------------------------------------------
 # Update History
+# 2026-05-18: Langsmith tracking 추가. (worker: @Gloveman)
 # 2026-05-18: git diff 기준 @file/@role header와 파일 책임을 기록하는 Update History/EOF footer 추가. (worker: @nobrain711)
 # 2026-05-12: refactor(scent_engine): S3P-138 refactor and upload scent_engine. (author: @Gloveman)
 # ----------------------------------------------------------------

@@ -14,39 +14,37 @@
   - [🏷️ Naming](./conventions/naming.md)
   - [🐍 Python Style](./conventions/python-style.md)
 - [🖥️ Backend](./backend.md)
-  - [🏗️ 1. Architecture]
+  - [🏗️ 1. Architecture](./backend/architecture/index.md)
     - [🧭 Architecture Overview](./backend/architecture/overview.md)
     - [🔄 Data Flow](./backend/architecture/data_flow.md)
     - [☁️ Infra Diagram](./backend/architecture/infra_diagram.md)
     - [📨 Sequence Diagram](./backend/architecture/sequence_diagram.md)
-  - [🔌 2. API Specification]
+  - [🔌 2. API Specification](./backend/api/index.md)
     - [📄 API Specification](./backend/api/api_specification.md)
     - [🤝 Recommendation API Contract](./backend/api/recommendation-api-contract.md)
-  - [🧠 3. Core Logic]
+  - [🧠 3. Core Logic](./backend/logic/index.md)
     - [🎯 Recommendation Logic](./backend/logic/recommendation_logic.md)
     - [🌈 Visual-Scent Mapping](./backend/logic/visual_scent_mapping.md)
     - [⚖️ Reranking Algorithm](./backend/logic/reranking_algorithm.md)
     - [🧬 Vector RAG](./backend/logic/vector-rag.md)
     - [🧯 Error Handling & Fallback](./backend/logic/error_handling_fallback.md)
-  - [🗄️ 4. Data Design]
+  - [🗄️ 4. Data Design](./backend/data/index.md)
     - [🧩 ERD Design](./backend/data/erd_design.md)
     - [🗺️ Knowledge Base Mapping](./backend/data/knowledge_base_mapping.md)
     - [🛢️ MySQL Document Store Roadmap](./backend/data/mysql-document-store-roadmap.md)
-  - [⚙️ 5. Pipelines]
+  - [⚙️ 5. Pipelines](./backend/pipeline/index.md)
     - [📥 Data Ingestion Pipeline](./backend/pipeline/data_ingestion_pipeline.md)
     - [👁️ VLM Pipeline](./backend/pipeline/vlm_pipeline.md)
-  - [🚀 6. Expansion]
+  - [🚀 6. Expansion](./backend/expansion/index.md)
     - [💬 LLM Query Optimization](./backend/expansion/llm-query-generation-expansion.md)
-- [🎨 Frontend](./frontend/info.md)
-  - [🏛️ 1. Architecture & Overview]
+- [🎨 Frontend](./frontend/index.md)
+  - [🏛️ 1. Architecture & Overview](./frontend/architecture/index.md)
     - [📚 Technical Wiki Overview](./frontend/FE_TECHNICAL_WIKI.md)
     - [🧱 Frontend Architecture](./frontend/architecture/FRONTEND_ARCHITECTURE.md)
     - [ℹ️ General Information](./frontend/info.md)
-  - [🧪 2. Testing & Troubleshooting]
-    - [🖼️ Image Upload Tests](./tests/image-upload-tests.md)
-    - [🛠️ Image Upload Troubleshooting](./tests/image-upload-troubleshooting.md)
+  - [🧪 2. Testing & Troubleshooting](./frontend/testing/index.md)
     - [💸 Price Sorting Refactor](./frontend/price-sorting-refactor.md)
-  - [🎤 3. Presentation Series]
+  - [🎤 3. Presentation Series](./frontend/presentation/index.md)
     - [🗂️ 00. Presentation Map](./frontend/presentation/00_PRESENTATION_MAP.md)
     - [🟨 01. JavaScript vs TypeScript](./frontend/presentation/01_JS_vs_TS.md)
     - [⚛️ 02. React + Vite Architecture](./frontend/presentation/02_React_Overview.md)
