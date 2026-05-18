@@ -44,22 +44,26 @@
 | 일자 | 범위 | 명령 | 결과 | 실패 원인 | 후속 조치 |
 |---|---|---|---|---|---|
 | 2026-05-18 | Backend Test | `docker compose run --rm backend sh -c "cd /backend/app && python manage.py test perfumes --noinput"` | PASS | - | `Ran 18 tests ... OK` 확인 |
-| 2026-05-18 | Frontend UT | `cd frontend && corepack yarn test:run` | PASS | - | `8 test files, 16 tests passed` 확인 |
-| 2026-05-18 | Frontend E2E | `cd frontend && corepack yarn test:e2e` | FAIL | selector 불일치 및 double drop 기대값 노후화 | 프론트 테스트 코드만 수정해 selector와 현재 중복 방지 동작 기준을 갱신 |
+| 2026-05-18 | Frontend UT | `cd frontend && yarn test:run` | PASS | - | `8 test files, 16 tests passed` 확인 |
+| 2026-05-18 | Frontend E2E | `cd frontend && yarn test:e2e` | PASS | - | Playwright Chromium 기준 4개 테스트 통과 |
 
 ## 2026-05-18 Frontend 테스트 실행 결과
 
+E2E 테스트 코드를 현재 UI와 중복 방지 동작 기준으로 갱신한 뒤, `corepack` 없이 `yarn` 명령으로 재실행해 아래 결과를 확인했다. `yarn playwright install chromium`으로 Playwright Chromium 설치도 확인했다.
+
 | 구분 | 명령 | 결과 | 요약 |
 |---|---|---|---|
-| Frontend UT | `cd frontend && corepack yarn test:run` | PASS | Vitest 기준 8개 테스트 파일, 16개 테스트 통과 |
-| Frontend E2E | `cd frontend && corepack yarn test:e2e` | FAIL | Playwright 기준 2개 테스트 실패 |
+| Frontend UT | `cd frontend && yarn test:run` | PASS | Vitest 기준 8개 테스트 파일, 16개 테스트 통과 |
+| Frontend E2E | `cd frontend && yarn test:e2e` | PASS | Playwright Chromium 기준 4개 테스트 통과 |
 
-### Frontend E2E 실패 상세
+### Frontend E2E 검증 상세
 
-| 테스트 | 실패 원인 | 후속 조치 |
+| 테스트 | 결과 | 검증 내용 |
 |---|---|---|
-| `single file selection uploads once and requests analysis once` | `Drag & Drop or Click to browse` selector를 찾지 못해 file chooser 대기 중 timeout 발생 | 현행 UI 텍스트 또는 file input 기준으로 테스트 selector 갱신 |
-| `documents current rapid double drop duplicate analysis behavior` | 현재 구현의 중복 방지 동작과 과거 기대값인 `/api/analyze/` 2회 호출이 맞지 않음 | 현재 중복 방지 동작 기준으로 기대 요청 횟수와 설명 갱신 |
+| `single file selection uploads once and requests analysis once` | PASS | 단일 이미지 업로드 후 `분석 시작` 클릭 시 upload log 1회, `/api/analyze/` 요청 1회 |
+| `rapid double drop keeps the current duplicate prevention behavior` | PASS | 빠른 double drop 상황에서 현재 중복 방지 lock 기준 upload log 1회, `/api/analyze/` 요청 1회 |
+| `invalid file upload does not request analysis` | PASS | 잘못된 파일 업로드 시 validation message 표시, `/api/analyze/` 미호출 |
+| `recommendation card opens product detail modal` | PASS | 추천 상품 카드 클릭 시 상세 모달에 상품명, 브랜드, 노트, 이미지 표시 |
 
 ## 2026-05-18 Backend 테스트 상세
 

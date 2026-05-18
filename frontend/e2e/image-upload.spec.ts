@@ -56,7 +56,34 @@ const analysisResponse = {
     radarScores: {},
     readableQuery: "",
   },
-  recommendations: [],
+  recommendations: [
+    {
+      id: 1,
+      name: "테스트 향수",
+      brand: "OLFIT",
+      price: "₩120,000",
+      price_krw: 120000,
+      size: "50ml",
+      image: "data:image/png;base64,iVBORw0KGgo=",
+      imageUrl: "data:image/png;base64,iVBORw0KGgo=",
+      tags: ["fresh"],
+      notes: "베르가못, 자스민, 머스크",
+      family: "프레시",
+      mainAccords: ["시트러스"],
+      moods: ["clean"],
+      occasions: ["daily"],
+      category: "Personal",
+      similarity: 91,
+      matchReason: "테스트 추천 사유",
+      details: {
+        story: "테스트 향수의 상세 설명입니다.",
+        topNotes: "베르가못",
+        middleNotes: "자스민",
+        baseNotes: "머스크",
+        bestFor: "데일리",
+      },
+    },
+  ],
 };
 
 async function prepareApp(page: Page, apiRequests: string[]) {
@@ -78,26 +105,31 @@ async function prepareApp(page: Page, apiRequests: string[]) {
   await page.locator("#interview").scrollIntoViewIfNeeded();
 }
 
+async function uploadValidImage(page: Page, fileName = "one.png") {
+  await page.locator('input[type="file"]').setInputFiles({
+    name: fileName,
+    mimeType: "image/png",
+    buffer: pixelPng,
+  });
+
+  const analyzeButton = page.getByRole("button", { name: /분석 시작/ });
+  await expect(analyzeButton).toBeEnabled({ timeout: 10_000 });
+  await analyzeButton.click();
+}
+
 test("single file selection uploads once and requests analysis once", async ({ page }) => {
   const logs: string[] = [];
   const apiRequests: string[] = [];
   page.on("console", (message) => logs.push(message.text()));
   await prepareApp(page, apiRequests);
 
-  const chooser = page.waitForEvent("filechooser");
-  await page.getByText("Drag & Drop or Click to browse").click();
-  const fileChooser = await chooser;
-  await fileChooser.setFiles({
-    name: "one.png",
-    mimeType: "image/png",
-    buffer: pixelPng,
-  });
+  await uploadValidImage(page);
 
-  await expect.poll(() => apiRequests.length).toBe(1);
+  await expect.poll(() => apiRequests.length, { timeout: 15_000 }).toBe(1);
   expect(logs.filter((line) => line.includes("Uploading image to cloud storage")).length).toBe(1);
 });
 
-test("documents current rapid double drop duplicate analysis behavior", async ({ page }) => {
+test("rapid double drop keeps the current duplicate prevention behavior", async ({ page }) => {
   const logs: string[] = [];
   const apiRequests: string[] = [];
   page.on("console", (message) => logs.push(message.text()));
@@ -125,6 +157,48 @@ test("documents current rapid double drop duplicate analysis behavior", async ({
     dispatchDrop("two.png");
   }, Array.from(pixelPng));
 
-  await expect.poll(() => apiRequests.length).toBe(2);
-  expect(logs.filter((line) => line.includes("Uploading image to cloud storage")).length).toBe(2);
+  const analyzeButton = page.getByRole("button", { name: /분석 시작/ });
+  await expect(analyzeButton).toBeEnabled({ timeout: 10_000 });
+  await analyzeButton.click();
+
+  await expect.poll(() => apiRequests.length, { timeout: 15_000 }).toBe(1);
+  expect(logs.filter((line) => line.includes("Uploading image to cloud storage")).length).toBe(1);
+});
+
+test("invalid file upload does not request analysis", async ({ page }) => {
+  const apiRequests: string[] = [];
+  await prepareApp(page, apiRequests);
+
+  await page.locator('input[type="file"]').setInputFiles({
+    name: "not-image.txt",
+    mimeType: "text/plain",
+    buffer: Buffer.from("not an image"),
+  });
+
+  await expect(
+    page.getByText("JPG, PNG, WEBP 형식의 이미지만 업로드 가능합니다."),
+  ).toBeVisible();
+  expect(apiRequests).toHaveLength(0);
+});
+
+test("recommendation card opens product detail modal", async ({ page }) => {
+  const apiRequests: string[] = [];
+  await prepareApp(page, apiRequests);
+
+  await uploadValidImage(page);
+  await expect.poll(() => apiRequests.length, { timeout: 15_000 }).toBe(1);
+
+  await page.locator("#report").scrollIntoViewIfNeeded();
+  await page.getByRole("heading", { name: "테스트 향수" }).click();
+
+  const modal = page.locator("div.fixed").filter({
+    has: page.getByRole("heading", { level: 3, name: "테스트 향수" }),
+  });
+
+  await expect(modal.getByRole("heading", { level: 3, name: "테스트 향수" })).toBeVisible();
+  await expect(modal.getByText("OLFIT", { exact: true })).toBeVisible();
+  await expect(modal.getByText("베르가못")).toBeVisible();
+  await expect(modal.getByText("자스민")).toBeVisible();
+  await expect(modal.getByText("머스크")).toBeVisible();
+  await expect(modal.locator('img[alt="테스트 향수"]')).toBeVisible();
 });
