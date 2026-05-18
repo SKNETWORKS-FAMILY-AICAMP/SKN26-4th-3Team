@@ -275,10 +275,14 @@ def build_detail_data(item):
 
     return detail_data
 
-
 # ----------------------------------------------------------------
-# Last Modified: 2026-05-15
-# Modified By: 이창우
+# Update History
+# 2026-05-18: git diff 기준 @file/@role header와 파일 책임을 기록하는 Update History/EOF footer 추가. (worker: @nobrain711)
+# 2026-05-15: fix(load_perfumes): remove unexpected indentation in load_pefumes.py. (author: @Gloveman)
+# 2026-05-15: feat(load_perfumes): enhance data ingestion and scoring logic. (author: @Gloveman)
+# 2026-05-14: fix(recommendations): split scent pyramid notes. (author: @nobrain711)
+# 2026-05-13: feat(perfumes): persist perfume image assets. (author: @nobrain711)
+# 2026-05-13: fix(django): guard migrate schema drift. (author: @nobrain711)
 # ----------------------------------------------------------------
 
 # EOF: load_perfumes.py

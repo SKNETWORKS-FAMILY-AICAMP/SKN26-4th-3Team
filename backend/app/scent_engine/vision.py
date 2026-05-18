@@ -5,11 +5,6 @@ NVIDIA NIM API(Gemma-VLM)를 호출하여 이미지로부터 시각적 속성을
 이미지의 시각적 컨텍스트를 분석하여 Scent Engine이 이해할 수 있는 구조화된 텍스트 데이터로 변환합니다.
 """
 
-# ----------------------------------------------------------------
-# Update History
-# 2026-05-11: 기존 Ollama 활용 키워드 추출을 nvidia nim free endpoint로 전환. (worker: Gloveman)
-# ----------------------------------------------------------------
-
 import os
 import json
 import time
@@ -133,5 +128,10 @@ class VLEngine:
             "raw_keywords": ["세련된", "미니멀", "시크한"],
         }
 
+# ----------------------------------------------------------------
+# Update History
+# 2026-05-18: git diff 기준 @file/@role header와 파일 책임을 기록하는 Update History/EOF footer 추가. (worker: @nobrain711)
+# 2026-05-12: refactor(scent_engine): S3P-138 refactor and upload scent_engine. (author: @Gloveman)
+# ----------------------------------------------------------------
 
-# EOF: scent_engine/vision.py
+# EOF: vision.py

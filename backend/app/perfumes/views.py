@@ -160,8 +160,14 @@ class AnalyzeView(APIView):
 
         return Response(response_data)
 
+# ----------------------------------------------------------------
+# Update History
+# 2026-05-18: git diff 기준 @file/@role header와 파일 책임을 기록하는 Update History/EOF footer 추가. (worker: @nobrain711)
+# 2026-05-15: refactor(analyzeview): optimize API orchestration and documentation. (author: @Gloveman)
+# 2026-05-11: docs(wiki): move frontend notes into mdbook. (author: @nobrain711)
+# 2026-05-11: feat(backend): migrate django fragrance apiAdds the Django REST backend, scent engine services, perfume data loa.... (author: @nobrain711)
+# 2026-05-14: docs(api): document analyze endpoint in swagger. (author: @nobrain711)
+# 2026-05-14: refactor(apiview): S4P-58 apply separated aura score logic to apiview. (author: @Gloveman)
+# ----------------------------------------------------------------
 
-# ----------------------------------------------------------------
-# Last Modified: 2026-05-15
-# Modified By: Olfít AI Team (Gemini CLI)
-# ----------------------------------------------------------------
+# EOF: views.py

@@ -1,10 +1,16 @@
 #!/bin/sh
+# @file docker-entrypoint.sh
+# @role
+# Starts the backend container by running Django setup tasks and launching the development server.
+
 set -e
 
 cd /backend
 
 MANAGE_PY="${DJANGO_MANAGE_PY:-app/manage.py}"
 
+# Treat common truthy strings as enabled so docker-compose environment values
+# can switch startup tasks on and off without changing this script.
 is_enabled() {
   case "$1" in
     1|true|TRUE|yes|YES|on|ON) return 0 ;;
@@ -12,6 +18,8 @@ is_enabled() {
   esac
 }
 
+# Fail fast when the database schema is behind the Django models. This catches
+# skipped migrations before startup tasks try to read or write missing tables.
 verify_db_schema() {
   python "$MANAGE_PY" shell <<'PY'
 from django.apps import apps
@@ -39,6 +47,8 @@ if [ -n "${BACKEND_STARTUP_DELAY:-}" ] && [ "${BACKEND_STARTUP_DELAY}" != "0" ];
   sleep "$BACKEND_STARTUP_DELAY"
 fi
 
+# Startup tasks are individually gated for CI, tests, and local debugging. The
+# default path keeps the development container self-initializing.
 if is_enabled "${BACKEND_RUN_MAKEMIGRATIONS:-true}"; then
   python "$MANAGE_PY" makemigrations perfumes
 fi
@@ -67,4 +77,15 @@ if [ "$#" -gt 0 ]; then
   exec "$@"
 fi
 
+# No explicit command was provided, so run Django's development server.
 exec python "$MANAGE_PY" runserver 0.0.0.0:8000
+
+# ----------------------------------------------------------------
+# Update History
+# 2026-05-18: git diff 기준 @file/@role header, startup task gate/schema check/server 실행 흐름 주석, EOF footer 추가. (worker: @nobrain711)
+# 2026-05-15: chore(backend): setup Pinecone infrastructure and update config. (author: @Gloveman)
+# 2026-05-13: feat(perfumes): persist perfume image assets. (author: @nobrain711)
+# 2026-05-13: fix(django): guard migrate schema drift. (author: @nobrain711)
+# ----------------------------------------------------------------
+
+# EOF: docker-entrypoint.sh

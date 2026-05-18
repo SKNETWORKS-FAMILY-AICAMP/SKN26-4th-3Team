@@ -1,3 +1,7 @@
+# @file requirements.txt
+# @role
+# Pins backend Python dependencies used by Django, DRF, MySQL, AI, and test tooling.
+
 # Web framework - Core Django and REST API support
 django>=6.0.5
 djangorestframework>=3.17.1
@@ -32,3 +36,14 @@ python-dotenv>=1.0.1
 pillow>=10.2.0
 sqlparse>=0.5.5
 tzdata>=2026.2
+
+# ----------------------------------------------------------------
+# Update History
+# 2026-05-18: git diff 기준 @file/@role header와 backend dependency manifest EOF footer 추가. (worker: @nobrain711)
+# 2026-05-15: chore(backend): setup Pinecone infrastructure and update config. (author: @Gloveman)
+# 2026-05-13: feat(perfumes): persist perfume image assets. (author: @nobrain711)
+# 2026-05-11: feat(backend): migrate django fragrance apiAdds the Django REST backend, scent engine services, perfume data loa.... (author: @nobrain711)
+# 2026-05-13: fix(docker): normalize startup script handling. (author: @nobrain711)
+# ----------------------------------------------------------------
+
+# EOF: requirements.txt

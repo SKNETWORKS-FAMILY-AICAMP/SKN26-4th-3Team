@@ -5,11 +5,6 @@
 시각/취향 벡터 융합, 5축 레이더 차트 점수 계산, 그리고 RAG 검색을 위한 정교한 자연어 쿼리 생성을 담당합니다.
 """
 
-# ----------------------------------------------------------------
-# Update History
-# 2026-05-16: 기존의 구조화된 rag_query 대신, 자연스러운 문장의 query만을 구성하여 반환하도록 수정 (worker: Gloveman)
-# ----------------------------------------------------------------
-
 import numpy as np
 from ..utils import load_master_map, load_user_preference_map
 from scent_engine import map_image_to_fragrance_keywords
@@ -204,5 +199,13 @@ class AuraService:
 
         return readable
 
+# ----------------------------------------------------------------
+# Update History
+# 2026-05-18: git diff 기준 @file/@role header와 파일 책임을 기록하는 Update History/EOF footer 추가. (worker: @nobrain711)
+# 2026-05-15: refactor(auraservice): use only readble query as vector search query. (author: @Gloveman)
+# 2026-05-15: feat(ui): refine content layout and improve upload robustness. (author: @JJonyeok2)
+# 2026-05-14: refactor(auraservices): S4P-58 enhance aura scoring logic for visualization. (author: @Gloveman)
+# 2026-05-11: feat(backend): migrate django fragrance apiAdds the Django REST backend, scent engine services, perfume data loa.... (author: @nobrain711)
+# ----------------------------------------------------------------
 
 # EOF: aura_service.py

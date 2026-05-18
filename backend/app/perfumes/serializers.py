@@ -1,3 +1,9 @@
+"""
+@file serializers.py
+@role
+Serializes perfume domain models for API and documentation surfaces.
+"""
+
 from rest_framework import serializers
 from .models import Brand, Perfume
 
@@ -138,3 +144,15 @@ class AnalyzeResponseSerializer(serializers.Serializer):
     fashionStyle = serializers.CharField()
     analysisMetadata = AnalysisMetadataSerializer()
     recommendations = RecommendationSerializer(many=True)
+
+# ----------------------------------------------------------------
+# Update History
+# 2026-05-18: git diff 기준 @file/@role header와 파일 책임을 기록하는 Update History/EOF footer 추가. (worker: @nobrain711)
+# 2026-05-14: fix(backend): include perfume image payloads. (author: @nobrain711)
+# 2026-05-11: docs(wiki): move frontend notes into mdbook. (author: @nobrain711)
+# 2026-05-11: feat(backend): migrate django fragrance apiAdds the Django REST backend, scent engine services, perfume data loa.... (author: @nobrain711)
+# 2026-05-14: docs(api): document analyze endpoint in swagger. (author: @nobrain711)
+# 2026-05-13: feat(perfumes): persist perfume image assets. (author: @nobrain711)
+# ----------------------------------------------------------------
+
+# EOF: serializers.py

@@ -5,12 +5,6 @@
 디자인된 도메인 규칙을 바탕으로 시각적 입력을 향수 도메인의 전문적인 속성으로 변환하는 기준을 제공합니다.
 """
 
-# ----------------------------------------------------------------
-# Update History
-# 2026-05-11: 기존 mapper에서 점수 할당 매핑 규칙 부분을 별도 파일로 분리. (worker: Gloveman)
-# ----------------------------------------------------------------
-
-
 def _mapping(
     families: dict[str, float],
     subs: dict[str, float],
@@ -1083,5 +1077,10 @@ KOREAN_VISUAL_TRIGGERS: dict[str, str] = {
     "밤": "night",
 }
 
+# ----------------------------------------------------------------
+# Update History
+# 2026-05-18: git diff 기준 @file/@role header와 파일 책임을 기록하는 Update History/EOF footer 추가. (worker: @nobrain711)
+# 2026-05-12: refactor(scent_engine): S3P-138 refactor and upload scent_engine. (author: @Gloveman)
+# ----------------------------------------------------------------
 
-# EOF: scent_engine/rules.py
+# EOF: rules.py

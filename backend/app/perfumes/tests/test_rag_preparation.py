@@ -495,10 +495,10 @@ class RagPreparationTest(TestCase):
                     self.assertIn(note, query_text)
                 self.assertTrue(any(value > 0 for value in search_vector.values()))
 
-
 # ----------------------------------------------------------------
 # Update History
-# 2026-05-18: tests.py에서 RagPreparationTest를 분리하고 파일 역할 header/footer 추가. (worker: nobrain711)
+# 2026-05-18: git diff 기준 @file/@role header와 파일 책임을 기록하는 Update History/EOF footer 추가. (worker: @nobrain711)
+# 2026-05-18: test(perfumes): expand backend coverage and split test modules. (author: @nobrain711)
 # ----------------------------------------------------------------
 
 # EOF: test_rag_preparation.py

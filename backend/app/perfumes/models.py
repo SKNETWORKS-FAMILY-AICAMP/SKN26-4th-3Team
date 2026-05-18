@@ -1,3 +1,9 @@
+"""
+@file models.py
+@role
+Defines the relational and JSON-backed perfume, detail, raw data, and image models.
+"""
+
 from django.db import models
 
 class Brand(models.Model):
@@ -77,3 +83,13 @@ class PerfumeImage(models.Model):
 
     def __str__(self):
         return self.original_url
+
+# ----------------------------------------------------------------
+# Update History
+# 2026-05-18: git diff 기준 @file/@role header와 파일 책임을 기록하는 Update History/EOF footer 추가. (worker: @nobrain711)
+# 2026-05-13: fix(django): guard migrate schema drift. (author: @nobrain711)
+# 2026-05-11: feat(backend): migrate django fragrance apiAdds the Django REST backend, scent engine services, perfume data loa.... (author: @nobrain711)
+# 2026-05-13: feat(perfumes): persist perfume image assets. (author: @nobrain711)
+# ----------------------------------------------------------------
+
+# EOF: models.py

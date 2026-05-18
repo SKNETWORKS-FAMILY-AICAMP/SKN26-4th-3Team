@@ -1,3 +1,9 @@
+"""
+@file image_extractor.py
+@role
+Downloads, normalizes, and synchronizes perfume image assets from raw data sources.
+"""
+
 import hashlib
 import json
 import re
@@ -229,3 +235,12 @@ def extension_for(url: str, content_type: str) -> str:
         return "jpg" if suffix == "jpeg" else suffix
 
     return "jpg"
+
+# ----------------------------------------------------------------
+# Update History
+# 2026-05-18: git diff 기준 @file/@role header와 파일 책임을 기록하는 Update History/EOF footer 추가. (worker: @nobrain711)
+# 2026-05-13: feat(perfumes): persist perfume image assets. (author: @nobrain711)
+# 2026-05-13: fix(django): guard migrate schema drift. (author: @nobrain711)
+# ----------------------------------------------------------------
+
+# EOF: image_extractor.py

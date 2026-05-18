@@ -323,10 +323,12 @@ class Command(BaseCommand):
             if v is not None
         }
 
-
 # ----------------------------------------------------------------
-# Last Modified: 2026-05-15
-# Modified By: 이창우
+# Update History
+# 2026-05-18: git diff 기준 @file/@role header와 파일 책임을 기록하는 Update History/EOF footer 추가. (worker: @nobrain711)
+# 2026-05-15: feat(index_to_pinecone): implement pinecone indexing with smart hash-based caching. (author: @Gloveman)
+# 2026-05-13: fix(django): guard migrate schema drift. (author: @nobrain711)
+# 2026-05-11: feat(backend): migrate django fragrance apiAdds the Django REST backend, scent engine services, perfume data loa.... (author: @nobrain711)
 # ----------------------------------------------------------------
 
 # EOF: index_to_pinecone.py

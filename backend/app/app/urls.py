@@ -1,4 +1,10 @@
 """
+@file urls.py
+@role
+Registers project-level URL routes for admin, API endpoints, and OpenAPI documentation.
+"""
+
+"""
 URL configuration for app project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -24,3 +30,11 @@ urlpatterns = [
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
 ]
+
+# ----------------------------------------------------------------
+# Update History
+# 2026-05-18: git diff 기준 @file/@role header와 파일 책임을 기록하는 Update History/EOF footer 추가. (worker: @nobrain711)
+# 2026-05-11: feat(backend): migrate django fragrance apiAdds the Django REST backend, scent engine services, perfume data loa.... (author: @nobrain711)
+# ----------------------------------------------------------------
+
+# EOF: urls.py

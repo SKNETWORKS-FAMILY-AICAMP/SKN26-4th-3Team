@@ -301,10 +301,11 @@ def convert_to_krw(price_data):
     except (TypeError, ValueError):
         return 0
 
-
 # ----------------------------------------------------------------
-# Last Modified: 2026-05-15
-# Modified By: 이창우
+# Update History
+# 2026-05-18: git diff 기준 @file/@role header와 파일 책임을 기록하는 Update History/EOF footer 추가. (worker: @nobrain711)
+# 2026-05-15: refactor(utils): S4P-32 extract utility functions for pricing and notes. (author: @Gloveman)
+# 2026-05-11: feat(backend): migrate django fragrance apiAdds the Django REST backend, scent engine services, perfume data loa.... (author: @nobrain711)
 # ----------------------------------------------------------------
 
 # EOF: utils.py

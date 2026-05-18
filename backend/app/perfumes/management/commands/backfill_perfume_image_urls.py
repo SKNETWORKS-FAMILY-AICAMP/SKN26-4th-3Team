@@ -1,3 +1,9 @@
+"""
+@file backfill_perfume_image_urls.py
+@role
+Runs Fragrantica image URL backfill as a Django management command.
+"""
+
 from django.conf import settings
 from django.core.management.base import BaseCommand
 import json
@@ -87,3 +93,11 @@ def sync_database_raw_json(raw_dir):
         raw_data.save(update_fields=["raw_json"])
         updated += 1
     return updated
+
+# ----------------------------------------------------------------
+# Update History
+# 2026-05-18: git diff 기준 @file/@role header와 파일 책임을 기록하는 Update History/EOF footer 추가. (worker: @nobrain711)
+# 2026-05-13: feat(perfumes): persist perfume image assets. (author: @nobrain711)
+# ----------------------------------------------------------------
+
+# EOF: backfill_perfume_image_urls.py

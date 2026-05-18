@@ -5,11 +5,6 @@
 사용자 입력이나 모델 출력의 다양한 향료 명칭을 통합된 영어 명칭으로 맵핑하여 데이터 일관성을 유지합니다.
 """
 
-# ----------------------------------------------------------------
-# Update History
-# 2026-05-09: 이미지 분석 기반 향수 추천 키워드 변환 로직 구현. (worker: rusidian)
-# ----------------------------------------------------------------
-
 from __future__ import annotations
 
 
@@ -239,5 +234,10 @@ def to_korean_note(canonical_name: str) -> str:
     """canonical English name을 한국어 대표 표기로 변환한다."""
     return CANONICAL_TO_KO.get(canonical_name, canonical_name)
 
+# ----------------------------------------------------------------
+# Update History
+# 2026-05-18: git diff 기준 기존 module docstring에 @file/@role을 병합하고 EOF footer 추가. (worker: @nobrain711)
+# 2026-05-12: refactor(scent_engine): S3P-138 refactor and upload scent_engine. (author: @Gloveman)
+# ----------------------------------------------------------------
 
-# EOF: scent_engine/aliases.py
+# EOF: aliases.py

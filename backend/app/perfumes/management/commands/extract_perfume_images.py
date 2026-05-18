@@ -1,3 +1,9 @@
+"""
+@file extract_perfume_images.py
+@role
+Runs perfume image extraction and database synchronization as a Django management command.
+"""
+
 import base64
 import os
 from pathlib import Path
@@ -101,3 +107,12 @@ def is_enabled(value):
     if isinstance(value, bool):
         return value
     return str(value).strip().lower() in {"1", "true", "yes", "on"}
+
+# ----------------------------------------------------------------
+# Update History
+# 2026-05-18: git diff 기준 @file/@role header와 파일 책임을 기록하는 Update History/EOF footer 추가. (worker: @nobrain711)
+# 2026-05-13: feat(perfumes): persist perfume image assets. (author: @nobrain711)
+# 2026-05-13: fix(django): guard migrate schema drift. (author: @nobrain711)
+# ----------------------------------------------------------------
+
+# EOF: extract_perfume_images.py

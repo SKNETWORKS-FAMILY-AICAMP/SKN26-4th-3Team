@@ -1,3 +1,9 @@
+"""
+@file fragrantica_image_backfill.py
+@role
+Backfills perfume image and product URLs from Fragrantica pages.
+"""
+
 import html
 import json
 import re
@@ -248,3 +254,11 @@ def backfill_raw_files(
             )
 
     return result
+
+# ----------------------------------------------------------------
+# Update History
+# 2026-05-18: git diff 기준 @file/@role header와 파일 책임을 기록하는 Update History/EOF footer 추가. (worker: @nobrain711)
+# 2026-05-13: feat(perfumes): persist perfume image assets. (author: @nobrain711)
+# ----------------------------------------------------------------
+
+# EOF: fragrantica_image_backfill.py

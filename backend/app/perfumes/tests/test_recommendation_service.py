@@ -120,12 +120,10 @@ class RecommendationServiceTest(TestCase):
         self.assertEqual(recommendation["details"]["middleNotes"], "나르가모타")
         self.assertEqual(recommendation["details"]["baseNotes"], "시더우드")
 
-
 # ----------------------------------------------------------------
 # Update History
-# 2026-05-18: tests.py에서 RecommendationServiceTest를 분리하고 파일 역할 header/footer 추가. (worker: nobrain711)
+# 2026-05-18: git diff 기준 @file/@role header와 파일 책임을 기록하는 Update History/EOF footer 추가. (worker: @nobrain711)
+# 2026-05-18: test(perfumes): expand backend coverage and split test modules. (author: @nobrain711)
 # ----------------------------------------------------------------
 
 # EOF: test_recommendation_service.py
-
-
