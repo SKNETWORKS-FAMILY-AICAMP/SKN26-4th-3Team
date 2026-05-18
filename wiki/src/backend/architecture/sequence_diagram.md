@@ -7,37 +7,6 @@
 사용자가 사진을 업로드하고 "분석하기"를 클릭했을 때 발생하는 전체 시퀀스입니다.
 
 ![sequence_diagram](../../assets/backend/architecture/sequence_diagram.png)
-```mermaid
-sequenceDiagram
-    participant U as User
-    participant FE as Frontend
-    participant BE as Backend
-    participant NIM as NVIDIA NIM (VLM)
-    participant OAI as OpenAI (Embedding)
-    participant PC as Pinecone (Vector DB)
-    participant DB as MySQL
-
-    U->>FE: 이미지 업로드 & 노트 선택
-    FE->>BE: POST /api/analyze/
-    BE->>NIM: 이미지 분석 요청 (Base64)
-    NIM-->>BE: 시각 키워드 반환 (JSON)
-    
-    BE->>BE: 아우라 융합 & RAG 쿼리 생성
-    
-    BE->>OAI: 쿼리 텍스트 전송
-    OAI-->>BE: 1536차원 벡터 반환
-    
-    BE->>PC: 벡터 검색 (Top 30)
-    PC-->>BE: 후보군 메타데이터 반환
-    
-    BE->>BE: 하이브리드 재정렬 (Aura + RAG)
-    
-    BE->>DB: 최종 Top 5 상세 이미지 조회 (Base64 등)
-    DB-->>BE: 이미지 에셋 데이터 반환
-    
-    BE-->>FE: 분석 리포트 & Top 5 추천 결과
-    FE->>U: 추천 결과 시각화 (레이더 차트 등)
-```
 
 ### 시퀀스 설명
 1.  **Frontend → Backend**: 이미지(Base64)와 선택된 노트 리스트를 담아 `/api/analyze/` 호출.

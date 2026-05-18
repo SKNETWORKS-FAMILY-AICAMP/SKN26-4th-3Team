@@ -5,15 +5,6 @@
 ## 1. 데이터 파이프라인 흐름
 
 ![data_ingestion_pipeline](../../assets/backend/pipeline/data_ingestion_pipeline.png)
-```mermaid
-graph TD
-    Raw[1. Raw JSON Data] --> Schema[2. Schema Standardizing]
-    Schema --> Aura[3. Aura Profiling & NLP]
-    Aura --> Validation{4. Validation}
-    Validation -- Success --> DB[(5. MySQL Upsert)]
-    Validation -- Success --> PC[(6. Pinecone Sync)]
-    Validation -- Fail --> Logs[Error Logs]
-```
 
 1. **Raw Data Ingestion**: JSON 형태의 브랜드별 원본 데이터 수집
 2. **Schema Standardizing**: 브랜드마다 다른 필드명을 표준 필드(Name, Brand, Notes 등)로 매핑
