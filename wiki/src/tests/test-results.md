@@ -44,6 +44,22 @@
 | 일자 | 범위 | 명령 | 결과 | 실패 원인 | 후속 조치 |
 |---|---|---|---|---|---|
 | 2026-05-18 | Backend Test | `docker compose run --rm backend sh -c "cd /backend/app && python manage.py test perfumes --noinput"` | PASS | - | `Ran 18 tests ... OK` 확인 |
+| 2026-05-18 | Frontend UT | `cd frontend && corepack yarn test:run` | PASS | - | `8 test files, 16 tests passed` 확인 |
+| 2026-05-18 | Frontend E2E | `cd frontend && corepack yarn test:e2e` | FAIL | selector 불일치 및 double drop 기대값 노후화 | 프론트 테스트 코드만 수정해 selector와 현재 중복 방지 동작 기준을 갱신 |
+
+## 2026-05-18 Frontend 테스트 실행 결과
+
+| 구분 | 명령 | 결과 | 요약 |
+|---|---|---|---|
+| Frontend UT | `cd frontend && corepack yarn test:run` | PASS | Vitest 기준 8개 테스트 파일, 16개 테스트 통과 |
+| Frontend E2E | `cd frontend && corepack yarn test:e2e` | FAIL | Playwright 기준 2개 테스트 실패 |
+
+### Frontend E2E 실패 상세
+
+| 테스트 | 실패 원인 | 후속 조치 |
+|---|---|---|
+| `single file selection uploads once and requests analysis once` | `Drag & Drop or Click to browse` selector를 찾지 못해 file chooser 대기 중 timeout 발생 | 현행 UI 텍스트 또는 file input 기준으로 테스트 selector 갱신 |
+| `documents current rapid double drop duplicate analysis behavior` | 현재 구현의 중복 방지 동작과 과거 기대값인 `/api/analyze/` 2회 호출이 맞지 않음 | 현재 중복 방지 동작 기준으로 기대 요청 횟수와 설명 갱신 |
 
 ## 2026-05-18 Backend 테스트 상세
 
