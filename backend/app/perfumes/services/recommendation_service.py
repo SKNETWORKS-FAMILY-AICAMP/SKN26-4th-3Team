@@ -1,19 +1,14 @@
 """
 @file recommendation_service.py
-@module Perfumes/Services/RecommendationService
-@description
-RAG(Retrieval-Augmented Generation) 기반 검색과 5축 아우라 유사도 재정렬을 결합한 하이브리드 추천 엔진입니다.
-사용자의 시각적 분위기(이미지)와 화학적 구성(아우라/노트)을 동시에 고려하여 최적의 향수를 선정합니다.
-
-주요 알고리즘:
-1. Symmetric RAG: 인덱싱 문서와 검색 쿼리의 자연어 구조를 일치시켜 의미론적 검색 성능 극대화.
-2. L2 Re-ranking: Pinecone 후보군 내에서 정규화된 5축 아우라 벡터 간 코사인 유사도 계산.
-3. Hybrid Scoring: (Aura 50%) + (RAG 50%) + Note Bonus(+0.1) 가중 합산 체계.
-4. Robust Fallback: Pinecone 장애 시 DB 기반의 실시간 아우라 매칭 시스템 가동.
-
-@author Olfít AI Team
-@version 4.9.0
+@role
+RAG 검색과 5축 아우라 유사도 재정렬을 결합하여 최적의 향수를 선정하는 하이브리드 추천 엔진 서비스입니다.
+Pinecone 벡터 검색, L2 기반 재랭킹, 가중치 합산 스코어링을 통해 고도로 개인화된 추천 결과를 생성합니다.
 """
+
+# ----------------------------------------------------------------
+# Update History
+# 2026-05-16: 추천 로직에 벡터 검색 및 하이브리드 리랭킹을 추가 (worker: Gloveman)
+# ----------------------------------------------------------------
 
 import os
 import numpy as np
@@ -517,10 +512,5 @@ class RecommendationService:
 
         return " ".join(reasons)
 
-
-# ----------------------------------------------------------------
-# Last Modified: 2026-05-15
-# Modified By: 이창우
-# ----------------------------------------------------------------
 
 # EOF: recommendation_service.py

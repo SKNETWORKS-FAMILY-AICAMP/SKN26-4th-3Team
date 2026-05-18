@@ -1,13 +1,14 @@
 """
-@file vision.py
-@module ScentEngine/Vision
-@description
-NVIDIA NIM API를 통해 시각적 요소를 텍스트 맥락으로 변환하는 Vision-Language 엔진입니다.
-이미지 내의 색상, 사물, 전체적인 무드를 추출하여 향수 매칭의 첫 단추를 제공합니다.
-
-@author Olfít AI Team
-@version 4.0.0
+@file scent_engine/vision.py
+@role
+NVIDIA NIM API(Gemma-VLM)를 호출하여 이미지로부터 시각적 속성을 추출하는 Vision-Language 엔진 모듈입니다.
+이미지의 시각적 컨텍스트를 분석하여 Scent Engine이 이해할 수 있는 구조화된 텍스트 데이터로 변환합니다.
 """
+
+# ----------------------------------------------------------------
+# Update History
+# 2026-05-11: 기존 Ollama 활용 키워드 추출을 nvidia nim free endpoint로 전환. (worker: Gloveman)
+# ----------------------------------------------------------------
 
 import os
 import json
@@ -16,35 +17,39 @@ from openai import OpenAI
 from .utils import extract_json_from_text, normalize_vlm_result
 from .prompts import IMAGE_ANALYSIS_PROMPT
 
+
 class VLEngine:
     """
     [Core VLM Engine]
     NVIDIA NIM (Gemma-VLM) 또는 OpenAI/Gemini 계열 모델을 사용하여
     이미지의 시각적 속성을 Olfít 표준 데이터 규격으로 추출합니다.
     """
-    
+
     def __init__(self, api_key=None, model="google/gemma-3n-e4b-it", temperature=0.1):
         """
         엔진 초기화 및 API 설정 로드.
         """
         from dotenv import load_dotenv
+
         load_dotenv()
-        
+
         # NVIDIA NIM API 엔드포인트 설정
         self.api_key = api_key or os.getenv("NVIDIA_API_KEY")
         self.base_url = "https://integrate.api.nvidia.com/v1"
-        self.model = model 
+        self.model = model
         self.temperature = temperature
-        
+
         if self.api_key:
-            print(f"[VLEngine] ✅ Engine Ready | Provider: NVIDIA | Model: {self.model}")
+            print(
+                f"[VLEngine] ✅ Engine Ready | Provider: NVIDIA | Model: {self.model}"
+            )
         else:
             print("[VLEngine] ❌ Critical: NVIDIA_API_KEY not found in environment.")
 
     def analyze_image(self, image_base64):
         """
         이미지를 분석하여 구조화된 JSON 결과를 반환합니다.
-        
+
         @param image_base64: 분석할 이미지의 Base64 인코딩 문자열
         @return: 정규화된 분석 결과 (visual_summary, mood, colors 등)
         """
@@ -65,7 +70,7 @@ class VLEngine:
         try:
             print(f"\n[VLEngine] >>> ATTEMPTING NVIDIA API CALL <<<")
             start_t = time.time()
-            
+
             # NVIDIA NIM API 호출 (OpenAI SDK 호환)
             response = client.chat.completions.create(
                 model=self.model,
@@ -73,7 +78,10 @@ class VLEngine:
                     {
                         "role": "user",
                         "content": [
-                            {"type": "text", "text": IMAGE_ANALYSIS_PROMPT}, # lib/scent_engine/prompts.py 참조
+                            {
+                                "type": "text",
+                                "text": IMAGE_ANALYSIS_PROMPT,
+                            },  # lib/scent_engine/prompts.py 참조
                             {
                                 "type": "image_url",
                                 "image_url": {
@@ -84,27 +92,29 @@ class VLEngine:
                     }
                 ],
                 temperature=self.temperature,
-                timeout=50.0
+                timeout=50.0,
             )
-            
+
             content = response.choices[0].message.content
             duration = time.time() - start_t
-            
+
             print(f"[VLEngine] <<< NVIDIA API RESPONDED ({duration:.2f}s) >>>")
-            
+
             # [Parsing] 텍스트에서 JSON 추출 및 정규화
             parsed = extract_json_from_text(content)
-            
+
             # [Post-processing] 한국어 문장 마무리 정제 (마침표 기준)
             if "visual_summary" in parsed and isinstance(parsed["visual_summary"], str):
                 summary = parsed["visual_summary"].strip()
                 if "." in summary:
-                    parsed["visual_summary"] = summary[:summary.rfind(".")+1]
-                
-                if not parsed["visual_summary"]:
-                    parsed["visual_summary"] = "스타일리시한 분위기가 느껴지는 이미지입니다."
+                    parsed["visual_summary"] = summary[: summary.rfind(".") + 1]
 
-            return normalize_vlm_result(parsed) # lib/scent_engine/utils.py 참조
+                if not parsed["visual_summary"]:
+                    parsed["visual_summary"] = (
+                        "스타일리시한 분위기가 느껴지는 이미지입니다."
+                    )
+
+            return normalize_vlm_result(parsed)  # lib/scent_engine/utils.py 참조
 
         except Exception as e:
             print(f"[VLEngine] ❌ Analysis Failed: {e}")
@@ -120,7 +130,8 @@ class VLEngine:
             "mood": ["modern", "urban", "luxurious"],
             "season": ["autumn"],
             "time": ["afternoon"],
-            "raw_keywords": ["세련된", "미니멀", "시크한"]
+            "raw_keywords": ["세련된", "미니멀", "시크한"],
         }
 
-# EOF: vision.py
+
+# EOF: scent_engine/vision.py

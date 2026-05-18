@@ -1,21 +1,14 @@
 """
-image_to_fragrance_mapper.py
-----------------------------
-이미지 시각 키워드를 향수 도메인 키워드로 변환한다.
-
-역할:
-1. 이미지 키워드 colors / objects / scene / mood / raw_keywords를 수집
-2. 시각 키워드를 향수 family / sub / component / descriptor로 점수화
-3. 패션/봄/오후/여성적 이미지에서는 Fresh/Floral 쪽을 보정
-4. black 단독으로 Leather/Oud/Incense가 과하게 올라가지 않도록 보정
-5. 하위 속성(Sub, Component, Descriptor)을 기반으로 Gourmand(그루망) 축 스코어를 동적 계산하여 5축 보정
-
-중요:
-- query_text는 RAG 검색용이며 prefix를 붙인다.
-  예: visual_color:green / fragrance_sub:Green
-- readable_query_text는 사람이 보기 좋은 디버깅용이다.
-- query_sections는 나중에 가중치 조정/로그 분석용으로 사용한다.
+@file scent_engine/mapper.py
+@role
+VLM에서 추출된 시각적 키워드(색상, 사물, 무드 등)를 향수 도메인의 전문적인 속성(5축 스코어, 향료 성분, 분위기 묘사 등)으로 매핑하고 점수를 산출하는 모듈입니다.
+분석된 데이터를 정규화된 키워드와 정량적 수치로 변환하여 상위 엔진(AuraService 등)이 추천 로직 및 쿼리 생성을 수행할 수 있도록 기초 데이터를 제공합니다.
 """
+
+# ----------------------------------------------------------------
+# Update History
+# 2026-05-14: 그루망 계열 점수 계산 로직 복구 (worker: Gloveman)
+# ----------------------------------------------------------------
 
 from __future__ import annotations
 
@@ -393,3 +386,6 @@ if __name__ == "__main__":
 
     result = map_image_to_fragrance_keywords(sample)
     print(json.dumps(result, ensure_ascii=False, indent=2))
+
+
+# EOF: scent_engine/mapper.py

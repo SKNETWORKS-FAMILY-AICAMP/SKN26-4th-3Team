@@ -1,3 +1,15 @@
+"""
+@file scent_engine/prompts.py
+@role
+VLM(Vision-Language Model) 이미지 분석을 위한 시스템 프롬프트를 정의하는 모듈입니다.
+이미지에서 향수 추천에 필요한 시각적 요소(색상, 사물, 장면 등)를 구조화된 JSON 규격으로 추출하도록 지시합니다.
+"""
+
+# ----------------------------------------------------------------
+# Update History
+# 2026-05-11: 프롬포트를 별도 파일로 분리 및 고도화. (worker: Gloveman)
+# ----------------------------------------------------------------
+
 IMAGE_ANALYSIS_PROMPT = """
 너는 향수 추천 서비스의 이미지 분석기다.
 
@@ -38,3 +50,6 @@ IMAGE_ANALYSIS_PROMPT = """
 - raw_keywords 안에 비슷한 표현을 반복하지 마라.
 - JSON의 마지막 }까지 반드시 닫아라.
 """
+
+
+# EOF: scent_engine/prompts.py

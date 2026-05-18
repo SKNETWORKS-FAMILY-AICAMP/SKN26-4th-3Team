@@ -1,21 +1,14 @@
 """
 @file aura_service.py
-@module Perfumes/Services/AuraService
-@description
-사용자의 시각적 분석 결과(VLM)와 명시적 취향(Selected Notes)을 융합하여
-통합적인 '향기 아우라(Aura)'를 계산하고, RAG 검색을 위한 한글 쿼리를 생성하는 서비스입니다.
-
-핵심 역할:
-1. 시각 키워드 매핑: VLM 결과(색상, 사물 등)를 향수 도메인 키워드로 변환.
-2. 다차원 벡터 융합: 시각 벡터(60%)와 취향 벡터(40%)를 가중 결합.
-3. 이중 벡터 산출:
-   - UI용: 현실적 가청 범위(Ref Max) 기준의 레이더 차트 점수.
-   - 검색용: 코사인 유사도 연산을 위한 L2 정규화 벡터.
-4. 대칭형 쿼리 생성: 임베딩 모델의 성능 극대화를 위한 자연어 기반 쿼리 구성.
-
-@author Olfít AI Team
-@version 4.9.0
+@role
+사용자의 시각적 분석 결과(VLM)와 명시적 취향(Selected Notes)을 융합하여 '향기 아우라(Aura)'를 산출하는 서비스입니다.
+시각/취향 벡터 융합, 5축 레이더 차트 점수 계산, 그리고 RAG 검색을 위한 정교한 자연어 쿼리 생성을 담당합니다.
 """
+
+# ----------------------------------------------------------------
+# Update History
+# 2026-05-16: 기존의 구조화된 rag_query 대신, 자연스러운 문장의 query만을 구성하여 반환하도록 수정 (worker: Gloveman)
+# ----------------------------------------------------------------
 
 import numpy as np
 from ..utils import load_master_map, load_user_preference_map
@@ -211,10 +204,5 @@ class AuraService:
 
         return readable
 
-
-# ----------------------------------------------------------------
-# Last Modified: 2026-05-15
-# Modified By: Olfít AI Team (Gemini CLI)
-# ----------------------------------------------------------------
 
 # EOF: aura_service.py
