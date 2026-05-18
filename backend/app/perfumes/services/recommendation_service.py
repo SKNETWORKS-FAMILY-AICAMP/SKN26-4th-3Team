@@ -246,6 +246,9 @@ class RecommendationService:
             )
 
             # _build_final_response 규격에 맞춘 가상 메타데이터 구성
+            notes_parsed = p_data.get("notes_parsed") or split_notes_heuristic(
+                p_data.get("representative_notes", [])
+            )
             fallback_results.append(
                 {
                     "id": p.id,
@@ -278,11 +281,9 @@ class RecommendationService:
                         "accords": p_data.get("accords", []),
                         "representative_notes": p_data.get("representative_notes", []),
                         "description": p_data.get("description", ""),
-                        "top_notes": p_data.get("notes_parsed", {}).get("top", []),
-                        "middle_notes": p_data.get("notes_parsed", {}).get(
-                            "middle", []
-                        ),
-                        "base_notes": p_data.get("notes_parsed", {}).get("base", []),
+                        "top_notes": notes_parsed.get("top", []),
+                        "middle_notes": notes_parsed.get("middle", []),
+                        "base_notes": notes_parsed.get("base", []),
                         "keywords": p_data.get("keywords", []),
                         **p_data.get("aura_profile", {}),
                     },
@@ -333,6 +334,12 @@ class RecommendationService:
 
             # UI 레이더용 유사도 (0~98% 범위로 안전하게 변환)
             hybrid_sim = int(min(item["hybrid_score"] * 100, 98))
+            image_url = m["image_url"]
+            if not image_url and image_obj and image_obj.processed_path:
+                image_url = image_obj.processed_path
+                marker = "/static/"
+                if marker in image_url:
+                    image_url = marker + image_url.split(marker, 1)[1]
 
             final_results.append(
                 {
@@ -342,7 +349,13 @@ class RecommendationService:
                     "price": m["price_raw"],
                     "price_krw": int(m["price_krw"]),
                     "size": m["volume"],
-                    "image": m["image_url"],
+                    "image": image_url,
+                    "imageUrl": (
+                        f"http://localhost:8000{image_url}"
+                        if image_url.startswith("/static/")
+                        else image_url
+                    ),
+                    "imageBase64": image_obj.base64_data if image_obj else "",
                     "perfume": {
                         "id": p_id,
                         "brand": m["brand"],
@@ -372,9 +385,9 @@ class RecommendationService:
                         "volume": m["volume"],
                     },
                     "imageDetail": {
-                        "url": m["image_url"],
+                        "url": image_url,
                         "originalUrl": (
-                            image_obj.original_url if image_obj else m["image_url"]
+                            image_obj.original_url if image_obj else image_url
                         ),
                         "backendPath": image_obj.processed_path if image_obj else "",
                         "base64": image_obj.base64_data if image_obj else "",
