@@ -42,14 +42,14 @@ Olfit의 프론트엔드와 백엔드에 존재하는 테스트 코드를 기준
 
 ```bash
 cd frontend
-corepack yarn test:run
+yarn test:run
 ```
 
 ### Frontend E2E 테스트
 
 ```bash
 cd frontend
-corepack yarn test:e2e
+yarn test:e2e
 ```
 
 `test:e2e`는 내부적으로 production build 후 Playwright 테스트를 실행한다.

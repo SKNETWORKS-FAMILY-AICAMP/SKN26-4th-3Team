@@ -28,21 +28,21 @@
 
 ```bash
 cd frontend
-corepack yarn install
+yarn install
 ```
 
 단위 테스트:
 
 ```bash
 cd frontend
-corepack yarn test:run
+yarn test:run
 ```
 
 E2E 테스트:
 
 ```bash
 cd frontend
-corepack yarn test:e2e
+yarn test:e2e
 ```
 
 `test:e2e`는 내부적으로 `yarn build && playwright test`를 실행한다.
@@ -52,7 +52,7 @@ corepack yarn test:e2e
 - TypeScript build 통과
 - Vite production build 통과
 - Vitest `uploadService` 테스트 통과
-- Playwright image upload E2E 2개 통과
+- Playwright image upload E2E 4개 통과
 - Tailwind ambiguous class 경고와 chunk size 경고는 기존 경고이며 이미지 업로드 중복 이슈와 직접 관련 없음
 
 ## Test Cases
@@ -124,24 +124,58 @@ apiRequests: 1
 측정 결과:
 
 ```text
-uploadLogs: 2
-cloudSuccessLogs: 2
-apiRequests: 2
+uploadLogs: 1
+apiRequests: 1
 ```
 
 판정:
 
-- 빠른 중복 drop은 실제로 중복 처리된다.
-- `ImageUploader`에 처리 중 가드가 없어 `processImage()`가 동시에 두 번 진입할 수 있다.
-- 결과적으로 `AIInterviewSection.handleImageProcessed()`도 두 번 호출되고 분석 API 요청도 두 번 발생한다.
+- 빠른 중복 drop은 현재 구현에서 중복 처리되지 않는다.
+- `ImageUploader`의 동기 lock이 두 번째 drop 진입을 차단한다.
+- `AIInterviewSection`의 분석 lock도 분석 요청 중복 실행을 방어한다.
+
+### 5. Invalid file upload
+
+텍스트 파일을 업로드하면 validation message가 표시되고 분석 요청은 발생하지 않는다.
+
+측정 결과:
+
+```text
+validationMessage: JPG, PNG, WEBP 형식의 이미지만 업로드 가능합니다.
+apiRequests: 0
+```
+
+판정:
+
+- MIME 타입과 확장자 validation이 잘못된 파일을 차단한다.
+- 유효하지 않은 파일은 `/api/analyze/` 요청으로 이어지지 않는다.
+
+### 6. Recommendation modal
+
+분석 응답에 추천 상품 fixture를 포함하고, 추천 카드 클릭 시 상세 모달을 확인한다.
+
+측정 결과:
+
+```text
+modalTitle: 테스트 향수
+brand: OLFIT
+notes: 베르가못, 자스민, 머스크
+image: visible
+```
+
+판정:
+
+- 분석 결과에서 추천 카드가 렌더링된다.
+- 추천 카드 클릭 시 상품명, 브랜드, 노트, 이미지가 포함된 상세 모달이 열린다.
 
 ## Findings
 
 실제 확인된 항목:
 
 - 부모 `div onClick`과 내부 `input.click()` 조합은 부모 click handler를 2번 실행시킨다.
-- 빠른 중복 drop은 업로드와 분석 API 요청을 중복 실행한다.
-- `AIInterviewSection`의 progress timer도 `handleImageProcessed()`가 두 번 들어오면 두 개 생성될 수 있다.
+- 현재 앱의 이미지 업로드 경로는 일반 파일 선택과 빠른 double drop 모두 업로드/분석 요청을 1회로 제한한다.
+- 잘못된 파일 업로드는 validation message를 표시하고 분석 요청을 보내지 않는다.
+- 추천 상품 카드는 상세 모달을 열고 상품명, 브랜드, 노트, 이미지를 표시한다.
 
 실제 확인되지 않은 항목:
 
@@ -151,11 +185,13 @@ apiRequests: 2
 
 ## Recommended Regression Checks
 
-이미지 업로드 중복 방지 수정 후에는 다음 조건을 다시 확인한다.
+이미지 업로드 회귀 테스트는 다음 조건을 기준으로 유지한다.
 
 - 파일 선택 1회: 업로드 1회, 분석 API 1회
 - 빠른 double drop: 업로드 1회, 분석 API 1회
+- 잘못된 파일 업로드: validation message 표시, 분석 API 0회
+- 추천 카드 클릭: 상세 모달에 상품명, 브랜드, 노트, 이미지 표시
 - 분석 중 재선택 또는 drop: 기존 분석이 끝나기 전 새 분석 요청이 시작되지 않음
 - retry: 의도적으로 재시도할 때만 분석 API 1회 호출
 
-현재 double drop E2E는 현 상태를 문서화하기 위해 `apiRequests.length === 2`를 기대한다. 중복 방지 수정 후에는 해당 기대값을 `1`로 바꿔 회귀 테스트로 전환한다.
+현재 double drop E2E는 중복 방지 회귀 테스트로 운영하며 `apiRequests.length === 1`을 기대한다.

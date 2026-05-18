@@ -8,6 +8,8 @@ Olfit 테스트 문서는 계획과 실행 결과를 분리해서 관리한다.
 |---|---|
 | [Test Plan](./test-plan.md) | Frontend, Backend, 통합, RAG 테스트 범위와 통과 기준 정의 |
 | [RAG Test](./rag-test.md) | RAG 파이프라인과 검색 품질 평가 방식 정의 |
+| [Image Upload Tests](./image-upload-tests.md) | 프론트 이미지 업로드 E2E 검증 시나리오와 결과 기준 |
+| [Image Upload Troubleshooting](./image-upload-troubleshooting.md) | 프론트 이미지 업로드 중복 요청 방지와 회귀 확인 기준 |
 | [Test Results](./test-results.md) | 테스트 실행 일자, 명령, 결과, 실패 원인, 후속 조치 기록 |
 
 ## 관리 원칙

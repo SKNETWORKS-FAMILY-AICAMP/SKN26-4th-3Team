@@ -2,7 +2,7 @@
 
 ## Symptom
 
-이미지 업로드 후 다음 현상이 의심되거나 관측될 수 있다.
+이미지 업로드 후 다음 현상이 의심될 때 확인할 기준을 정리한다. 아래 중복 요청 문제는 과거 회귀 위험으로 관리하며, 현재 E2E 기준에서는 방지 동작이 검증되어 있다.
 
 - 업로드 로직이 중복 실행된다.
 - progress bar가 예상보다 빠르게 증가한다.
@@ -31,14 +31,16 @@
 
 따라서 이 구조는 좋지 않지만, 현재 테스트 기준으로 클릭 1회가 곧바로 분석 API 2회로 이어진 증거는 없다.
 
-### 2. No in-flight guard in `ImageUploader`
+### 2. In-flight guard in `ImageUploader`
 
-`processImage(file)`는 이미지 리사이징과 업로드 시뮬레이션을 비동기로 실행한다. 하지만 함수 진입 시점에 이미 업로드 중인지 확인하는 동기 가드가 없다.
+`processImage(file)`는 이미지 리사이징과 업로드 시뮬레이션을 비동기로 실행한다. 현재 구현은 함수 진입 시점에 동기 lock을 확인해 빠른 중복 drop을 차단한다.
 
 현재 흐름:
 
 ```tsx
 const processImage = async (file: File) => {
+  if (uploadProcessingRef.current || isUploading || isAnalyzing) return;
+  uploadProcessingRef.current = true;
   // validation
   const reader = new FileReader();
   reader.onload = async () => {
@@ -56,14 +58,17 @@ const processImage = async (file: File) => {
 
 확인 결과:
 
-- 빠른 double drop에서 `uploadToCloudStorage()` 2회 호출
-- `/api/analyze/` 2회 호출
+- 빠른 double drop에서 `uploadToCloudStorage()` 1회 호출
+- `/api/analyze/` 1회 호출
 
-### 3. No in-flight guard in `AIInterviewSection`
+### 3. In-flight guard in `AIInterviewSection`
 
-`handleImageProcessed()`는 호출될 때마다 progress timer를 만들고 분석 API를 호출한다.
+`handleImageProcessed()`는 progress timer를 만들고 분석 API를 호출한다. 현재 구현은 `processingRef`로 이미 분석 중인 경우 추가 진입을 차단한다.
 
 ```tsx
+if (processingRef.current || isComplete) return;
+processingRef.current = true;
+
 const progressTimer = setInterval(() => {
   setProgress(...)
 }, interval);
@@ -71,13 +76,13 @@ const progressTimer = setInterval(() => {
 const results = await requestAuraAnalysis(base64, selectedNotes);
 ```
 
-상위 `ImageUploader`가 중복으로 `onImageProcessed()`를 호출하면 이 함수도 중복 실행된다.
+상위 `ImageUploader`가 중복 이벤트를 받더라도 분석 섹션에서 다시 한 번 방어한다.
 
 결과:
 
-- progress timer가 두 개 생길 수 있다.
-- `requestAuraAnalysis()`가 중복 호출될 수 있다.
-- 먼저 끝난 요청과 나중에 끝난 요청이 상태를 덮어쓸 수 있다.
+- progress timer 중복 생성 위험을 낮춘다.
+- `requestAuraAnalysis()`가 중복 호출되지 않도록 방어한다.
+- 먼저 끝난 요청과 나중에 끝난 요청이 상태를 덮어쓰는 상황을 방지한다.
 
 ## Not Confirmed
 
@@ -95,11 +100,11 @@ const results = await requestAuraAnalysis(base64, selectedNotes);
 
 StrictMode는 개발 환경에서 렌더링과 일부 effect를 의도적으로 반복할 수 있지만, 이번 케이스의 직접 원인으로 확인되지는 않았다.
 
-## Recommended Fix
+## Current Guarding Strategy
 
-### 1. Replace parent click with a label or button
+### 1. Use native label/input behavior
 
-업로드 영역 전체를 클릭 가능하게 유지하려면 `label htmlFor`와 input `id`를 연결한다.
+업로드 영역은 native file input을 포함한 label 기반 구조로 관리한다. E2E에서는 숨겨진 input에 직접 `setInputFiles()`를 사용해 브라우저 file chooser 의존성을 줄인다.
 
 ```tsx
 <label htmlFor="ootd-image-input">
@@ -108,33 +113,22 @@ StrictMode는 개발 환경에서 렌더링과 일부 effect를 의도적으로 
 <input id="ootd-image-input" type="file" />
 ```
 
-또는 부모 click handler에서 input-originated click을 무시한다.
-
-```tsx
-onClick={(event) => {
-  if (event.target === fileInputRef.current) return;
-  fileInputRef.current?.click();
-}}
-```
-
-표준 접근성 측면에서는 label 방식이 더 낫다.
-
-### 2. Add synchronous processing guard in `ImageUploader`
+### 2. Keep synchronous processing guard in `ImageUploader`
 
 React state만으로는 같은 tick의 중복 이벤트를 막기 어렵다. `useRef`로 즉시 반영되는 lock을 둔다.
 
 ```tsx
-const isProcessingRef = useRef(false);
+const uploadProcessingRef = useRef(false);
 
 const processImage = async (file: File) => {
-  if (isProcessingRef.current || isAnalyzing) return;
-  isProcessingRef.current = true;
+  if (uploadProcessingRef.current || isUploading || isAnalyzing) return;
+  uploadProcessingRef.current = true;
   setIsUploading(true);
 
   try {
     // read, resize, upload
   } finally {
-    isProcessingRef.current = false;
+    uploadProcessingRef.current = false;
     setIsUploading(false);
   }
 };
@@ -142,21 +136,21 @@ const processImage = async (file: File) => {
 
 핵심은 FileReader 시작 전에 lock을 잡는 것이다.
 
-### 3. Add in-flight guard in `AIInterviewSection`
+### 3. Keep in-flight guard in `AIInterviewSection`
 
 `handleImageProcessed()`에도 별도 lock을 둔다. 업로더에서 막더라도 분석 섹션이 public callback boundary이므로 방어 로직을 갖는 것이 안전하다.
 
 ```tsx
-const isAnalyzingRef = useRef(false);
+const processingRef = useRef(false);
 
 const handleImageProcessed = async (base64: string, remoteUrl: string) => {
-  if (isAnalyzingRef.current) return;
-  isAnalyzingRef.current = true;
+  if (processingRef.current || isComplete) return;
+  processingRef.current = true;
 
   try {
     // progress timer, requestAuraAnalysis
   } finally {
-    isAnalyzingRef.current = false;
+    // 성공 시 lock 유지, 실패 시 재시도를 위해 해제
   }
 };
 ```
@@ -167,7 +161,7 @@ const handleImageProcessed = async (base64: string, remoteUrl: string) => {
 
 ## Verification After Fix
 
-수정 후 다음 결과가 나와야 한다.
+현재 E2E 기준은 다음 결과를 기대한다.
 
 ```text
 single file selection:
@@ -183,8 +177,8 @@ rapid double drop:
 
 ```bash
 cd frontend
-corepack yarn test:run
-corepack yarn test:e2e
+yarn test:run
+yarn test:e2e
 ```
 
-`test:e2e`는 production build를 포함한다. 중복 방지 수정 후에는 `frontend/e2e/image-upload.spec.ts`의 rapid double drop 기대값을 현재 동작 기록용 `2`에서 회귀 검증용 `1`로 변경한다.
+`test:e2e`는 production build를 포함한다. 현재 `frontend/e2e/image-upload.spec.ts`의 rapid double drop 기대값은 회귀 검증용 `1`이다.

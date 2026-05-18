@@ -4,8 +4,8 @@
 
 | 구분 | 명령 | 결과 | 비고 |
 |---|---|---|---|
-| Frontend UT | `cd frontend && corepack yarn test:run` | 미실행 | 계획서 이관 및 wiki 정리 단계 |
-| Frontend E2E | `cd frontend && corepack yarn test:e2e` | 미실행 | 계획서 이관 및 wiki 정리 단계 |
+| Frontend UT | `cd frontend && yarn test:run` | 미실행 | 계획서 이관 및 wiki 정리 단계 |
+| Frontend E2E | `cd frontend && yarn test:e2e` | 미실행 | 계획서 이관 및 wiki 정리 단계 |
 | Backend Test | `cd backend/app && python manage.py test perfumes` | 미실행 | 계획서 이관 및 wiki 정리 단계 |
 | RAG 전용 테스트 | 해당 없음 | 미구성 | 현재 코드에는 RAG 전용 자동화 테스트가 별도 분리되어 있지 않음 |
 | RAG 검색 품질 평가 | 해당 없음 | 미실행 | LLM judge와 gold set 기반 Hit@5 평가 기준 문서화 필요 |
@@ -37,7 +37,7 @@
 
 | 일자 | 범위 | 명령 | 결과 | 실패 원인 | 후속 조치 |
 |---|---|---|---|---|---|
-| YYYY-MM-DD | Frontend UT | `cd frontend && corepack yarn test:run` | PASS/FAIL | - | - |
+| YYYY-MM-DD | Frontend UT | `cd frontend && yarn test:run` | PASS/FAIL | - | - |
 
 ## 2026-05-18 테스트 실행 결과
 

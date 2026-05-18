@@ -59,21 +59,21 @@
 
 ```bash
 cd frontend
-corepack yarn build
+yarn build
 ```
 
 단위 테스트는 Vitest를 사용한다.
 
 ```bash
 cd frontend
-corepack yarn test:run
+yarn test:run
 ```
 
 브라우저 이벤트와 업로드 흐름은 Playwright E2E로 확인한다. `test:e2e`는 production build 후 Playwright를 실행한다.
 
 ```bash
 cd frontend
-corepack yarn test:e2e
+yarn test:e2e
 ```
 
 테스트 결과물은 Git에 포함하지 않는다.
