@@ -11,6 +11,7 @@ from django.db import migrations, models
 
 
 def copy_detail_base64_to_images(apps, schema_editor):
+    """PerfumeDetail.data.image_asset.base64 값을 PerfumeImage.base64_data로 이전한다."""
     PerfumeImage = apps.get_model("perfumes", "PerfumeImage")
 
     for image in PerfumeImage.objects.select_related("perfume_detail").iterator():
@@ -24,6 +25,7 @@ def copy_detail_base64_to_images(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
+    """PerfumeImage에 base64_data 필드를 추가하고 기존 값을 이전하는 migration."""
 
     dependencies = [
         ("perfumes", "0008_remove_perfumerawdata_source_url"),

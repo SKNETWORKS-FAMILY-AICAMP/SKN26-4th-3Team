@@ -14,9 +14,12 @@ from perfumes.services.fragrantica_image_backfill import backfill_raw_files
 
 
 class Command(BaseCommand):
+    """Fragrantica 이미지 URL 보강 작업을 실행하는 Django management command."""
+
     help = "Backfill missing Fragrantica image_url values into raw files and PerfumeRawData."
 
     def add_arguments(self, parser):
+        """raw 파일 위치, 처리 제한, dry-run 옵션을 등록한다."""
         parser.add_argument(
             "--raw-dir",
             default=settings.BASE_DIR / "data" / "raw",
@@ -35,6 +38,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        """raw 파일 backfill을 실행하고 필요 시 PerfumeRawData까지 동기화한다."""
         result = backfill_raw_files(
             options["raw_dir"],
             limit=options["limit"],
@@ -56,6 +60,7 @@ class Command(BaseCommand):
 
 
 def sync_database_raw_json(raw_dir):
+    """backfill된 raw 파일의 image_url/product_url을 PerfumeRawData.raw_json에 반영한다."""
     updated = 0
     records_by_key = {}
     for json_path in sorted(Path(raw_dir).glob("*_fragrance_data.json")):

@@ -19,6 +19,8 @@ Fetcher = Any
 
 @dataclass(frozen=True)
 class FragranticaImageCandidate:
+    """Fragrantica catalog에서 추출한 후보 상품명, 상품 URL, 이미지 URL."""
+
     name: str
     page_url: str
     image_url: str
@@ -26,21 +28,26 @@ class FragranticaImageCandidate:
 
 @dataclass
 class BackfillResult:
+    """raw JSON backfill 처리 건수와 매칭 실패 상품 목록을 담는다."""
+
     checked: int = 0
     updated: int = 0
     unmatched: list[str] | None = None
 
     def __post_init__(self) -> None:
+        """mutable 기본값을 피하기 위해 unmatched 목록을 초기화한다."""
         if self.unmatched is None:
             self.unmatched = []
 
 
 def fetch_designer_catalog(designer_url: str, fetcher: Fetcher | None = None) -> dict[str, FragranticaImageCandidate]:
+    """디자이너 catalog 페이지를 가져와 상품명 기준 후보 이미지 map으로 변환한다."""
     html_text = fetch_html(designer_url, fetcher)
     return parse_designer_catalog(html_text, base_url=designer_url)
 
 
 def fetch_html(url: str, fetcher: Fetcher | None = None) -> str:
+    """테스트용 fetcher가 없으면 Scrapling으로 원격 HTML을 가져온다."""
     if fetcher is not None:
         return fetcher(url)
 
@@ -63,6 +70,7 @@ def fetch_html(url: str, fetcher: Fetcher | None = None) -> str:
 
 
 def parse_designer_catalog(html_text: str, *, base_url: str) -> dict[str, FragranticaImageCandidate]:
+    """Fragrantica designer catalog HTML에서 상품 카드별 이미지 후보를 추출한다."""
     catalog: dict[str, FragranticaImageCandidate] = {}
     for card in re.findall(r"<a\b[^>]*\bprefumeHbox\b.*?</a>", html_text, flags=re.I | re.S):
         href = extract_attr(card, "href")
@@ -81,6 +89,7 @@ def parse_designer_catalog(html_text: str, *, base_url: str) -> dict[str, Fragra
 
 
 def parse_product_page_image_url(html_text: str) -> str:
+    """상품 상세 HTML의 JSON-LD 또는 social meta tag에서 대표 이미지 URL을 찾는다."""
     for script_body in re.findall(
         r'<script\b[^>]*type=["\']application/ld\+json["\'][^>]*>(.*?)</script>',
         html_text,
@@ -107,6 +116,7 @@ def parse_product_page_image_url(html_text: str) -> str:
 
 
 def image_url_from_json_ld(data: Any) -> str:
+    """JSON-LD 객체, 배열, graph 구조에서 첫 번째 유효한 image URL을 재귀적으로 찾는다."""
     if isinstance(data, list):
         for item in data:
             image_url = image_url_from_json_ld(item)
@@ -141,6 +151,7 @@ def image_url_from_json_ld(data: Any) -> str:
 
 
 def extract_image_url(card_html: str) -> str:
+    """catalog 카드 HTML에서 img src 또는 jpeg source srcset의 첫 URL을 추출한다."""
     image_src = ""
     img_match = re.search(r"<img\b[^>]*>", card_html, flags=re.I | re.S)
     if img_match:
@@ -159,6 +170,7 @@ def extract_image_url(card_html: str) -> str:
 
 
 def extract_perfume_name(card_html: str) -> str:
+    """catalog 카드 HTML에서 Fragrantica 상품명을 추출한다."""
     match = re.search(
         r'<h3\b[^>]*class=["\'][^"\']*tw-grid-perfume-title[^"\']*["\'][^>]*>(.*?)</h3>',
         card_html,
@@ -171,11 +183,13 @@ def extract_perfume_name(card_html: str) -> str:
 
 
 def extract_attr(tag_html: str, attr: str) -> str:
+    """HTML tag 문자열에서 지정한 attribute 값을 추출한다."""
     match = re.search(rf'\b{re.escape(attr)}=["\']([^"\']+)["\']', tag_html, flags=re.I)
     return match.group(1).strip() if match else ""
 
 
 def normalize_name(value: object) -> str:
+    """상품명을 비교 가능한 ASCII 소문자 토큰 문자열로 정규화한다."""
     text = html.unescape(str(value or "")).strip().lower()
     text = text.replace("&", " and ")
     text = re.sub(r"[\u2018\u2019\u201a\u201b]", "'", text)
@@ -185,6 +199,7 @@ def normalize_name(value: object) -> str:
 
 
 def designer_url_from_record(record: dict[str, Any]) -> str:
+    """raw record의 product URL 또는 brand 값으로 Fragrantica designer URL을 추정한다."""
     product_url = str(record.get("product_url") or "")
     path_parts = [part for part in urlparse(product_url).path.split("/") if part]
     if len(path_parts) >= 2 and path_parts[0].lower() == "perfume":
@@ -195,6 +210,7 @@ def designer_url_from_record(record: dict[str, Any]) -> str:
 
 
 def title_slug(slug: str) -> str:
+    """Fragrantica designer URL 규칙에 맞게 hyphen slug의 각 단어 첫 글자를 대문자로 만든다."""
     return "-".join(part[:1].upper() + part[1:] for part in slug.strip("/").split("-") if part)
 
 
@@ -205,6 +221,7 @@ def backfill_raw_files(
     limit: int | None = None,
     dry_run: bool = False,
 ) -> BackfillResult:
+    """raw JSON 파일의 비어 있는 image_url을 Fragrantica 또는 상품 페이지에서 찾아 채운다."""
     result = BackfillResult()
     catalogs: dict[str, dict[str, FragranticaImageCandidate]] = {}
 

@@ -16,9 +16,12 @@ from perfumes.services.image_extractor import extract_images_from_raw_dir
 
 
 class Command(BaseCommand):
+    """raw perfume JSON의 이미지 URL을 정적 파일과 PerfumeImage DB row로 동기화한다."""
+
     help = "Download perfume images from backend/app/data/raw into static/perfumes/images."
 
     def add_arguments(self, parser):
+        """raw JSON 입력 경로와 이미지 출력 경로 옵션을 등록한다."""
         parser.add_argument(
             "--raw-dir",
             default=settings.BASE_DIR / "data" / "raw",
@@ -31,6 +34,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        """이미지 추출 서비스를 실행하고 생성된 mapping을 DB에 저장한다."""
         result = extract_images_from_raw_dir(
             options["raw_dir"],
             options["output_dir"],
@@ -61,6 +65,7 @@ class Command(BaseCommand):
 
 
 def resolve_perfume_detail_id(record):
+    """raw record의 브랜드/영문명으로 PerfumeDetail id를 조회한다."""
     brand_name = str(record.get("brand") or "").strip().upper()
     english_name = (
         record.get("english_name")
@@ -83,6 +88,7 @@ def resolve_perfume_detail_id(record):
 
 
 def sync_image_to_database(image):
+    """추출된 이미지 mapping을 PerfumeImage row로 upsert한다."""
     base64_data = ""
     if image.processed_path and is_enabled(os.getenv("PERFUME_IMAGE_STORE_BASE64", "true")):
         base64_data = encode_file_to_base64(image.processed_path)
@@ -100,10 +106,12 @@ def sync_image_to_database(image):
 
 
 def encode_file_to_base64(path):
+    """로컬 이미지 파일을 ASCII base64 문자열로 인코딩한다."""
     return base64.b64encode(Path(path).read_bytes()).decode("ascii")
 
 
 def is_enabled(value):
+    """환경 변수 문자열을 boolean feature flag 값으로 해석한다."""
     if isinstance(value, bool):
         return value
     return str(value).strip().lower() in {"1", "true", "yes", "on"}

@@ -23,6 +23,7 @@ class RecommendationService:
     """
 
     def __init__(self):
+        """추천에 필요한 매핑 데이터와 외부 검색 설정을 초기화합니다."""
         self.master_map = load_master_map()
         self.axes = ["플로럴", "우디", "오리엔탈", "프레시", "구르망"]
 
@@ -317,6 +318,7 @@ class RecommendationService:
             image_obj = images.get(p_id)
 
             def translate_list(notes):
+                """원본 노트 목록을 한국어 표시명으로 변환한다."""
                 return [note_trans.get(n, n) for n in notes]
 
             # 피라미드 번역 적용

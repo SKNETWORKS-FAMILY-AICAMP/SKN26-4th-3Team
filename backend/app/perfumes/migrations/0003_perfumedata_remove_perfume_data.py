@@ -12,6 +12,7 @@ from django.db import migrations, models
 
 
 def copy_perfume_data(apps, schema_editor):
+    """Perfume.data JSON을 새 PerfumeData 테이블로 복사한다."""
     Perfume = apps.get_model("perfumes", "Perfume")
     PerfumeData = apps.get_model("perfumes", "PerfumeData")
 
@@ -24,6 +25,7 @@ def copy_perfume_data(apps, schema_editor):
 
 
 def restore_perfume_data(apps, schema_editor):
+    """rollback 시 PerfumeData.data를 기존 Perfume.data 필드로 복원한다."""
     Perfume = apps.get_model("perfumes", "Perfume")
     PerfumeData = apps.get_model("perfumes", "PerfumeData")
 
@@ -32,6 +34,7 @@ def restore_perfume_data(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
+    """Perfume.data를 별도 PerfumeData 모델로 분리하는 migration."""
 
     dependencies = [
         ("perfumes", "0002_perfumerawdata"),

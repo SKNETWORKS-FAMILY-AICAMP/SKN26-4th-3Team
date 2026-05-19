@@ -13,13 +13,17 @@ from rest_framework.test import APIClient
 from unittest.mock import patch
 
 class AnalyzeViewTest(TestCase):
+    """Analyze API의 session validation과 정상 응답 구조를 검증한다."""
+
     def setUp(self):
+        """APIClient와 analyze endpoint URL, 테스트 session id를 준비한다."""
         self.client = APIClient()
         self.url = reverse('analyze') 
         self.session_id = "test-session-uuid"
 
     @patch('scent_engine.VLEngine.analyze_image')
     def test_analyze_success(self, mock_analyze):
+        """VLM mock 결과와 session id가 있으면 추천 응답이 반환되는지 확인한다."""
         # Mock VLM response
         mock_analyze.return_value = {
             "visual_summary": "검은색 슈트를 입은 세련된 남성",
@@ -49,6 +53,7 @@ class AnalyzeViewTest(TestCase):
         print(f"Test Success: {response.data['fashionStyle']}")
 
     def test_analyze_missing_session_id(self):
+        """session id header가 없으면 400 error 응답을 반환하는지 확인한다."""
         data = {"image": "dummy", "selectedNotes": []}
         response = self.client.post(self.url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

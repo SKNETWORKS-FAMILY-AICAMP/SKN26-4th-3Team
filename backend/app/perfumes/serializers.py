@@ -8,16 +8,24 @@ from rest_framework import serializers
 from .models import Brand, Perfume
 
 class BrandSerializer(serializers.ModelSerializer):
+    """브랜드 모델의 기본 식별 정보를 직렬화한다."""
+
     class Meta:
+        """BrandSerializer가 노출할 모델과 필드를 정의한다."""
+
         model = Brand
         fields = ['id', 'name', 'country_code']
 
 class PerfumeSerializer(serializers.ModelSerializer):
+    """향수 모델과 연결된 상세 JSON, 이미지 정보를 API 응답 형태로 직렬화한다."""
+
     brand_name = serializers.CharField(source='brand.name', read_only=True)
     data = serializers.SerializerMethodField()
     image_asset = serializers.SerializerMethodField()
     
     class Meta:
+        """PerfumeSerializer가 노출할 모델과 필드를 정의한다."""
+
         model = Perfume
         fields = [
             'id', 'brand', 'brand_name', 'korean_name', 'english_name', 
@@ -25,10 +33,12 @@ class PerfumeSerializer(serializers.ModelSerializer):
         ]
 
     def get_data(self, obj):
+        """PerfumeDetail JSON이 없을 때도 빈 딕셔너리로 안전하게 반환한다."""
         detail = getattr(obj, 'detail', None)
         return getattr(detail, 'data', {}) or {}
 
     def get_image_asset(self, obj):
+        """첫 번째 연결 이미지를 프론트엔드가 기대하는 asset payload로 변환한다."""
         detail = getattr(obj, 'detail', None)
         if detail is None:
             return {}
@@ -45,6 +55,8 @@ class PerfumeSerializer(serializers.ModelSerializer):
 
 
 class AnalyzeRequestSerializer(serializers.Serializer):
+    """분석 API 요청 body schema를 정의한다."""
+
     image = serializers.CharField(
         help_text="사용자가 업로드한 이미지의 Base64 문자열입니다.",
     )
@@ -57,22 +69,30 @@ class AnalyzeRequestSerializer(serializers.Serializer):
 
 
 class ErrorResponseSerializer(serializers.Serializer):
+    """API 오류 응답 schema를 정의한다."""
+
     error = serializers.CharField(help_text="클라이언트에 표시할 오류 메시지입니다.")
 
 
 class PriceSerializer(serializers.Serializer):
+    """추천 상품 가격 정보를 직렬화한다."""
+
     raw = serializers.CharField(required=False, allow_blank=True)
     amount = serializers.FloatField(required=False)
     currency = serializers.CharField(required=False, allow_blank=True)
 
 
 class NotesPyramidSerializer(serializers.Serializer):
+    """향수 노트를 top, middle, base 피라미드 구조로 직렬화한다."""
+
     top = serializers.ListField(child=serializers.CharField(), required=False)
     middle = serializers.ListField(child=serializers.CharField(), required=False)
     base = serializers.ListField(child=serializers.CharField(), required=False)
 
 
 class RecommendationPerfumeSerializer(serializers.Serializer):
+    """추천 카드 내부의 향수 상세 정보를 직렬화한다."""
+
     id = serializers.IntegerField()
     brand = serializers.CharField()
     koreanName = serializers.CharField()
@@ -94,6 +114,8 @@ class RecommendationPerfumeSerializer(serializers.Serializer):
 
 
 class RecommendationImageDetailSerializer(serializers.Serializer):
+    """추천 상품 이미지의 원본, 백엔드 경로, base64 정보를 직렬화한다."""
+
     url = serializers.CharField(required=False, allow_blank=True)
     originalUrl = serializers.CharField(required=False, allow_blank=True)
     backendPath = serializers.CharField(required=False, allow_blank=True)
@@ -101,6 +123,8 @@ class RecommendationImageDetailSerializer(serializers.Serializer):
 
 
 class RecommendationDetailsSerializer(serializers.Serializer):
+    """추천 상세 모달에서 사용하는 스토리와 노트 설명을 직렬화한다."""
+
     story = serializers.CharField(required=False, allow_blank=True)
     topNotes = serializers.CharField(required=False, allow_blank=True)
     middleNotes = serializers.CharField(required=False, allow_blank=True)
@@ -109,6 +133,8 @@ class RecommendationDetailsSerializer(serializers.Serializer):
 
 
 class RecommendationSerializer(serializers.Serializer):
+    """개별 추천 결과 카드의 전체 API 응답 schema를 정의한다."""
+
     id = serializers.IntegerField()
     name = serializers.CharField()
     brand = serializers.CharField()
@@ -131,6 +157,8 @@ class RecommendationSerializer(serializers.Serializer):
 
 
 class AnalysisMetadataSerializer(serializers.Serializer):
+    """분석 결과를 재현하거나 표시하는 데 필요한 메타데이터를 직렬화한다."""
+
     base64Image = serializers.CharField()
     selectedNotes = serializers.ListField(child=serializers.CharField())
     radarScores = serializers.DictField(child=serializers.FloatField())
@@ -138,6 +166,8 @@ class AnalysisMetadataSerializer(serializers.Serializer):
 
 
 class AnalyzeResponseSerializer(serializers.Serializer):
+    """분석 API의 최종 응답 schema를 정의한다."""
+
     type = serializers.CharField()
     personalMood = serializers.CharField()
     perfumeKeywords = serializers.ListField(child=serializers.CharField())

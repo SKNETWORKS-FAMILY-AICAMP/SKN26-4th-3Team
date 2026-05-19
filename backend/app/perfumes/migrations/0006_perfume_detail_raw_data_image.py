@@ -12,6 +12,7 @@ from django.db import migrations, models
 
 
 def copy_perfume_data_to_normalized_tables(apps, schema_editor):
+    """기존 Perfume.data를 PerfumeDetail, PerfumeRawData, PerfumeImage로 분리한다."""
     Perfume = apps.get_model("perfumes", "Perfume")
     PerfumeDetail = apps.get_model("perfumes", "PerfumeDetail")
     PerfumeRawData = apps.get_model("perfumes", "PerfumeRawData")
@@ -40,6 +41,7 @@ def copy_perfume_data_to_normalized_tables(apps, schema_editor):
 
 
 def restore_perfume_data(apps, schema_editor):
+    """rollback 시 PerfumeDetail.data를 기존 Perfume.data 필드로 복원한다."""
     Perfume = apps.get_model("perfumes", "Perfume")
     PerfumeDetail = apps.get_model("perfumes", "PerfumeDetail")
 
@@ -48,6 +50,7 @@ def restore_perfume_data(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
+    """향수 상세, 원본 JSON, 이미지 정보를 정규화 테이블로 분리하는 migration."""
 
     dependencies = [
         ("perfumes", "0005_remove_perfumeproductinfo_perfume_and_more"),

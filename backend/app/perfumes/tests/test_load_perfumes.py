@@ -20,8 +20,11 @@ from perfumes.models import Brand, Perfume, PerfumeDetail, PerfumeImage, Perfume
 from perfumes.services.image_extractor import PerfumeImageMapping
 
 class PerfumeDataModelTest(TestCase):
+    """향수 raw data 적재와 이미지 추출 command의 DB 동기화를 검증한다."""
+
     @patch("perfumes.management.commands.load_perfumes.load_master_map")
     def test_load_perfumes_populates_normalized_detail_and_raw_data(self, mock_master_map):
+        """load_perfumes가 Perfume, Detail, RawData를 정규화해 생성하는지 확인한다."""
         mock_master_map.return_value = {
             "accord_to_category": {"citrus": "프레시"},
             "note_to_accord": {"오렌지": "citrus"},
@@ -73,6 +76,7 @@ class PerfumeDataModelTest(TestCase):
 
     @patch("perfumes.management.commands.load_perfumes.load_master_map")
     def test_load_perfumes_updates_existing_perfume_raw_data(self, mock_master_map):
+        """기존 향수 row가 raw JSON 기준으로 최신 detail/raw data로 갱신되는지 확인한다."""
         mock_master_map.return_value = {
             "accord_to_category": {"우디": "우디", "프레쉬": "프레시"},
             "note_to_accord": {"대나무": "우디"},
@@ -142,6 +146,7 @@ class PerfumeDataModelTest(TestCase):
 
     @patch("perfumes.management.commands.extract_perfume_images.extract_images_from_raw_dir")
     def test_extract_perfume_images_syncs_downloaded_images_to_database(self, mock_extract):
+        """이미지 추출 command가 PerfumeImage row와 base64 데이터를 저장하는지 확인한다."""
         with TemporaryDirectory() as tmpdir:
             image_path = Path(tmpdir) / "aqva.jpg"
             image_path.write_bytes(b"image-bytes")

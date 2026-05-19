@@ -15,9 +15,12 @@ from perfumes.utils import load_master_map
 from scent_engine.mapper import VISUAL_TO_FRAGRANCE_RULES, KOREAN_VISUAL_TRIGGERS
 
 class Command(BaseCommand):
+    """구버전 migration package에 남아 있는 향수 데이터 로드 command snapshot."""
+
     help = 'Load perfumes into MySQL with Symmetric Aura Scoring (v4.0)'
 
     def handle(self, *args, **options):
+        """raw JSON 향수 데이터를 읽어 구버전 Perfume.data 구조로 적재한다."""
         # 데이터 존재 여부 체크 (중복 적재 방지)
         try:
             if Perfume.objects.exists():

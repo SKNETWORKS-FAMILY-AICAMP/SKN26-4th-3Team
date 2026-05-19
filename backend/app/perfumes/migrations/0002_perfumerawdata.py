@@ -12,6 +12,7 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
+    """초기 PerfumeRawData schema를 생성하는 migration."""
 
     dependencies = [
         ('perfumes', '0001_initial'),

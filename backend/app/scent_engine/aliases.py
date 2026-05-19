@@ -9,6 +9,7 @@ from __future__ import annotations
 
 
 def _norm(text: str) -> str:
+    """Alias lookup용 텍스트를 공백 제거와 소문자 기준으로 정규화한다."""
     return str(text or "").strip().lower()
 
 

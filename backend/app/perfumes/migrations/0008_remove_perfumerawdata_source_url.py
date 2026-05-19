@@ -11,6 +11,7 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
+    """PerfumeRawData.source_url 컬럼을 제거하는 migration."""
 
     dependencies = [
         ("perfumes", "0007_remove_source_url_from_raw_json"),

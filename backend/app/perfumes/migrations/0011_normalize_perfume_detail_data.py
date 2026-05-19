@@ -28,6 +28,7 @@ DETAIL_DATA_KEYS = {
 
 
 def normalize_detail_data(apps, schema_editor):
+    """PerfumeDetail.data를 서비스에서 사용하는 허용 필드 집합으로 정규화한다."""
     PerfumeDetail = apps.get_model("perfumes", "PerfumeDetail")
 
     for detail in PerfumeDetail.objects.all().iterator():
@@ -46,6 +47,7 @@ def normalize_detail_data(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
+    """PerfumeDetail JSON payload를 정규화된 key set으로 축소하는 migration."""
 
     dependencies = [
         ("perfumes", "0010_remove_image_asset_from_perfume_detail"),
