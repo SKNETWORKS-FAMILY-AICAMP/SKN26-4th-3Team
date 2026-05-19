@@ -152,12 +152,12 @@
 
 **프론트 파이프라인 상세**
 <div align="center">
-  <img src="./docs/images/frontend_flow.png" width="50%" alt="Data pipeline">
+  <img src="./docs/images/frontend_flow.png" width="90%" alt="Data pipeline">
 </div>
 
 **백엔드 파이프라인 상세**
 <div align="center">
-  <img src="./docs/images/data_flow.png" width="50%" alt="Data pipeline">
+  <img src="./docs/images/data_flow.png" width="70%" alt="Data pipeline">
 </div>
 
 ### 데이터베이스 설계
