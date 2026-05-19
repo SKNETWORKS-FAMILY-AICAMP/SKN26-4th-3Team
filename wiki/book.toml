@@ -1,6 +1,6 @@
 [book]
-title = "SKN26 Project Template Wiki"
-description = "SKN26 project template knowledge base"
+title = "Olfít Wiki"
+description = "SKN26 Olfít project knowledge base"
 authors = ["SKN26"]
 language = "ko"
 multilingual = false
@@ -12,3 +12,6 @@ build-dir = "book"
 [output.html]
 default-theme = "light"
 preferred-dark-theme = "navy"
+
+[preprocessor.katex]
+after = ["links"]
