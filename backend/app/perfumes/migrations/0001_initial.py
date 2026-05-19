@@ -12,6 +12,7 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
+    """초기 Brand와 Perfume schema를 생성하는 migration."""
 
     initial = True
 

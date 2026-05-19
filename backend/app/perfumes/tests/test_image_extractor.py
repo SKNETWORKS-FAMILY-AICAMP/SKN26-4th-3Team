@@ -19,7 +19,10 @@ from perfumes.services.fragrantica_image_backfill import (
 )
 
 class PerfumeImageExtractorTest(TestCase):
+    """이미지 추출 서비스와 Fragrantica image URL backfill parser를 검증한다."""
+
     def test_extracts_images_from_raw_json_into_brand_directories(self):
+        """raw JSON의 image_url을 브랜드 디렉터리 아래 이미지 파일로 저장하는지 확인한다."""
         with TemporaryDirectory() as tmpdir:
             tmp_path = Path(tmpdir)
             raw_dir = tmp_path / "raw"
@@ -41,6 +44,7 @@ class PerfumeImageExtractorTest(TestCase):
             )
 
             def downloader(url):
+                """테스트용 이미지 bytes와 content type을 반환한다."""
                 return b"image-bytes", "image/jpeg"
 
             updated_at = datetime(2026, 5, 13, tzinfo=timezone.utc)
@@ -69,6 +73,7 @@ class PerfumeImageExtractorTest(TestCase):
             )
 
     def test_skips_existing_images_without_downloading_again(self):
+        """동일 이미지 파일이 이미 있으면 downloader 호출 없이 skip하는지 확인한다."""
         with TemporaryDirectory() as tmpdir:
             tmp_path = Path(tmpdir)
             raw_dir = tmp_path / "raw"
@@ -98,6 +103,7 @@ class PerfumeImageExtractorTest(TestCase):
             )
 
             def fail_if_called(url):
+                """기존 파일이 있을 때 downloader가 호출되면 테스트를 실패시킨다."""
                 raise AssertionError("downloader should not be called for existing image")
 
             updated_at = datetime(2026, 5, 13, tzinfo=timezone.utc)
@@ -123,6 +129,7 @@ class PerfumeImageExtractorTest(TestCase):
             )
 
     def test_records_failed_image_url_for_database_sync(self):
+        """이미지 다운로드 실패도 DB 동기화용 빈 processed_path mapping으로 남기는지 확인한다."""
         with TemporaryDirectory() as tmpdir:
             tmp_path = Path(tmpdir)
             raw_dir = tmp_path / "raw"
@@ -144,6 +151,7 @@ class PerfumeImageExtractorTest(TestCase):
             )
 
             def blocked_downloader(url):
+                """차단된 이미지 URL을 시뮬레이션한다."""
                 raise RuntimeError("403 forbidden")
 
             updated_at = datetime(2026, 5, 13, tzinfo=timezone.utc)
@@ -168,6 +176,7 @@ class PerfumeImageExtractorTest(TestCase):
             )
 
     def test_backfills_fragrantica_image_urls_from_designer_catalog(self):
+        """Fragrantica designer catalog HTML에서 상품 이미지와 상세 URL을 추출하는지 확인한다."""
         designer_html = """
         <a href="/perfume/Maison-Francis-Kurkdjian/724-75754.html"
            class="group prefumeHbox tw-gridlist-card-base">
@@ -195,6 +204,7 @@ class PerfumeImageExtractorTest(TestCase):
         )
 
     def test_backfills_raw_file_image_url_and_product_url(self):
+        """raw file의 빈 image_url/product_url을 catalog 후보로 보강하는지 확인한다."""
         with TemporaryDirectory() as tmpdir:
             raw_dir = Path(tmpdir) / "raw"
             raw_dir.mkdir()
@@ -215,6 +225,7 @@ class PerfumeImageExtractorTest(TestCase):
             )
 
             def fetcher(url):
+                """테스트용 Fragrantica catalog HTML을 반환한다."""
                 self.assertEqual(
                     url,
                     "https://www.fragrantica.com/designers/Maison-Francis-Kurkdjian.html",
@@ -242,6 +253,7 @@ class PerfumeImageExtractorTest(TestCase):
             )
 
     def test_parses_product_page_json_ld_image(self):
+        """상품 상세 페이지 JSON-LD에서 대표 이미지 URL을 추출하는지 확인한다."""
         html_text = """
         <script type="application/ld+json">
         {

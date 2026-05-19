@@ -12,6 +12,7 @@ from django.db import migrations, models
 
 
 def build_product_info(data):
+    """상세 JSON에서 상품 표시와 구매 연결에 필요한 필드만 추출한다."""
     return {
         'brand': data.get('brand', ''),
         'korean_name': data.get('korean_name', ''),
@@ -35,6 +36,7 @@ def build_product_info(data):
 
 
 def copy_product_info(apps, schema_editor):
+    """기존 PerfumeData row에서 PerfumeProductInfo row를 생성한다."""
     PerfumeData = apps.get_model('perfumes', 'PerfumeData')
     PerfumeProductInfo = apps.get_model('perfumes', 'PerfumeProductInfo')
 
@@ -52,6 +54,7 @@ def copy_product_info(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
+    """PerfumeProductInfo 모델을 생성하고 기존 상품 정보를 복사하는 migration."""
 
     dependencies = [
         ('perfumes', '0003_perfumedata_remove_perfume_data'),

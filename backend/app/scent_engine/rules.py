@@ -11,6 +11,7 @@ def _mapping(
     components: dict[str, float],
     descriptors: dict[str, float],
 ) -> dict[str, dict[str, float]]:
+    """시각 trigger 하나에 연결된 향수 계열, 어코드, 성분, 묘사 점수를 묶는다."""
     return {
         "families": families,
         "subs": subs,

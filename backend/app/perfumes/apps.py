@@ -8,6 +8,8 @@ from django.apps import AppConfig
 
 
 class PerfumesConfig(AppConfig):
+    """Django perfumes 앱의 기본 설정을 정의한다."""
+
     name = 'perfumes'
 
 # ----------------------------------------------------------------

@@ -11,6 +11,7 @@ from django.db import migrations
 
 
 def remove_release_year_from_detail_meta(apps, schema_editor):
+    """PerfumeDetail.data.meta의 release_year 중복 값을 제거한다."""
     PerfumeDetail = apps.get_model("perfumes", "PerfumeDetail")
 
     for detail in PerfumeDetail.objects.all().iterator():
@@ -35,6 +36,7 @@ def remove_release_year_from_detail_meta(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
+    """release_year를 Perfume 모델 필드로만 유지하도록 detail meta를 정리하는 migration."""
 
     dependencies = [
         ("perfumes", "0011_normalize_perfume_detail_data"),

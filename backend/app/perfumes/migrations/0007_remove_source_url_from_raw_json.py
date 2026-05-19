@@ -11,6 +11,7 @@ from django.db import migrations
 
 
 def remove_source_url_from_raw_json(apps, schema_editor):
+    """PerfumeRawData.raw_json 내부의 중복 source_url 필드를 제거한다."""
     PerfumeRawData = apps.get_model("perfumes", "PerfumeRawData")
 
     for row in PerfumeRawData.objects.all().iterator():
@@ -24,10 +25,12 @@ def remove_source_url_from_raw_json(apps, schema_editor):
 
 
 def noop(apps, schema_editor):
+    """역방향 migration에서 별도 복원 작업을 수행하지 않는다."""
     pass
 
 
 class Migration(migrations.Migration):
+    """raw_json 내부 source_url 제거를 적용하는 data migration."""
 
     dependencies = [
         ("perfumes", "0006_perfume_detail_raw_data_image"),

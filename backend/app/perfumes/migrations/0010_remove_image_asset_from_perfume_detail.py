@@ -11,6 +11,7 @@ from django.db import migrations
 
 
 def remove_image_fields_from_detail_data(apps, schema_editor):
+    """PerfumeDetail.data에서 이미지 관련 중복 필드를 제거한다."""
     PerfumeDetail = apps.get_model("perfumes", "PerfumeDetail")
 
     for detail in PerfumeDetail.objects.all().iterator():
@@ -30,6 +31,7 @@ def remove_image_fields_from_detail_data(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
+    """PerfumeDetail JSON에서 image_asset/image_url 필드를 정리하는 migration."""
 
     dependencies = [
         ("perfumes", "0009_perfumeimage_base64_data"),

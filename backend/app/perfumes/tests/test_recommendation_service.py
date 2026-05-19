@@ -11,7 +11,10 @@ from perfumes.models import Brand, Perfume, PerfumeDetail, PerfumeImage
 from perfumes.services.recommendation_service import RecommendationService
 
 class RecommendationServiceTest(TestCase):
+    """RecommendationService의 fallback 추천 응답 payload를 검증한다."""
+
     def test_recommendations_include_perfume_detail_and_image_payload(self):
+        """추천 결과에 향수 상세, 가격, 노트, 이미지 base64 payload가 포함되는지 확인한다."""
         brand = Brand.objects.create(name="BVLGARI")
         perfume = Perfume.objects.create(
             brand=brand,
@@ -84,6 +87,7 @@ class RecommendationServiceTest(TestCase):
         self.assertEqual(recommendation["imageBase64"], "base64-image")
 
     def test_recommendations_split_flat_notes_when_parsed_notes_are_missing(self):
+        """notes_parsed가 없을 때 flat notes를 top/middle/base로 분리하는지 확인한다."""
         brand = Brand.objects.create(name="LE LABO")
         perfume = Perfume.objects.create(
             brand=brand,

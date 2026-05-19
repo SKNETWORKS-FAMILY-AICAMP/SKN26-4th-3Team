@@ -44,6 +44,7 @@ def encode_image_to_base64(
 
 
 def _dedupe_list(values: list[str], max_items: int | None = None) -> list[str]:
+    """문자열 리스트를 정규화하고 순서를 유지한 채 중복을 제거한다."""
     seen = set()
     result = []
     for value in values:
@@ -58,6 +59,7 @@ def _dedupe_list(values: list[str], max_items: int | None = None) -> list[str]:
 
 
 def _ensure_list(value: Any, key: str) -> list[str]:
+    """VLM 필드 값을 리스트 형태로 강제 변환하고 필드별 최대 개수를 적용한다."""
     if value is None:
         values = []
     elif isinstance(value, list):
@@ -114,12 +116,14 @@ def extract_json_from_text(text: str) -> dict[str, Any]:
 
 
 def _extract_string_field(text: str, key: str) -> str:
+    """깨진 JSON 응답 텍스트에서 단일 문자열 필드를 정규식으로 복구한다."""
     pattern = rf'"{re.escape(key)}"\s*:\s*"([^"]*)"'
     match = re.search(pattern, text, re.DOTALL)
     return match.group(1).strip() if match else ""
 
 
 def _extract_array_field(text: str, key: str, max_items: int) -> list[str]:
+    """깨진 JSON 응답 텍스트에서 문자열 배열 필드를 정규식으로 복구한다."""
     key_pattern = rf'"{re.escape(key)}"\s*:\s*'
     key_match = re.search(key_pattern, text)
     if not key_match:
@@ -141,6 +145,7 @@ def _extract_array_field(text: str, key: str, max_items: int) -> list[str]:
 
 
 def _fallback_parse_partial_json(text: str) -> dict[str, Any]:
+    """JSON 파싱 실패 시 알려진 VLM schema 필드를 개별적으로 복구한다."""
     recovered = {
         "visual_summary": _extract_string_field(text, "visual_summary"),
         "colors": _extract_array_field(text, "colors", MAX_ITEMS["colors"]),

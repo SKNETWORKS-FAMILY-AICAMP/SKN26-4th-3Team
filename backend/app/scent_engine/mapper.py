@@ -24,6 +24,7 @@ GOURMAND_TRIGGERS = {
 
 
 def _collect_source_keywords(image_keywords: dict[str, Any]) -> list[str]:
+    """VLM 결과의 여러 필드에서 trigger 탐색에 사용할 원천 키워드를 수집한다."""
     source: list[str] = []
 
     for key in ["colors", "objects", "scene", "mood", "season", "time", "raw_keywords"]:
@@ -42,6 +43,7 @@ def _collect_source_keywords(image_keywords: dict[str, Any]) -> list[str]:
 
 
 def _detect_triggers(source_keywords: list[str]) -> list[str]:
+    """영문/한글 시각 키워드가 규칙 테이블의 trigger와 매칭되는지 탐색한다."""
     joined = " ".join(source_keywords).lower()
     detected: list[str] = []
 
@@ -62,6 +64,7 @@ def _add_scores(
     multiplier: float = 1.0,
     normalize_component: bool = False,
 ) -> None:
+    """점수 딕셔너리에 규칙 점수를 누적하고, 성분명은 필요 시 canonical 명칭으로 정규화한다."""
     for key, score in score_map.items():
         normalized_key = normalize_note_keyword(key) if normalize_component else key
         if not normalized_key:
@@ -75,6 +78,7 @@ def _subtract_score(
     amount: float,
     normalize_component: bool = False,
 ) -> None:
+    """문맥 보정 과정에서 과도하게 부여된 점수를 0 아래로 내려가지 않게 차감한다."""
     normalized_key = normalize_note_keyword(key) if normalize_component else key
     if not normalized_key:
         return
@@ -82,6 +86,7 @@ def _subtract_score(
 
 
 def _build_component_ko_scores(component_scores: dict[str, float]) -> dict[str, float]:
+    """canonical 성분 점수를 한국어 대표 성분명 기준 점수로 합산한다."""
     result: dict[str, float] = {}
 
     for component, score in component_scores.items():
@@ -96,6 +101,7 @@ def _calculate_gourmand_score(
     sub_scores: defaultdict[str, float],
     descriptor_scores: defaultdict[str, float],
 ) -> float:
+    """성분, 서브 어코드, 묘사 점수를 조합해 구르망 계열 보정 점수를 계산한다."""
     gourmand_score = 0.0
 
     # 1. Components (원료 가중치 x 1.0)
@@ -121,6 +127,7 @@ def _rank_scores(
     score_dict: dict[str, float],
     top_n: int | None = None,
 ) -> list[dict[str, float | str]]:
+    """점수 딕셔너리를 내림차순으로 정렬하고 표시용 name/score 목록으로 변환한다."""
     ranked = sorted(score_dict.items(), key=lambda x: x[1], reverse=True)
 
     if top_n:
@@ -137,10 +144,12 @@ def _rank_scores(
 
 
 def _names_only(ranked_items: list[dict[str, float | str]]) -> list[str]:
+    """정렬된 score item 목록에서 이름만 추출한다."""
     return [str(item["name"]) for item in ranked_items]
 
 
 def _has_any(source_keywords: list[str], candidates: list[str]) -> bool:
+    """수집된 원천 키워드 문자열에 후보 키워드 중 하나라도 포함되는지 확인한다."""
     joined = " ".join(source_keywords).lower()
     return any(candidate.lower() in joined for candidate in candidates)
 

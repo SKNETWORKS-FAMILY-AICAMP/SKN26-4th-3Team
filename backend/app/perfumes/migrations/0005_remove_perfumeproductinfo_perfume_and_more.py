@@ -11,6 +11,7 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
+    """중간 product info schema를 제거하고 PerfumeRawData 구조를 갱신하는 migration."""
 
     dependencies = [
         ('perfumes', '0004_perfumeproductinfo'),

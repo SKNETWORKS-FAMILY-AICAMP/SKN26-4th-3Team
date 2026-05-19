@@ -26,12 +26,15 @@ PerfumeDetailIdResolver = Callable[[dict[str, Any]], Any]
 
 @dataclass(frozen=True)
 class PerfumeImageMapping:
+    """raw data 이미지 한 건을 PerfumeImage DB row로 동기화하기 위한 중간 표현."""
+
     perfume_detail_id: Any
     original_url: str
     processed_path: str
     updated_at: datetime
 
     def as_db_row(self) -> dict[str, Any]:
+        """ORM bulk 작업에 사용할 수 있는 딕셔너리 형태로 변환한다."""
         return {
             "perfume_detail_id": self.perfume_detail_id,
             "original_url": self.original_url,
@@ -42,6 +45,8 @@ class PerfumeImageMapping:
 
 @dataclass(frozen=True)
 class ImageExtractionFailure:
+    """이미지 다운로드 또는 저장 실패 정보를 기록한다."""
+
     brand: str
     english_name: str
     image_url: str
@@ -50,6 +55,8 @@ class ImageExtractionFailure:
 
 @dataclass
 class ExtractionResult:
+    """이미지 추출 작업의 집계 결과와 동기화 대상 목록을 담는다."""
+
     created: int = 0
     skipped: int = 0
     failed: int = 0
@@ -69,6 +76,7 @@ ALLOWED_EXTENSIONS = {"avif", "gif", "jpeg", "jpg", "png", "webp"}
 
 
 def default_downloader(url: str) -> tuple[bytes, str]:
+    """requests로 이미지를 내려받고, 403 응답은 Scrapling 기반 downloader로 재시도한다."""
     try:
         response = requests.get(
             url,
@@ -86,6 +94,7 @@ def default_downloader(url: str) -> tuple[bytes, str]:
 
 
 def scrapling_downloader(url: str) -> tuple[bytes, str]:
+    """Scrapling Fetcher를 사용해 bot 차단 가능성이 있는 이미지 URL을 내려받는다."""
     try:
         from scrapling.fetchers import Fetcher
     except ImportError as exc:
@@ -115,6 +124,7 @@ def extract_images_from_raw_dir(
     clock: Clock = lambda: datetime.now(timezone.utc),
     perfume_detail_id_resolver: PerfumeDetailIdResolver | None = None,
 ) -> ExtractionResult:
+    """raw perfume JSON 디렉터리에서 이미지 URL을 찾아 정적 파일로 저장한다."""
     raw_path = Path(raw_dir)
     output_path = Path(output_dir)
     result = ExtractionResult()
@@ -198,6 +208,7 @@ def build_image_mapping(
     clock: Clock,
     perfume_detail_id_resolver: PerfumeDetailIdResolver | None = None,
 ) -> PerfumeImageMapping:
+    """저장된 이미지 파일 경로와 원본 record를 DB 동기화용 mapping으로 묶는다."""
     perfume_detail_id = (
         resolve_perfume_detail_id(record, perfume_detail_id_resolver)
     )
@@ -213,12 +224,14 @@ def resolve_perfume_detail_id(
     record: dict[str, Any],
     perfume_detail_id_resolver: PerfumeDetailIdResolver | None = None,
 ) -> Any:
+    """외부 resolver가 있으면 사용하고, 없으면 record의 perfume_detail_id를 반환한다."""
     if perfume_detail_id_resolver is not None:
         return perfume_detail_id_resolver(record)
     return record.get("perfume_detail_id")
 
 
 def slugify(value: object) -> str:
+    """브랜드명과 상품명을 파일/디렉터리 이름에 안전한 slug로 변환한다."""
     text = str(value or "").strip().lower()
     text = re.sub(r"[^a-z0-9]+", "-", text)
     text = text.strip("-")
@@ -226,6 +239,7 @@ def slugify(value: object) -> str:
 
 
 def extension_for(url: str, content_type: str) -> str:
+    """Content-Type을 우선하고 URL suffix를 fallback으로 사용해 이미지 확장자를 결정한다."""
     media_type = content_type.split(";", 1)[0].strip().lower()
     if media_type in CONTENT_TYPE_EXTENSIONS:
         return CONTENT_TYPE_EXTENSIONS[media_type]

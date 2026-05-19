@@ -15,6 +15,7 @@ class Brand(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
+        """브랜드 row를 공식 명칭으로 표시한다."""
         return self.name
 
 class Perfume(models.Model):
@@ -37,10 +38,13 @@ class Perfume(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        """동일 브랜드 안에서 같은 영문 상품명이 중복 저장되지 않도록 제한한다."""
+
         # 동일 브랜드 내 중복 상품 방지
         unique_together = ('brand', 'english_name')
 
     def __str__(self):
+        """관리자와 로그에서 브랜드와 영문명을 함께 표시한다."""
         return f"[{self.brand.name}] {self.english_name}"
 
 
@@ -53,6 +57,7 @@ class PerfumeDetail(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
+        """연결된 향수 기준으로 상세 데이터 row를 식별한다."""
         return f"Detail for {self.perfume}"
 
 
@@ -65,6 +70,7 @@ class PerfumeRawData(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
+        """연결된 향수 기준으로 원본 데이터 row를 식별한다."""
         return f"Raw data for {self.perfume}"
 
 
@@ -79,9 +85,12 @@ class PerfumeImage(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        """같은 향수 상세에 동일 원본 이미지 URL이 중복 저장되지 않도록 제한한다."""
+
         unique_together = ('perfume_detail', 'original_url')
 
     def __str__(self):
+        """이미지 row를 원본 URL로 표시한다."""
         return self.original_url
 
 # ----------------------------------------------------------------
