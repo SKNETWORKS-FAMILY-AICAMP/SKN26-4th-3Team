@@ -79,6 +79,82 @@
 
 ## 🖥️ 서비스 화면 (이미지 추가)
 
+**개인정보 동의 화면**
+<div align="center">
+  <img src="./docs/images/olfit_popup.png" width="70%" alt="olfit-popup">
+</div>
+
+**메인 화면**
+<div align="center">
+  <img src="./docs/images/olfit_header.png" width="70%" alt="olfit-header">
+</div>
+
+**설명 화면**
+<div align="center">
+  <img src="./docs/images/olfit_philosophy.png" width="70%" alt="olfit-philosophy">
+</div>
+
+**향수 용어 설명 화면**
+<div align="center">
+  <img src="./docs/images/olfit_education.png" width="70%" alt="olfit-education">
+</div>
+
+**향수 원료 설명 화면**
+<div align="center">
+  <img src="./docs/images/olfit_concent.png" width="70%" alt="olfit-concent">
+</div>
+
+**탑, 미들, 베이스 노트 설정 화면**
+<div align="center">
+  <img src="./docs/images/olfit_pyramid.png" width="70%" alt="olfit-pyramid">
+</div>
+
+**분석 전 화면**
+<div align="center">
+  <img src="./docs/images/olfit_banalyze.png" width="70%" alt="olfit-beforeAnalyze">
+</div>
+
+**분석 후 화면**
+<div align="center">
+  <img src="./docs/images/olfit_aanalyze.png" width="70%" alt="olfit-AfterAnalyze">
+</div>
+
+**리포트 화면 1**
+<div align="center">
+  <img src="./docs/images/olfit_report1.png" width="70%" alt="olfit-ScentBlueprint">
+</div>
+
+**리포트 화면 2**
+<div align="center">
+  <img src="./docs/images/olfit_report2.png" width="70%" alt="olfit-Aura">
+</div>
+
+**리포트 화면 3**
+<div align="center">
+  <img src="./docs/images/olfit_report3.png" width="70%" alt="olfit-MatchingToggle">
+</div>
+
+**리포트 화면 4**
+<div align="center">
+  <img src="./docs/images/olfit_report4.png" width="70%" alt="olfit-RecommendPerfume">
+</div>
+
+**리포트 화면 5**
+<div align="center">
+  <img src="./docs/images/olfit_report5.png" width="70%" alt="olfit-sharebtn">
+</div>
+
+**실 데이터와 기능 설명**
+<div align="center">
+  <img src="./docs/images/olfit_trust.png" width="70%" alt="olfit-sharebtn">
+</div>
+
+**하단 이동 버튼과 부가 기능**
+<div align="center">
+  <img src="./docs/images/olfit_footer.png" width="70%" alt="olfit-footer">
+</div>
+
+
 ---
 
 ## 🛠️ 기술 스택
