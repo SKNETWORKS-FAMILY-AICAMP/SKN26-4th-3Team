@@ -544,14 +544,16 @@ Top 5 추천이 동일 계열·브랜드로 쏠리는 문제를 방지하기 위
     </thead>
     <tbody>
         <tr>
-            <td rowspan="5" style="text-align: center; font-weight: bold; border: 1px solid #ddd; padding: 10px;">이창우</td>
+            <td rowspan="4" style="text-align: center; font-weight: bold; border: 1px solid #ddd; padding: 10px;">이창우</td>
             <td style="text-align: center; border: 1px solid #ddd; padding: 10px;">장한재</td>
-            <td style="border: 1px solid #ddd; padding: 10px;"></td>
+            <td style="border: 1px solid #ddd; padding: 10px;">
+            few-shot 프롬포트 기법을 통해 VLM이 추출한 원시 스타일 키워드를 목적에 맞게 정제하고 고도화하는 로직을 실험해 주셨습니다. 더불어, 동물 실험 등 브랜드의 ‘윤리성’ 지표에 대해서도 조사해 주셨습니다. 비록 해당 결과가 실제 서비스에 직접 반영되지 못했지만, 할당받은 테스크를 끝까지 잘 완수해 주셨습니다.
+            </td>
         </tr>
         <tr>
             <td style="text-align: center; border: 1px solid #ddd; padding: 10px;">전종혁</td>
             <td style="border: 1px solid #ddd; padding: 10px;">
-            few-shot 프롬포트 기법을 통해 VLM이 추출한 원시 스타일 키워드를 목적에 맞게 정제하고 고도화하는 로직을 실험해 주셨습니다. 더불어, 동물 실험 등 브랜드의 ‘윤리성’ 지표에 대해서도 조사해 주셨습니다. 비록 해당 결과가 실제 서비스에 직접 반영되지 못했지만, 할당받은 테스크를 끝까지 잘 완수해 주셨습니다.
+            핵심 기능을 구현해주셨습니다. 적재된 향수에 대해 VLM으로 분위기를 추출한 뒤, 사용자의 의도와 일치하도록 하는 결과 출력에 필요한 것들을 담당해주셨습니다.
             </td>
         </tr>
         <tr>
@@ -568,10 +570,10 @@ Top 5 추천이 동일 계열·브랜드로 쏠리는 문제를 방지하기 위
             </td>
         </tr>
         <tr>
-            <td rowspan="5" style="text-align: center; font-weight: bold; border: 1px solid #ddd; padding: 10px;">장한재</td>
+            <td rowspan="4" style="text-align: center; font-weight: bold; border: 1px solid #ddd; padding: 10px;">장한재</td>
             <td style="text-align: center; border: 1px solid #ddd; padding: 10px;">이창우</td>
             <td style="border: 1px solid #ddd; padding: 10px;">
-            VLM을 활용하여 사용자가 업로드한 이미지로부터 향수 관련 키워드를 자동으로 추출하고, 5축 벡터 계산을 위한 기초 점수 산정 매핑 로직을 구현해 주셨습니다. 이에 더해 RAG 기반 추천 로직의 초안을 작성하여 이후 추천 알고리즘 고도화 작업 및 백엔드 시스템으로 이식 과정에서 시행착오를 줄이고 전체적인 개발 시간을 크게 단축할 수 있었습니다. 
+            VLM을 활용하여 사용자가 업로드한 이미지로부터 향수 관련 키워드를 자동으로 추출하고, 5축 벡터 계산을 위한 기초 점수 산정 매핑 로직을 구현해 주셨습니다. 이에 더해 RAG 기반 추천 로직의 초안을 작성하여 이후 추천 알고리즘 고도화 작업 및 백엔드 시스템으로 이식 과정에서 시행착오를 줄이고 전체적인 개발 시간을 크게 단축할 수 있었습니다.
             </td>
         </tr>
         <tr>
@@ -593,7 +595,7 @@ Top 5 추천이 동일 계열·브랜드로 쏠리는 문제를 방지하기 위
             </td>
         </tr>
         <tr>
-            <td rowspan="5" style="text-align: center; font-weight: bold; border: 1px solid #ddd; padding: 10px;">전종혁</td>
+            <td rowspan="4" style="text-align: center; font-weight: bold; border: 1px solid #ddd; padding: 10px;">전종혁</td>
             <td style="text-align: center; border: 1px solid #ddd; padding: 10px;">이창우</td>
             <td style="border: 1px solid #ddd; padding: 10px;">
             Olfit 서비스의 프론트엔드 전반을 총괄하여, ‘향수 추천’ 이라는 서비스의 정체성이 직관적으로 드러나도록 UI/UX를 크게 향상해 주었습니다.  또한 UI 개발에 머무르지 않고 AWS EC2로의 배포 작업까지 성공적으로 완수해 주었습니다. 개발 초기 프로토타입에서 발생한 크고 작은 버그들을 AI 에이전트를 적극적으로 활용해 해결하고, backend에서 반환하는 데이터 스키마의 변경사항에 대해 바로 반영을 해 주는 등 긴밀한 협업을 할 수 있었습니다.
@@ -618,7 +620,7 @@ Top 5 추천이 동일 계열·브랜드로 쏠리는 문제를 방지하기 위
             </td>
         </tr>
         <tr>
-            <td rowspan="5" style="text-align: center; font-weight: bold; border: 1px solid #ddd; padding: 10px;">조동휘</td>
+            <td rowspan="4" style="text-align: center; font-weight: bold; border: 1px solid #ddd; padding: 10px;">조동휘</td>
             <td style="text-align: center; border: 1px solid #ddd; padding: 10px;">이창우</td>
             <td style="border: 1px solid #ddd; padding: 10px;">
             Olfit 서비스를 위한 Dockerfile을 작성하고, DB 설계를 함께 담당했습니다. 또한 Front/Back/LLM 전반에 대한 Test를 작성하여 서비스에 대한 성능 평가를 진행하고 파트별로 결과를 기록해 주었습니다. 이를 통해 우리의 시스템 파이프라인이 문제 없이 동작하며, 나아가 ‘RAG 검색 성능’과 ‘추천 성능’ 역시 검증할 수 있었습니다. 코드 리펙토링에 있어서도 Fallback 로직 등 놓친 디테일을 보완하여 완성도를 더욱 높였습니다.
@@ -633,7 +635,7 @@ Top 5 추천이 동일 계열·브랜드로 쏠리는 문제를 방지하기 위
         <tr>
             <td style="text-align: center; border: 1px solid #ddd; padding: 10px;">전종혁</td>
             <td style="border: 1px solid #ddd; padding: 10px;">
-            인프라 구축과 CI/CD 로 개발 환경에 통일을 담당해주셨습니다. 저 혼자만 다른 개발 환경에서 개발했지만, 환경의 차이에서 오는 오류를 사전에 방지했습니다. 
+            인프라 구축과 CI/CD 로 개발 환경에 통일을 담당해주셨습니다. 저 혼자만 다른 개발 환경에서 개발했지만, 환경의 차이에서 오는 오류를 사전에 방지했습니다.
             </td>
         </tr>
         <tr>
@@ -643,7 +645,7 @@ Top 5 추천이 동일 계열·브랜드로 쏠리는 문제를 방지하기 위
             </td>
         </tr>
         <tr>
-            <td rowspan="5" style="text-align: center; font-weight: bold; border: 1px solid #ddd; padding: 10px;">최수아</td>
+            <td rowspan="4" style="text-align: center; font-weight: bold; border: 1px solid #ddd; padding: 10px;">최수아</td>
             <td style="text-align: center; border: 1px solid #ddd; padding: 10px;">이창우</td>
             <td style="border: 1px solid #ddd; padding: 10px;">
             3차 프로젝트때 경험을 바탕으로, Jira를 통한 일정 관리 및 기술 명세서 등 문서 작업, 발표를 맡아 주었습니다. 또한 Front 디자인에 대한 피드백과 표준화된 성분명 등을 조사해 주었습니다. 각자가 해야할 작업들이 명확하게 정의되어 있어 해당 jira issue를 가지고 commit을 날리며 관리할 수 있어 코드 관리도 편했던 것 같습니다.
